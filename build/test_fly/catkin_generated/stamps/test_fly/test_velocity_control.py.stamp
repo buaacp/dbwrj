@@ -4,6 +4,10 @@
 import rospy
 from multirotor_communication import Communication  
 import threading
+import math
+# 定义最大速度
+MAX_VELOCITY = 3.0
+PD = 0.5
 
 def main():
     rospy.init_node('arm_and_set_mode')
@@ -61,38 +65,47 @@ def main():
         print("飞行模式切换失败")
         return
 
-    # 设置目标速度，例如向前移动1米/秒，保持高度
-    target_vx = 1.0  # 前向速度 (m/s)
-    target_vy = 0.0  # 左向速度 (m/s)
-    target_vz = 0.0  # 上升/下降速度 (m/s)
+    # 设置目标位置
+    target_x = 0.0
+    target_y = 0.0 
+    target_z = 1.0 
     target_yaw = communication.current_yaw  # 保持当前航向
 
-    communication.target_motion = communication.construct_target(
-        vx=target_vx,
-        vy=target_vy,
-        vz=target_vz,
-        yaw=target_yaw
-    )
 
-    print("开始速度控制，目标速度：vx={:.2f} m/s, vy={:.2f} m/s, vz={:.2f} m/s".format(target_vx, target_vy, target_vz))
+    print("开始速度控制")
 
     rate = rospy.Rate(10)  # 10Hz
     while not rospy.is_shutdown():
-        # 打印当前速度
-        if communication.current_velocity is not None:
-            current_vx = communication.current_velocity.x
-            current_vy = communication.current_velocity.y
-            current_vz = communication.current_velocity.z
-            print("当前速度：vx={:.2f} m/s, vy={:.2f} m/s, vz={:.2f} m/s".format(current_vx, current_vy, current_vz))
-            # 判断是否达到目标速度（可以根据具体需求调整阈值）
-            if (abs(current_vx - target_vx) < 0.1 and
-                abs(current_vy - target_vy) < 0.1 and
-                abs(current_vz - target_vz) < 0.1):
-                print("已达到目标速度")
-                break
-        rate.sleep()
+        if communication.current_position is not None:
+            current_x = communication.current_position.x
+            current_y = communication.current_position.y
+            current_z = communication.current_position.z
 
-    print("速度控制过程结束")
+            control_vx = (target_x - current_x)*PD
+            control_vy = (target_y - current_y)*PD
+            control_vz = (target_z - current_z)*PD
+            # 计算速度的大小
+            speed = math.sqrt(control_vx**2 + control_vy**2 + control_vz**2)
+
+            # 如果速度超出最大速度，进行限幅
+            if speed > MAX_VELOCITY:
+                scale = MAX_VELOCITY / speed
+                control_vx *= scale
+                control_vy *= scale
+                control_vz *= scale
+
+            communication.target_motion = communication.construct_target(
+                vx=control_vx,
+                vy=control_vy,
+                vz=control_vz,
+                yaw=target_yaw
+            )
+            # 判断是否达到目标位置
+            if (abs(target_x - current_x) < 0.1 and
+                abs(target_y - current_y) < 0.1 and
+                abs(target_z - current_z) < 0.1):
+                print("已达到目标位置")
+        rate.sleep()
 
 if __name__ == '__main__':
     main()

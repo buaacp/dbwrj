@@ -4,7 +4,7 @@
 import rospy
 from mavros_msgs.msg import PositionTarget
 from mavros_msgs.srv import CommandBool, SetMode, ParamSet
-from geometry_msgs.msg import PoseStamped, Pose, Twist
+from geometry_msgs.msg import PoseStamped, Pose, TwistStamped
 from std_msgs.msg import String
 from pyquaternion import Quaternion
 import sys
@@ -15,6 +15,7 @@ class Communication:
         
         self.vehicle_type = vehicle_type
         self.vehicle_id = vehicle_id
+        self.vision_pose = None
         self.current_position = None
         self.current_velocity = None  # 添加当前速度
         self.current_yaw = 0
@@ -32,8 +33,9 @@ class Communication:
         '''
         ros subscribers
         '''
+        self.vision_pose_sub = rospy.Subscriber(self.vehicle_type+'_'+self.vehicle_id+"/mavros/vision_pose/pose", PoseStamped, self.vision_pose_callback,queue_size=1)
         self.local_pose_sub = rospy.Subscriber(self.vehicle_type+'_'+self.vehicle_id+"/mavros/local_position/pose", PoseStamped, self.local_pose_callback,queue_size=1)
-        self.local_vel_sub = rospy.Subscriber(self.vehicle_type+'_'+self.vehicle_id+"/mavros/local_position/velocity", Twist, self.local_velocity_callback, queue_size=1)  # 订阅速度信息
+        self.local_vel_sub = rospy.Subscriber(self.vehicle_type+'_'+self.vehicle_id+"/mavros/local_position/velocity_local", TwistStamped, self.local_velocity_callback, queue_size=1)  # 订阅速度信息
         self.cmd_sub = rospy.Subscriber("/xtdrone/"+self.vehicle_type+'_'+self.vehicle_id+"/cmd",String,self.cmd_callback,queue_size=3)
         self.cmd_pose_flu_sub = rospy.Subscriber("/xtdrone/"+self.vehicle_type+'_'+self.vehicle_id+"/cmd_pose_flu", Pose, self.cmd_pose_flu_callback,queue_size=1)
         self.cmd_pose_enu_sub = rospy.Subscriber("/xtdrone/"+self.vehicle_type+'_'+self.vehicle_id+"/cmd_pose_enu", Pose, self.cmd_pose_enu_callback,queue_size=1)
@@ -66,6 +68,9 @@ class Communication:
     def local_pose_callback(self, msg):
         self.current_position = msg.pose.position
         self.current_yaw = self.q2yaw(msg.pose.orientation)
+
+    def vision_pose_callback(self, msg):
+        self.vision_pose = msg.pose.position
 
     def local_velocity_callback(self, msg):
         self.current_velocity = msg  # 更新当前速度

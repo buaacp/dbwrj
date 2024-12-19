@@ -6,8 +6,8 @@ from geometry_msgs.msg import PoseStamped, Vector3Stamped
 import sys
 from gazebo_msgs.msg import ModelStates
 
-vehicle_type = sys.argv[1]
-vehicle_num = int(sys.argv[2])
+vehicle_type = 'iris'
+vehicle_num = 1
 multi_pose_pub = [None]*vehicle_num
 multi_speed_pub = [None]*vehicle_num
 multi_local_pose = [PoseStamped() for i in range(vehicle_num)]

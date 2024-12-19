@@ -4,7 +4,7 @@
 import rospy
 from mavros_msgs.msg import PositionTarget
 from mavros_msgs.srv import CommandBool, SetMode, ParamSet
-from geometry_msgs.msg import PoseStamped, Pose, Twist, TwistStamped
+from geometry_msgs.msg import PoseStamped, Pose, TwistStamped,Twist
 from std_msgs.msg import String
 from pyquaternion import Quaternion
 import sys
@@ -67,6 +67,7 @@ class Communication:
 
     def local_pose_callback(self, msg):
         self.current_position = msg.pose.position
+        self.current_position_time = msg.header.stamp
         self.current_yaw = self.q2yaw(msg.pose.orientation)
 
     def vision_pose_callback(self, msg):
@@ -74,6 +75,7 @@ class Communication:
 
     def local_velocity_callback(self, msg):
         self.current_velocity = msg  # 更新当前速度
+        # self.current_velocity_time = msg.header.stamp
 
     def construct_target(self, x=0, y=0, z=0, vx=0, vy=0, vz=0, afx=0, afy=0, afz=0, yaw=0, yaw_rate=0):
         target_raw_pose = PositionTarget()
