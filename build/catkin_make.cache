@@ -1,2 +1,0 @@
-test_fly
--DCATKIN_DEVEL_PREFIX=/home/zlhq/px4_fly_ws/devel -DCMAKE_INSTALL_PREFIX=/home/zlhq/px4_fly_ws/install -G Unix Makefiles

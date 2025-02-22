@@ -1,0 +1,15 @@
+#! /usr/bin/env python
+# -*- coding: UTF-8 -*-
+# 关节弧度的范围
+GIMBAL_THETA_LOWERB = [-130,-60]#云台
+GIMBAL_THETA_UPPERB = [130,90]
+GIMBAL_THETA_CENTER = [0,0]
+
+ARM_THETA_LOWERB = []#机械臂
+ARM_THETA_UPPERB = []
+
+MAX_SPEED = 200
+
+CONTROL_T = 0.1
+GIMBAL_CONTROL_T = 0.5
+
