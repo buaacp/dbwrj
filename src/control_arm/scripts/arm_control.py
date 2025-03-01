@@ -13,6 +13,7 @@ import threading
 current_dir = os.path.dirname(__file__)
 sys.path.append(current_dir)
 
+from multirotor_communication import Communication  
 import ARM
 import config
 
@@ -39,7 +40,7 @@ def create_serial_port(self,port_name,SERVO_BAUDRATE=115200):
         return None
     
 
-def query_servos_continuously():
+def query_state_continuously():
     rospy.Subscriber("/joint_states", JointState, arm.joint_states_callback)
     rospy.spin()
 
@@ -49,14 +50,17 @@ def arm_control():
     angular = [0,0,0,0]
     for i in SERVO_IDS:
         angular[i] = -0.2*(angel_target[i]-arm.angle[i])
-    print("关节角度：",arm.angle)
-    print("关节控制速度：",angular)
+    # print("关节角度：",arm.angle)
+    # print("关节控制速度：",angular)
     return angular
 
 
 if __name__ == '__main__':
     try:
         rospy.init_node('arm_control', anonymous=True)
+        vehicle_type = 'iris'
+        vehicle_id = '0'
+        communication = Communication(vehicle_type, vehicle_id)
         rate_control = rospy.Rate(5)
         if not IF_SIMULATION:
             # 尝试创建串口
@@ -66,8 +70,8 @@ if __name__ == '__main__':
         else:
             uart = None
         arm = ARM.ARM(uart=uart, SERVO_IDS=SERVO_IDS,if_simulation=IF_SIMULATION)
-        # 创建并启动查询舵机角度的线程
-        angle_thread = threading.Thread(target=query_servos_continuously, daemon=True)
+        # 创建并启动查询带臂无人机状态的线程
+        angle_thread = threading.Thread(target=query_state_continuously, daemon=True)
         angle_thread.start()
         pub_angular = rospy.Publisher('/le_arm_controller/command', Float64MultiArray, queue_size=10)
         time.sleep(1)

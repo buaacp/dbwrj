@@ -1,0 +1,5 @@
+<launch>
+  <!-- 无人机ID设置 -->
+    <node pkg="control_arm" type="arm_control.py" name="control_arm" output="screen">
+    </node>
+</launch>
