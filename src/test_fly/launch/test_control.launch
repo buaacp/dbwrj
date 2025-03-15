@@ -1,15 +1,14 @@
 <launch>
     <node
         pkg="test_fly"
-        type="get_local_pose.py"
-        name="get_local_pose"
-        output="screen">
-    </node>
-
-    <node
-        pkg="test_fly"
         type="test_velocity_control.py"
         name="test_velocity_control"
+        output="screen">
+    </node>
+    <node
+        pkg="test_fly"
+        type="get_local_pose.py"
+        name="get_local_pose"
         output="screen">
     </node>
 </launch>

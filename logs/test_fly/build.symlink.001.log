@@ -1,0 +1,3 @@
+Symlinking /home/zlhq/px4_fly_ws/devel/lib/pkgconfig/test_fly.pc
+Symlinking /home/zlhq/px4_fly_ws/devel/share/test_fly/cmake/test_flyConfig.cmake
+Symlinking /home/zlhq/px4_fly_ws/devel/share/test_fly/cmake/test_flyConfig-version.cmake

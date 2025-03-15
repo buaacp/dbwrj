@@ -12,8 +12,8 @@ import sys
 import atexit
 
 # 定义最大速度和 PD 控制系数
-MAX_VELOCITY = 3.0
-PD = 2
+MAX_VELOCITY = 1.0
+PD = 3
 
 
 def main():
@@ -132,18 +132,22 @@ def main():
 
     # 设置目标位置
     target_x = 0.0
-    target_y = 1.0 
-    target_z = 2.0 
-    target_yaw = communication.current_yaw  # 保持当前航向
+    target_y = 0.0
+    target_z = 1
+    target_yaw = 0  # 保持当前航向
 
     rospy.loginfo("开始速度控制")
 
     rate = rospy.Rate(10)  # 10Hz
     while not rospy.is_shutdown():
         if communication.current_position is not None and communication.current_velocity is not None:
-            current_x = communication.current_position.x
-            current_y = communication.current_position.y
-            current_z = communication.current_position.z
+            # current_x = communication.current_position.x
+            # current_y = communication.current_position.y
+            # current_z = communication.current_position.z
+
+            current_x = communication.vision_pose.x
+            current_y = communication.vision_pose.y
+            current_z = communication.vision_pose.z
 
             control_vx = (target_x - current_x) * PD
             control_vy = (target_y - current_y) * PD
