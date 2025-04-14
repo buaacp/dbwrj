@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 '''
 Fashion Star 总线伺服舵机Python SDK
@@ -302,7 +302,7 @@ class UartServoManager:
 			logging.error('串口数据发送异常, 请检查是否是USB口松动或设备号变更, 需重新初始化舵机')
 			# 
 
-	def ping(self, servo_id):
+	def ping(self, servo_id:int):
 		'''发送Ping请求'''
 		# self.cur_ping_servo_id = servo_id #　为了可视化显示
 		self.send_request(self.CODE_PING, struct.pack('<B', servo_id))
@@ -408,7 +408,7 @@ class UartServoManager:
 		# logging.info('查询单个舵机的所有配置 id={}'.format(servo_id))
 		self.update(wait_response=True)
 
-	def set_servo_angle(self, servo_id, angle, is_mturn=False, interval=None, velocity=None, t_acc=20, t_dec=20,  power=0, mean_dps=100.0):
+	def set_servo_angle(self, servo_id:int, angle:float, is_mturn:bool=False, interval:float=None, velocity:float=None, t_acc:int=20, t_dec:int=20,  power:int=0, mean_dps:float=100.0):
 		'''发送舵机角度控制请求
 		@param servo_id 
 			舵机的ID号
@@ -708,14 +708,14 @@ class UartServoManager:
 				if t_current - t_start > timeout:
 					break
 
-	def set_origin_point(self, servo_id):
+	def set_origin_point(self, servo_id:int):
 		'''发送设置原点请求'''
 		self.send_request(self.CODE_SET_ORIGIN_POINT, struct.pack('<BB', servo_id, 0))
 
-	def reset_multi_turn_angle(self, servo_id):
+	def reset_multi_turn_angle(self, servo_id:int):
 		'''发送重设多圈角度请求'''
 		self.send_request(self.CODE_RESET_MULTI_TURN_ANGLE, struct.pack('<B', servo_id))
 	
-	def disable_torque(self, servo_id):
+	def disable_torque(self, servo_id:int):
 		'''发送禁用力矩请求'''
 		self.wheel_stop(servo_id)

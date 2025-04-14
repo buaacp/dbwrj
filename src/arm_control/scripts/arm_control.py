@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 import rospy
 from std_msgs.msg import Float64MultiArray
@@ -32,7 +32,7 @@ SERVO_IDS = [0, 1, 2, 3]  # 云台的舵机的ID号列表
 GIMBAL_TYPE =1
 ARM_TYPE = 0
 IF_SIMULATION = 1
-
+MAX_SPEED = 0.5
 MAX_d_q = 2
 
 
@@ -47,12 +47,12 @@ def create_serial_port(self,port_name,SERVO_BAUDRATE=115200):
     except serial.SerialException as e:
         print("无法打开串口")
         return None
-    
+
 
 def query_state_continuously():
     rospy.Subscriber("/joint_states", JointState, arm.joint_states_callback)
-    rospy.Subscriber('mavros/global_position/rel_alt', Float64, uav.relative_altitude_info_callback)
-    # rospy.Subscriber('mavros/imu/data', Imu, uav.attitude_info_callback)
+    # rospy.Subscriber('mavros/global_position/rel_alt', Float64, uav.relative_altitude_info_callback)
+    # rospy.Subscriber('mavros/imu/data', Imu, uav.attitude_info_callback)  # 仿真时姿态获取用vision_pose
     rospy.Subscriber("mavros/vision_pose/pose", PoseStamped, uav.vision_imu_callback)
     rospy.Subscriber('mavros/local_position/pose', PoseStamped, uav.pose_callback)
     rospy.Subscriber('mavros/local_position/velocity_local', TwistStamped, uav.velocity_callback)
@@ -63,15 +63,13 @@ def query_state_continuously():
 def get_target_pos():
     pos_target_virtual = np.array([[arm.target_pose.x], [arm.target_pose.y], [arm.target_pose.z]])
     pos_target = pos_target_virtual
-    # pos_target[0] += (uav.pose.x - uav.vision_pose.x)
-    # pos_target[1] += (uav.pose.y - uav.vision_pose.y)
-    # pos_target[2] += (uav.pose.z - uav.vision_pose.z)
+
     return pos_target
 
 def arm_control(d_q):
     # angel_target = [0,0,0,0]
     angular = [-1*d_q[0,0],-1*d_q[1,0],-1*d_q[2,0],-1*d_q[3,0]]
-    print("angular",angular)
+    # print("angular",angular)
     # for i in SERVO_IDS:
     #     angular[i] = -0.2*(angel_target[i]-arm.angle[i])
     return angular
@@ -113,12 +111,11 @@ def arm_velocity_control(pos_target):
     # delta = -math.pi/2
     #### DEBUG
     # 机械臂参数（单位：弧度）
-    p_delta = np.array([[0.0], [-0.105], [-0.135]])  # 基座偏移
-    L1 = 0.1049
-    L2 = 0.0874
-    L3_real = 0.08
+    p_delta = np.array([[0.0], [-0.096], [-0.135]])  # 基座偏移
+    L1 = arm.L1
+    L2 = arm.L2
+    L3_real = arm.L3
     q = np.array([arm.angle[0], arm.angle[1], arm.angle[2], arm.angle[3]]).reshape(-1, 1)  # 关节角度初始化
-    print("q: ",q*180/math.pi)
 
     # 雅可比矩阵 俯仰 滚转 偏航
     J_eb_omega = np.array([
@@ -213,7 +210,7 @@ def arm_velocity_control(pos_target):
 
     T1 = np.dot(J_b,I_b)
     T2 = J_e
-    # print("T1",T1,"T2",T2)
+
 
     x_e = np.vstack((p_e, omega_e))
 
@@ -235,9 +232,6 @@ def arm_velocity_control(pos_target):
 if __name__ == '__main__':
     try:
         rospy.init_node('arm_control', anonymous=True)
-        vehicle_type = 'iris'
-        vehicle_id = '0'
-        rate_control = rospy.Rate(20)
         if not IF_SIMULATION:
             # 尝试创建串口
             uart = create_serial_port(SERVO_PORT_NAME)
@@ -247,6 +241,7 @@ if __name__ == '__main__':
             uart = None
         arm = ARM.ARM(uart=uart, SERVO_IDS=SERVO_IDS,if_simulation=IF_SIMULATION)
         uav = UAV.Myuav()
+        rate_control = rospy.Rate(arm.control_rate)
         # 创建并启动查询带臂无人机状态的线程
         angle_thread = threading.Thread(target=query_state_continuously)
         angle_thread.setDaemon(True)
@@ -257,7 +252,7 @@ if __name__ == '__main__':
             print("----------")
             # 目标位置 x y z
             pos_target = get_target_pos()
-            # print("pos_target: ",pos_target)
+            print("pos_target: ",pos_target)
             d_q = arm_velocity_control(pos_target)
             d_q = arm.boundary_q(d_q)
             angular = arm_control(d_q)

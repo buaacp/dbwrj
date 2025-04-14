@@ -1,0 +1,8 @@
+prefix=/home/zlhq/px4_fly_ws/install
+
+Name: test_fly
+Description: Description of test_fly
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

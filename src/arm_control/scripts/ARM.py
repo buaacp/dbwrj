@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: UTF-8 -*-
 '''
     对于uservo.py进行进一步的打包，方便多个舵机的协同控制
@@ -39,24 +39,49 @@ class ARM:
         self.last_update_time = None
         self.altitude = 1
         self.target_pose = Pose()
+        self.control_rate = 50
+        self.L1 = 0.104
+        self.L2 = 0.0884
+        self.L3 = 0.10
 
     def boundary_q(self,d_q):
-        if self.angle[0]>=math.pi/4 and d_q[0]>0:
-            d_q[0] = 0
-        if self.angle[0]<=-math.pi/4 and d_q[0]<0:
-            d_q[0] = 0
-        if self.angle[1]>=math.pi/2 and d_q[1]>0:
-            d_q[1] = 0
-        if self.angle[1]<=-math.pi/2 and d_q[1]<0:
-            d_q[1] = 0
-        if self.angle[2]>=math.pi/2 and d_q[2]>0:
-            d_q[2] = 0
-        if self.angle[2]<=-math.pi/2 and d_q[2]<0:
-            d_q[2] = 0
-        if self.angle[3]>=math.pi/2 and d_q[3]>0:
-            d_q[3] = 0
-        if self.angle[3]<=-math.pi/2 and d_q[3]<0:
-            d_q[3] = 0
+        q0 = self.angle[0]+d_q[0]/self.control_rate
+        q1 = self.angle[1]+d_q[1]/self.control_rate
+        q2 = self.angle[2]+d_q[2]/self.control_rate
+        q3 = self.angle[3]+d_q[3]/self.control_rate
+        if q0>=math.pi/4 or q1<=-math.pi/4:
+            q0 = self.angle[0]
+            d_q[0]=0
+        # 第一关节位置
+        point1 = np.array([
+            np.sin(-q0) * self.L1 * np.sin(q1),
+            np.cos(-q0) * self.L1 * np.sin(q1),
+            -self.L1 * np.cos(q1)
+        ]).reshape(3, 1)
+        if point1[2,0]>=0 or abs(q1)>=80*math.pi/180:
+            q1 = self.angle[1]
+            d_q[1]=0
+
+        # 第二关节位置
+        point2 = point1+np.array([
+            np.sin(-q0) * self.L2 * np.sin(q1 + q2),
+            np.cos(-q0) * self.L2 * np.sin(q1 + q2),
+            -self.L2 * np.cos(q1 + q2)
+        ]).reshape(3, 1)
+        if point2[2,0]>=0 or abs(q2)>=90*math.pi/180:
+            q2 = self.angle[2]
+            d_q[2]=0
+
+        # 末端执行器位置
+        point3 = point2 + np.array([
+            np.sin(-q0) * self.L3 * np.sin(q1 + q2 + q3),
+            np.cos(-q0) * self.L3 * np.sin(q1 + q2 + q3),
+            -self.L3 * np.cos(q1 + q2 + q3)
+        ]).reshape(3, 1)
+        if point3[2,0]>=0 or abs(q3)>=90*math.pi/180:
+            q3 = self.angle[3]
+            d_q[3]=0
+
         return d_q
         
     def query_servo_angle(self, servo_id):
