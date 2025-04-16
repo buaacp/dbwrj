@@ -17,12 +17,10 @@ import math
 
 # 添加当前脚本所在目录到sys.path
 current_dir = os.path.dirname(__file__)
-sys.path.append(current_dir)
+utils_path = os.path.join(current_dir, "utils")
+sys.path.append(utils_path)
 
-import ARM
-import config
-import UAV
-import common
+from utils import ARM, config, common, UAV
 
 # 参数配置
 SERVO_PORT_NAME = '/dev/ttyUSB0'  # 舵机串口号

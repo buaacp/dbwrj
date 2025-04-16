@@ -4,7 +4,7 @@
     <!-- 其他与 iris_0 相关的节点 -->
 
     <!-- 添加 arm_control 节点到 iris_0 group -->
-    <node pkg="arm_control" type="arm_control.py" name="control_arm" output="screen">
+    <node pkg="arm_control" type="arm_control_mpc.py" name="control_arm" output="screen">
     </node>
   </group>
 </launch>

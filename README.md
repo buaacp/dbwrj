@@ -9,6 +9,7 @@ zlhq001218
 常用指令：
 roslaunch le_arm iris_arm.launch
 roslaunch test_fly test_control.launch 
+roslaunch arm_control control_arm.launch 
 
 rostopic echo /joint_states 
 

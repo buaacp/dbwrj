@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 import rospy
@@ -27,7 +27,7 @@ def main():
     parent_directory = os.path.dirname(os.path.dirname(current_script_path))
     
     # 定义CSV文件的路径
-    LOG_ENABLED = True  # 将此设置为 False 以禁用日志记录
+    LOG_ENABLED = False  # 将此设置为 False 以禁用日志记录
     log_directory = os.path.join(parent_directory, "data_logs")
     if LOG_ENABLED:
         if not os.path.exists(log_directory):
