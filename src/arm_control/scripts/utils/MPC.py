@@ -7,12 +7,14 @@ class MPC:
     def __init__(self):
         # set the Parameters of MPC
         # state weight matrix ( q1, ..., q4)[4]
-        self.Q = ca.diagcat(0, 4, 1, 0)
+        self.Q = ca.diagcat(0, 2, 0.5, 0)
         # controls weights matrix
         Ra = 1
         # (q1, ..., q4)[4]
         self.R = ca.diagcat(Ra, Ra, Ra/4, Ra/8)
-        self.step_horizon = 0.05  # time between steps in seconds
+        R_delta = 0.2
+        self.R_delta = ca.diagcat(R_delta, R_delta, R_delta, R_delta)
+        self.step_horizon = 0.1  # time between steps in seconds
         self.N = 40  # number of look ahead steps
 
         # states symbolic variables
@@ -22,15 +24,16 @@ class MPC:
         self.n_tarpos = 6
         # arm tip
         self.state_target = ca.DM([0, 0, 0, 0])  # target state
+        self.u_pre = ca.DM([0, 0, 0, 0])  # target state
         # set the para of arm
         self.Qa = ca.diag([400, 400, 400])
         self.Qa_rot = ca.diag([1])
         # control limit
-        self.v_arm_max = 1
-        self.v_arm_min = -1
+        self.v_arm_max = 0.4
+        self.v_arm_min = -0.4
         self.L1 = 0.1049
-        self.L2 = 0.0874
-        self.L3 = 0.1
+        self.L2 = 0.0884
+        self.L3 = 0.12
         self.k_exp = -1
 
         self.create_symbolic_variables()
@@ -66,16 +69,19 @@ class MPC:
         self.cost_fn = 0  # cost function
         self.g = self.X[:, 0] - self.P[:self.n_states]  # constraints in the equation
         # runge kutta
+        u_pre =self.u_pre
         for k in range(self.N):
             st = self.X[:, k]
             con = self.U[:, k]
             x_arm, attitude_arm = self.RobFki(st)
             attitude_error = ca.exp(-(attitude_arm.T @ self.P_arm[3:6, k]))
-            self.cost_fn = self.cost_fn \
+            delta_u = u_pre - con
+            self.cost_fn = (self.cost_fn\
+                           + delta_u.T @ self.R_delta @ delta_u\
                            + st.T @ self.Q @ st \
                            + con.T @ self.R @ con \
                            + (x_arm - self.P_arm[:3, k]).T @ self.Qa @ (x_arm - self.P_arm[:3, k]) \
-                           + attitude_error.T @ self.Qa_rot @ attitude_error
+                           + attitude_error.T @ self.Qa_rot @ attitude_error)
             st_next = self.X[:, k + 1]
             k1 = self.f(st, con)
             k2 = self.f(st + self.step_horizon / 2 * k1, con)
@@ -83,6 +89,7 @@ class MPC:
             k4 = self.f(st + self.step_horizon * k3, con)
             st_next_RK4 = st + (self.step_horizon / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
             self.g = ca.vertcat(self.g, st_next - st_next_RK4)
+            u_pre = con
 
     def set_optimize_option(self):
         OPT_variables = ca.vertcat(
@@ -160,6 +167,7 @@ class MPC:
         )
         u = ca.reshape(sol['x'][self.n_states * (self.N + 1):], self.n_controls, self.N)
         X0 = ca.reshape(sol['x'][: self.n_states * (self.N + 1)], self.n_states, self.N + 1)
+        self.u_pre = u[:, 0]
         return X0, u
     def get_exp_point(self,p_target_local,flag_leave):
         distance_b = np.linalg.norm(p_target_local)
@@ -241,6 +249,3 @@ class MPC:
             p_b += uav_arm.dt * uav_arm.d_xb[0:3]
             delta += uav_arm.dt * uav_arm.d_xb[5, 0]
         return arg_p_arm
-    @staticmethod
-    def DM2Arr(dm):
-        return np.array(dm.full())

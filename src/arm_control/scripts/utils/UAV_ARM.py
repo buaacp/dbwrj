@@ -13,7 +13,7 @@ class UAV_ARM:
         self.I = np.eye(3)
         self.Z = np.zeros((3, 3))
         self.T = 20
-        self.dt = 0.1
+        self.dt = 0.2
         self.draw_t = 0.1
         # 飞机参数（单位：弧度）
         self.R_b = np.eye(3)
@@ -30,10 +30,10 @@ class UAV_ARM:
         self.pos_target = np.array([[0], [3], [0.65]])
 
         # 机械臂参数（单位：弧度）
-        self.p_delta = np.array([[0.0], [-0.125], [-0.125]])  # 基座偏移
+        self.p_delta = np.array([[0.0], [-0.096], [-0.135]])  # 基座偏移
         self.L1 = 0.1049
         self.L2 = 0.0874
-        self.L3_real = 0.1
+        self.L3 = 0.1
         self.q = np.deg2rad([0, 45, 45, 0]).reshape(-1, 1)  # 关节角度初始化
         self.d_q = np.zeros((4, 1))  # 关节角速度
 

@@ -1,14 +1,31 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-import casadi as ca
 
-# 创建一个矩阵
-matrix = ca.SX([[1.0, 2.0], [3.0, 4.0]])
+from casadi import *
 
-# 对矩阵中的每个元素进行指数运算
-exp_matrix = ca.exp(matrix)
+# 创建优化变量
+x = MX.sym('x')
+y = MX.sym('y')
+vars = vertcat(x, y)
 
-print("原矩阵:")
-print(matrix)
-print("指数矩阵:")
-print(exp_matrix)
+# 定义目标函数
+f = (x - 1)**2 + (y - 2.5)**2
+
+# 定义约束
+g = [x - y, x + y - 3]
+
+# 创建 NLP 问题
+nlp = {'x': vars, 'f': f, 'g': vertcat(*g)}
+
+# 创建求解器（使用 IPOPT）
+solver = nlpsol('solver', 'ipopt', nlp)
+
+# 设置初始猜测和约束边界
+x0 = [0, 0]
+lbg = [0, 0]
+ubg = [0, 0]
+
+# 求解
+sol = solver(x0=x0, lbg=lbg, ubg=ubg)
+
+# 输出结果
+print("Optimal solution:")
+print(sol['x'])

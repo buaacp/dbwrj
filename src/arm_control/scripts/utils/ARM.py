@@ -35,10 +35,12 @@ class ARM:
         self.if_simulation = if_simulation
         # 控制模式 0：搜索 1：跟踪 2:安全
         self.control_mode = 0
-        self.target_pos = [0,0,-20]
         self.last_update_time = None
         self.altitude = 1
         self.target_pose = Pose()
+        self.target_pose.x = 0
+        self.target_pose.y = 0
+        self.target_pose.z = 0.65
         self.control_rate = 50
         self.L1 = 0.104
         self.L2 = 0.0884
@@ -88,7 +90,7 @@ class ARM:
         """
         查询指定舵机的当前角度
         """
-        self.angle[servo_id] = self.uservo.query_servo_angle(servo_id)
+        self.angle[servo_id] = self.uservo.query_servo_angle(servo_id)*math.pi/180
 
     def joint_states_callback(self,data):
         # joint 0 
@@ -122,6 +124,14 @@ class ARM:
         """
         for servo_id in self.SERVO_IDS:
             self.query_servo_angle(servo_id)
+
+    def keep_query_all_servos(self):
+        while True:
+            try:
+                self.query_all_servos()  # 持续查询舵机
+                time.sleep(0.02)
+            except Exception as e:
+                print(f"查询舵机时发生错误: {e}")
 
     def velocity_control_all(self,type,velocity):
         """
@@ -169,6 +179,11 @@ class ARM:
 
         return interval/1000
             
+    def real_angular_control(self,d_q,dt,type):
+        angle_now = [self.angle[0],self.angle[1],self.angle[2],self.angle[3]]
+        angle_exp = angle_now + dt*d_q
+        for servo_id in self.SERVO_IDS:
+            self.position_control_single(type,servo_id,angle_exp[servo_id]*180/math.pi,interval=dt*1000)
 
     def position_control_single(self,type,servo_id,position,interval):
         if type == 0:

@@ -31,12 +31,12 @@ SERVO_IDS = [0, 1, 2, 3]  # 云台的舵机的ID号列表
 
 GIMBAL_TYPE =1
 ARM_TYPE = 0
-IF_SIMULATION = 1
+IF_SIMULATION = 0
 MAX_SPEED = 0.5
 MAX_d_q = 2
 
 
-def create_serial_port(self,port_name,SERVO_BAUDRATE=115200):
+def create_serial_port(port_name,SERVO_BAUDRATE=115200):
     try:
         # 尝试打开串口
         uart = serial.Serial(port=port_name, baudrate=SERVO_BAUDRATE,
@@ -87,10 +87,11 @@ def arm_control_old():
 
 def arm_velocity_control():
     # 飞机参数（单位：弧度）
-    uav_arm.p_b = np.array(
-    [[uav.vision_pose.x], [uav.vision_pose.y], [uav.vision_pose.z]],
-    dtype=np.float64  # 显式声明浮点类型
-    )
+    if IF_SIMULATION:
+        uav_arm.p_b = np.array(
+        [[uav.vision_pose.x], [uav.vision_pose.y], [uav.vision_pose.z]],
+        dtype=np.float64  # 显式声明浮点类型
+        )
     uav_arm.phi = uav.roll*math.pi/180  # 滚转角
     uav_arm.theta = uav.pitch*math.pi/180  # 俯仰角
     uav_arm.delta = uav.yaw*math.pi/180  # 偏航角
@@ -110,8 +111,8 @@ def arm_velocity_control():
     # phi = 0
     # theta = 0
     # delta = -math.pi/2
-    print("pos_target",uav_arm.pos_target)
-    print("d_xb",uav_arm.d_xb)
+    # print("pos_target",uav_arm.pos_target)
+    # print("d_xb",uav_arm.d_xb)
     print("p_b",uav_arm.p_b)
     #### DEBUG
     # 机械臂参数（单位：弧度）
@@ -185,24 +186,29 @@ if __name__ == '__main__':
         angle_thread = threading.Thread(target=query_state_continuously)
         angle_thread.setDaemon(True)
         angle_thread.start()
+        if not IF_SIMULATION:
+            arm_query_thread = threading.Thread(target=arm.keep_query_all_servos, daemon=True)
+            arm_query_thread.start()
+            print("查询舵机角度的线程已启动")
         pub_angular = rospy.Publisher('/le_arm_controller/command', Float64MultiArray, queue_size=10)
         time.sleep(0.5)
         arg_p_arm = ca.DM.zeros(mpc.n_tarpos * (mpc.N + 1))
 
         while not rospy.is_shutdown():
-            # 目标位置 x y z
-            pos_target = get_target_pos()
-            uav_arm.pos_target = pos_target
-            if uav_arm.gazebo_time>uav_arm.last_control_time+uav_arm.dt:
-                uav_arm.last_control_time = uav_arm.gazebo_time
+            # 目标位置更新
+            uav_arm.pos_target = get_target_pos()
 
-                d_q = arm_velocity_control()
-                # d_q = arm.boundary_q(d_q)
-                angular = arm_control(d_q)
-                # angular = arm_control_old()
-                msg_angular = Float64MultiArray()
-                msg_angular.data = angular  # 设置数据部分
-                pub_angular.publish(msg_angular)
+            d_q = arm_velocity_control()
+            print("d_q = ",d_q)
+            print("arm_angle = ",arm.angle)
+            print("pos_target = ",uav_arm.pos_target)
+            # angular = arm_control(d_q)
+            # msg_angular = Float64MultiArray()
+            # msg_angular.data = angular  # 设置数据部分
+            # pub_angular.publish(msg_angular)
+            arm.real_angular_control(d_q,uav_arm.dt,type=0)
+
+            time.sleep(uav_arm.dt)
                 
 
     except rospy.ROSInterruptException:
