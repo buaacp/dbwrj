@@ -24,17 +24,6 @@ sys.path.append(utils_path)
 
 from utils import ARM, config, common, UAV, MPC, UAV_ARM
 
-# 参数配置
-SERVO_PORT_NAME = '/dev/ttyUSB0'  # 舵机串口号
-SERVO_BAUDRATE = 115200  # 舵机的波特率
-SERVO_IDS = [0, 1, 2, 3]  # 云台的舵机的ID号列表
-
-GIMBAL_TYPE =1
-ARM_TYPE = 0
-IF_SIMULATION = 1
-MAX_SPEED = 0.5
-MAX_d_q = 2
-
 
 def create_serial_port(self,port_name,SERVO_BAUDRATE=115200):
     try:
@@ -162,6 +151,14 @@ def arm_velocity_control():
     return uav_arm.d_q
 
 if __name__ == '__main__':
+    # 参数配置
+    SERVO_PORT_NAME = '/dev/ttyUSB0'  # 舵机串口号
+    SERVO_BAUDRATE = 115200  # 舵机的波特率
+    SERVO_IDS = [0, 1, 2, 3]  # 云台的舵机的ID号列表
+
+    GIMBAL_TYPE =1
+    ARM_TYPE = 0
+    IF_SIMULATION = rospy.get_param('/if_simulation', False)
     try:
         rospy.init_node('arm_control', anonymous=True)
         if not IF_SIMULATION:

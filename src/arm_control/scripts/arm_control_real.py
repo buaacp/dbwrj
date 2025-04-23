@@ -24,16 +24,6 @@ sys.path.append(utils_path)
 
 from utils import ARM, config, common, UAV, MPC, UAV_ARM
 
-# 参数配置
-SERVO_PORT_NAME = '/dev/ttyUSB0'  # 舵机串口号
-SERVO_BAUDRATE = 115200  # 舵机的波特率
-SERVO_IDS = [0, 1, 2, 3]  # 云台的舵机的ID号列表
-
-GIMBAL_TYPE =1
-ARM_TYPE = 0
-IF_SIMULATION = 0
-MAX_SPEED = 0.5
-MAX_d_q = 2
 
 
 def create_serial_port(port_name,SERVO_BAUDRATE=115200):
@@ -163,6 +153,14 @@ def arm_velocity_control():
     return uav_arm.d_q
 
 if __name__ == '__main__':
+    # 参数配置
+    SERVO_PORT_NAME = '/dev/ttyUSB0'  # 舵机串口号
+    SERVO_BAUDRATE = 115200  # 舵机的波特率
+    SERVO_IDS = [0, 1, 2, 3]  # 云台的舵机的ID号列表
+
+    GIMBAL_TYPE =1
+    ARM_TYPE = 0
+    IF_SIMULATION = rospy.get_param('/if_simulation', False)
     try:
         rospy.init_node('arm_control', anonymous=True)
         if not IF_SIMULATION:
@@ -198,17 +196,25 @@ if __name__ == '__main__':
             # 目标位置更新
             uav_arm.pos_target = get_target_pos()
 
-            d_q = arm_velocity_control()
-            print("d_q = ",d_q)
-            print("arm_angle = ",arm.angle)
-            print("pos_target = ",uav_arm.pos_target)
-            # angular = arm_control(d_q)
-            # msg_angular = Float64MultiArray()
-            # msg_angular.data = angular  # 设置数据部分
-            # pub_angular.publish(msg_angular)
-            arm.real_angular_control(d_q,uav_arm.dt,type=0)
+            current_time = rospy.Time.now()
+            uav_arm.real_time = current_time.to_sec() 
+            if uav_arm.real_time>uav_arm.last_control_time+uav_arm.dt:
+                uav_arm.last_control_time = uav_arm.gazebo_time
+                d_q = arm_velocity_control()
 
-            time.sleep(uav_arm.dt)
+                end_time = rospy.Time.now()
+                time_diff = end_time - current_time
+                diff_seconds = time_diff.to_sec() 
+                print("lag_time : ",diff_seconds)
+
+                # print("d_q = ",d_q)
+                # print("arm_angle = ",arm.angle)
+                # print("pos_target = ",uav_arm.pos_target)
+                # angular = arm_control(d_q)
+                # msg_angular = Float64MultiArray()
+                # msg_angular.data = angular  # 设置数据部分
+                # pub_angular.publish(msg_angular)
+                arm.real_angular_control(d_q,uav_arm.dt,type=0)
                 
 
     except rospy.ROSInterruptException:

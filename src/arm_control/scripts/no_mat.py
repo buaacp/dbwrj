@@ -20,7 +20,7 @@ if __name__ == '__main__':
     uav_arm = UAV_ARM.UAV_ARM()
     mpc.L1 = uav_arm.L1
     mpc.L2 = uav_arm.L2
-    mpc.L3 = uav_arm.L3_real
+    mpc.L3 = uav_arm.L3
     mpc.step_horizon = uav_arm.dt
 
     u0 = ca.DM.zeros((mpc.n_controls, mpc.N))  # initial control

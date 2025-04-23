@@ -34,7 +34,7 @@ class MPC:
         self.L1 = 0.1049
         self.L2 = 0.0884
         self.L3 = 0.12
-        self.k_exp = -1
+        self.k_exp = -0.5
 
         self.create_symbolic_variables()
         self.build_cost_function()
@@ -120,10 +120,13 @@ class MPC:
         ubx = ca.DM.zeros((n_states * (N + 1) + n_controls * N, 1))
 
         limit = [
-            [-120, 120],
-            [-60, 90],
-            [-100, 100],
-            [-100, 100],
+            [x * math.pi / 180 for x in joint_limits]  # 每个关节的角度单独转换
+            for joint_limits in [
+                [-130, 130],  # 关节1：-130°~130°
+                [-60, 90],  # 关节2：-60°~90°
+                [-100, 100],  # 关节3：-100°~100°
+                [-100, 100]  # 关节4：-100°~100°
+            ]
         ]
 
         lbx[0: n_states * (N + 1): n_states] = limit[0][0]  # q1 lower bound
@@ -169,23 +172,26 @@ class MPC:
         X0 = ca.reshape(sol['x'][: self.n_states * (self.N + 1)], self.n_states, self.N + 1)
         self.u_pre = u[:, 0]
         return X0, u
-    def get_exp_point(self,p_target_local,flag_leave):
+    def get_exp_point(self,p_target_local,flag_leave,flag_default):
         distance_b = np.linalg.norm(p_target_local)
         L_max = self.L1+self.L2+self.L3
         L_min = self.L1+self.L2
-        p_target_default = np.array([0,0,-L_min]).reshape(-1, 1)
+        p_target_default = np.array([0, 0, -L_max]).reshape(-1, 1)
         pose_exp = np.array([0, 0, 0]).reshape(-1, 1)
         if distance_b > L_max:
-            if flag_leave:
+            if flag_default:
                 p_target_local = p_target_default
             else:
+                # 期望距离计算 L_min-L_max  越远距离越小
                 L_exp = L_min + (L_max-L_min) * math.exp(self.k_exp * (distance_b - L_max))
-                if(p_target_local[2]>-L_min):
+                if(p_target_local[2] > -L_min):
                     p_target_local[2] = -L_min
-                p_end = np.array([0,0,-L_min]).reshape(-1, 1)
+                p_end = np.array([0, 0, -L_min]).reshape(-1, 1)
+                # 下方L_min处与目标点的连线
                 vector_e = p_target_local - p_end
                 vector_e = vector_e/np.linalg.norm(vector_e)
-                vector1 = np.array([0,0,-L_min])
+
+                vector1 = np.array([0, 0, -L_min])
                 c = np.dot(vector1, vector_e)
                 # 解二次方程
                 discriminant = c**2 - (L_min ** 2 - L_exp ** 2)
@@ -198,10 +204,12 @@ class MPC:
                     k1 = 0  # 或其他默认逻辑
                 pose_exp = p_target_local - (vector1.reshape(-1, 1)+k1*vector_e)
                 pose_exp = pose_exp/np.linalg.norm(pose_exp)
+                if flag_leave:
+                    pose_exp = np.array([0, 0, 0]).reshape(-1, 1)
                 p_target_local = vector1.reshape(-1, 1)+k1*vector_e
         return p_target_local,pose_exp
 
-    def get_target_path(self,uav_arm):
+    def get_target_path(self, uav_arm):
         arg_p_arm = ca.DM.zeros(self.n_tarpos * (self.N + 1))
         p_b = np.copy(uav_arm.p_b)
         pos_target = np.copy(uav_arm.pos_target)
@@ -213,11 +221,14 @@ class MPC:
         for k in range(self.N + 1):
             # 计算无人机是否处于脱离状态
             flag_leave = 0
+            flag_default = 0
             uav_tar_dis = pos_target - p_b
             aim_heading_vector = np.array([uav_tar_dis[0, 0], uav_tar_dis[1, 0]])
             real_heading_vector = np.array([-1 * np.sin(delta), np.cos(delta)])
             if np.dot(aim_heading_vector, real_heading_vector.T) < 0:
                 flag_leave = 1
+                if np.linalg.norm(uav_tar_dis)>10:
+                    flag_default = 1
 
             R_z = np.array([
                 [np.cos(delta), -np.sin(delta), 0],
@@ -238,7 +249,7 @@ class MPC:
 
             R_b_inv = np.linalg.inv(R_b)  # 逆矩阵
             p_target_local = np.dot(R_b_inv, (pos_target - p_b)) - uav_arm.p_delta
-            p_exp,pose_exp = self.get_exp_point(p_target_local,flag_leave)
+            p_exp,pose_exp = self.get_exp_point(p_target_local,flag_leave,flag_default)
 
             pose_target = [p_exp[0], p_exp[1], p_exp[2], pose_exp[0], pose_exp[1], pose_exp[2]]
 

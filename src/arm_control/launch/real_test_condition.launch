@@ -1,0 +1,22 @@
+<launch>
+    <!-- 其他与 iris_0 相关的节点 -->
+    <arg name="world" default="$(find le_arm)/worlds/weightless_ball.world"/>
+    <arg name="gui" default="true"/>
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+
+    <!-- 2. 加载 Gazebo 空环境，并注入自定义世界文件 -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world)"/>  <!-- 关键参数：指定世界文件路径[4,6](@ref) -->
+        <arg name="gui" value="$(arg gui)"/>            <!-- 控制 Gazebo 图形界面 -->
+        <arg name="paused" value="$(arg paused)"/>      <!-- 启动时是否暂停仿真 -->
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>  <!-- 使用仿真时间 -->
+    </include>
+    <!-- 添加 arm_control 节点到 iris_0 group -->
+    <node
+        pkg="test_fly"
+        type="get_local_pose.py"
+        name="get_local_pose"
+        output="screen">
+    </node>
+</launch>

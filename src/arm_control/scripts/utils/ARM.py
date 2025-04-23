@@ -180,10 +180,11 @@ class ARM:
         return interval/1000
             
     def real_angular_control(self,d_q,dt,type):
+        k_delta =1.2
         angle_now = [self.angle[0],self.angle[1],self.angle[2],self.angle[3]]
         angle_exp = angle_now + dt*d_q
         for servo_id in self.SERVO_IDS:
-            self.position_control_single(type,servo_id,angle_exp[servo_id]*180/math.pi,interval=dt*1000)
+            self.position_control_single(type,servo_id,angle_exp[servo_id]*180/math.pi,interval=k_delta*dt*1000)
 
     def position_control_single(self,type,servo_id,position,interval):
         if type == 0:
