@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="default">
+    <!-- 包含Gazebo的默认参数（如光照） -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- 添加灰色地板 -->
+    <model name="ground_plane">
+      <static>true</static>  <!-- 设置为静态物体 -->
+      <pose>0 0 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>  <!-- 平面法线方向（Z轴方向） -->
+              <size>10 10</size>      <!-- 平面尺寸 -->
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>10 10</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>  <!-- 灰色材质 -->
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 添加无重量小球 -->
+    <model name="weightless_ball">
+      <pose>0 0 0.72 0 0 0</pose>  <!-- 初始位置（离地10cm） -->
+      <link name="ball_link">
+        <!-- 关闭重力影响 -->
+        <gravity>0</gravity>
+        
+        
+        <!-- 定义视觉外观 -->
+        <visual name="visual">
+          <geometry>
+            <sphere>
+              <radius>0.01</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <ambient>1 0 0 1</ambient>  <!-- 红色 -->
+          </material>
+        </visual>
+        
+        <!-- 设置极小的质量避免零值问题 -->
+        <inertial>
+          <mass>0.0000001</mass>
+          <inertia>
+            <ixx>0.0000001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.0000001</iyy>
+            <iyz>0</iyz>
+            <izz>0.0000001</izz>
+          </inertia>
+        </inertial>
+      </link>
+    </model>
+  </world>
+</sdf>

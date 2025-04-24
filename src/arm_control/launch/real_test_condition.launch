@@ -1,6 +1,6 @@
 <launch>
     <!-- 其他与 iris_0 相关的节点 -->
-    <arg name="world" default="$(find le_arm)/worlds/weightless_ball.world"/>
+    <arg name="world" default="$(find arm_control)/worlds/weightless_ball.world"/>
     <arg name="gui" default="true"/>
     <arg name="paused" default="false"/>
     <arg name="use_sim_time" default="true"/>
