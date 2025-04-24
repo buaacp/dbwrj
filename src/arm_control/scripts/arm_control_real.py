@@ -16,6 +16,7 @@ import casadi as ca
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 import math
+from tf2_geometry_msgs import PointStamped
 
 # 添加当前脚本所在目录到sys.path
 current_dir = os.path.dirname(__file__)
@@ -49,6 +50,7 @@ def query_state_continuously():
     rospy.Subscriber("mavros/vision_pose/pose", PoseStamped, uav.vision_pose_callback)
     rospy.Subscriber("/weightless_ball/pose", PoseStamped, arm.target_pos_callback)
     rospy.Subscriber("/clock", Clock, uav_arm.clock_callback)
+    rospy.Publisher('/object_detection/object_position_tripod', PointStamped, arm.real_target_pos_callback)
     rospy.spin()
 
 def get_target_pos():

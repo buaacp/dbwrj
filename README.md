@@ -1,6 +1,6 @@
 同步方式：
 git add .
-git commit -m "2025/4/23提交(实物1.1)"
+git commit -m "2025/4/24提交(实物1.2)"
 git push -u origin master
 
 username :zhenglihaqi

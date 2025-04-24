@@ -118,6 +118,12 @@ class ARM:
         self.target_pose.x = msg.pose.position.x
         self.target_pose.y = msg.pose.position.y
         self.target_pose.z = msg.pose.position.z
+
+    def real_target_pos_callback(self,msg):
+        self.target_pose.x = msg.point.x
+        self.target_pose.y = msg.point.y
+        self.target_pose.z = msg.point.z
+        
     def query_all_servos(self): 
         """
         查询所有舵机的角度
