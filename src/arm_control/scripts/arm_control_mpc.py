@@ -100,8 +100,8 @@ def arm_velocity_control():
     # theta = 0
     # delta = -math.pi/2
     print("pos_target",uav_arm.pos_target)
-    print("d_xb",uav_arm.d_xb)
-    print("p_b",uav_arm.p_b)
+    # print("d_xb",uav_arm.d_xb)
+    # print("p_b",uav_arm.p_b)
     #### DEBUG
     # 机械臂参数（单位：弧度）
     # 参数更新
@@ -196,6 +196,7 @@ if __name__ == '__main__':
                 d_q = arm_velocity_control()
                 # d_q = arm.boundary_q(d_q)
                 angular = arm_control(d_q)
+                print("angular: ",angular)
                 # angular = arm_control_old()
                 msg_angular = Float64MultiArray()
                 msg_angular.data = angular  # 设置数据部分

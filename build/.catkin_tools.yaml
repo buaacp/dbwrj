@@ -1,6 +1,0 @@
-devel_space: /home/zlhq/px4_fly_ws/devel
-install: false
-install_space: /home/zlhq/px4_fly_ws/install
-profile: default
-source_space: /home/zlhq/px4_fly_ws/src
-workspace: /home/zlhq/px4_fly_ws

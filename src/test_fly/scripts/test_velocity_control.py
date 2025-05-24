@@ -69,7 +69,6 @@ def main():
     # 启动发送控制指令的线程
     communication_thread = threading.Thread(target=communication.start)
     communication_thread.start()
-    IF_TAKEOFF = 0
 
     # 等待服务可用
     try:
@@ -131,42 +130,54 @@ def main():
         return
 
     # 设置目标位置
-    target_yaw = 0  # 保持当前航向
+    target_yaw = communication.current_yaw  # 保持当前航向
 
     rospy.loginfo("开始速度控制")
 
     rate = rospy.Rate(10)  # 10Hz
     while not rospy.is_shutdown():
         if communication.current_position is not None and communication.current_velocity is not None:
-            # current_x = communication.current_position.x
-            # current_y = communication.current_position.y
-            # current_z = communication.current_position.z
+
+            if communication.mission_state == 0:
+                target_x = communication.default_pose.position.x
+                target_y = communication.default_pose.position.y
+                target_z = communication.default_pose.position.z
+                MAX_VELOCITY = 1
+            elif communication.mission_state == 1:
+                # 计算期望位置
+                target_x = communication.target_pose.position.x
+                target_y = communication.target_pose.position.y
+                target_z = communication.target_pose.position.z+0.36
+                MAX_VELOCITY = 0.2
 
             current_x = communication.vision_pose.x
             current_y = communication.vision_pose.y
             current_z = communication.vision_pose.z
 
+            delta_x = target_x - current_x
+            delta_y = target_y - current_y
+            delta_z = target_z - current_z
 
-            control_vx = (communication.target_pose.position.x - current_x) * PD
-            control_vy = (communication.target_pose.position.y - current_y) * PD
-            control_vz = (communication.target_pose.position.z + 0.33 - current_z) * PD
+            distance_xy = math.sqrt(delta_x*delta_x+delta_y*delta_y)
+            if(distance_xy>0.3):
+                target_yaw = math.atan2(delta_y,delta_x)
+
+
+            control_vx = delta_x * PD
+            control_vy = delta_y * PD
+            control_vz = delta_z * PD
 
             # 计算速度的大小
-            speed = math.sqrt(control_vx**2 + control_vy**2 + control_vz**2)
-
-            if IF_TAKEOFF == 0:
-                MAX_VELOCITY = 1
-                if speed<=0.1:
-                    IF_TAKEOFF = 1
-            else:
-                MAX_VELOCITY = 0.2
+            speed = math.sqrt(control_vx**2 + control_vy**2)
 
             # 如果速度超出最大速度，进行限幅
             if speed > MAX_VELOCITY:
                 scale = MAX_VELOCITY / speed
                 control_vx *= scale
                 control_vy *= scale
-                control_vz *= scale
+            min_speed = -0.5  # 下限
+            max_speed = 0.5   # 上限
+            control_vz = max(min(control_vz, max_speed), min_speed)
 
             communication.target_motion = communication.construct_target(
                 vx=control_vx,
@@ -175,17 +186,17 @@ def main():
                 yaw=target_yaw
             )
 
-            # 获取当前时间戳（自实验开始以来的时间，秒，精确到0.001）
-            current_time = communication.current_position_time  # 假设这是 rospy.Time 对象
-            elapsed_duration = current_time - start_time
-            elapsed_time = round(elapsed_duration.to_sec(), 3)  # 精确到0.001秒
-
-            # 获取当前速度
-            current_vx = communication.current_velocity.twist.linear.x
-            current_vy = communication.current_velocity.twist.linear.y
-            current_vz = communication.current_velocity.twist.linear.z
 
             if LOG_ENABLED and writer:
+                 # 获取当前时间戳（自实验开始以来的时间，秒，精确到0.001）
+                current_time = communication.current_position_time  # 假设这是 rospy.Time 对象
+                elapsed_duration = current_time - start_time
+                elapsed_time = round(elapsed_duration.to_sec(), 3)  # 精确到0.001秒
+
+                # 获取当前速度
+                current_vx = communication.current_velocity.twist.linear.x
+                current_vy = communication.current_velocity.twist.linear.y
+                current_vz = communication.current_velocity.twist.linear.z
                 # 写入CSV
                 row = {
                     'elapsed_time': '%.3f' % elapsed_time,  # 格式化为字符串，保留3位小数

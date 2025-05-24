@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 import rospy
@@ -12,9 +12,8 @@ import sys
 import atexit
 
 # 定义最大速度和 PD 控制系数
-MAX_VELOCITY = 1.0
-PD = 3
-
+MAX_VELOCITY = 1
+PD = 2
 
 def main():
     rospy.init_node('arm_and_set_mode')
@@ -27,7 +26,7 @@ def main():
     parent_directory = os.path.dirname(os.path.dirname(current_script_path))
     
     # 定义CSV文件的路径
-    LOG_ENABLED = True  # 将此设置为 False 以禁用日志记录
+    LOG_ENABLED = False  # 将此设置为 False 以禁用日志记录
     log_directory = os.path.join(parent_directory, "data_logs")
     if LOG_ENABLED:
         if not os.path.exists(log_directory):
@@ -70,6 +69,7 @@ def main():
     # 启动发送控制指令的线程
     communication_thread = threading.Thread(target=communication.start)
     communication_thread.start()
+    IF_TAKEOFF = 0
 
     # 等待服务可用
     try:
@@ -131,9 +131,6 @@ def main():
         return
 
     # 设置目标位置
-    target_x = 0.0
-    target_y = 0.0
-    target_z = 1
     target_yaw = 0  # 保持当前航向
 
     rospy.loginfo("开始速度控制")
@@ -149,12 +146,20 @@ def main():
             current_y = communication.vision_pose.y
             current_z = communication.vision_pose.z
 
-            control_vx = (target_x - current_x) * PD
-            control_vy = (target_y - current_y) * PD
-            control_vz = (target_z - current_z) * PD
+
+            control_vx = (communication.target_pose.position.x - current_x) * PD
+            control_vy = (communication.target_pose.position.y - current_y) * PD
+            control_vz = (communication.target_pose.position.z + 0.33 - current_z) * PD
 
             # 计算速度的大小
             speed = math.sqrt(control_vx**2 + control_vy**2 + control_vz**2)
+
+            if IF_TAKEOFF == 0:
+                MAX_VELOCITY = 1
+                if speed<=0.1:
+                    IF_TAKEOFF = 1
+            else:
+                MAX_VELOCITY = 0.2
 
             # 如果速度超出最大速度，进行限幅
             if speed > MAX_VELOCITY:

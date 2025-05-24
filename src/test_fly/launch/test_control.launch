@@ -11,4 +11,10 @@
         name="get_local_pose"
         output="screen">
     </node>
+    <node
+        pkg="test_fly"
+        type="mission_control.py"
+        name="mission_control"
+        output="screen">
+    </node>
 </launch>

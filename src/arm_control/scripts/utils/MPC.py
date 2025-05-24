@@ -14,8 +14,8 @@ class MPC:
         self.R = ca.diagcat(Ra, Ra, Ra/4, Ra/8)
         R_delta = 0.2
         self.R_delta = ca.diagcat(R_delta, R_delta, R_delta, R_delta)
-        self.step_horizon = 0.1  # time between steps in seconds
-        self.N = 40  # number of look ahead steps
+        self.step_horizon = 0.05  # time between steps in seconds
+        self.N = 50  # number of look ahead steps
 
         # states symbolic variables
         self.n_states = 4
@@ -76,12 +76,20 @@ class MPC:
             x_arm, attitude_arm = self.RobFki(st)
             attitude_error = ca.exp(-(attitude_arm.T @ self.P_arm[3:6, k]))
             delta_u = u_pre - con
-            self.cost_fn = (self.cost_fn\
-                           + delta_u.T @ self.R_delta @ delta_u\
-                           + st.T @ self.Q @ st \
-                           + con.T @ self.R @ con \
-                           + (x_arm - self.P_arm[:3, k]).T @ self.Qa @ (x_arm - self.P_arm[:3, k]) \
-                           + attitude_error.T @ self.Qa_rot @ attitude_error)
+            if k==self.N-1:
+                self.cost_fn = (self.cost_fn\
+                            + delta_u.T @ self.R_delta @ delta_u\
+                            + st.T @ self.Q @ st \
+                            + con.T @ self.R @ con \
+                            + 100*(x_arm - self.P_arm[:3, k]).T @ self.Qa @ (x_arm - self.P_arm[:3, k]) \
+                            + 10*attitude_error.T @ self.Qa_rot @ attitude_error)
+            else:
+                self.cost_fn = (self.cost_fn\
+                            + delta_u.T @ self.R_delta @ delta_u\
+                            + st.T @ self.Q @ st \
+                            + con.T @ self.R @ con \
+                            + (x_arm - self.P_arm[:3, k]).T @ self.Qa @ (x_arm - self.P_arm[:3, k]) \
+                            + attitude_error.T @ self.Qa_rot @ attitude_error)
             st_next = self.X[:, k + 1]
             k1 = self.f(st, con)
             k2 = self.f(st + self.step_horizon / 2 * k1, con)
@@ -122,10 +130,10 @@ class MPC:
         limit = [
             [x * math.pi / 180 for x in joint_limits]  # 每个关节的角度单独转换
             for joint_limits in [
-                [-130, 130],  # 关节1：-130°~130°
+                [-90, 90],  # 关节1：-130°~130°
                 [-60, 90],  # 关节2：-60°~90°
-                [-100, 100],  # 关节3：-100°~100°
-                [-100, 100]  # 关节4：-100°~100°
+                [-85, 85],  # 关节3：-85°~85°
+                [-85, 85]  # 关节4：-85°~85°
             ]
         ]
 
@@ -257,6 +265,6 @@ class MPC:
                 arg_p_arm[k * self.n_tarpos + j] = pose_target[j]
 
             # 更新预测状态
-            p_b += uav_arm.dt * uav_arm.d_xb[0:3]
-            delta += uav_arm.dt * uav_arm.d_xb[5, 0]
+            # p_b += uav_arm.dt * uav_arm.d_xb[0:3]
+            # delta += uav_arm.dt * uav_arm.d_xb[5, 0]  # 取消航向补偿
         return arg_p_arm

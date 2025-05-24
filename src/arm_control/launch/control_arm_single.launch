@@ -1,0 +1,11 @@
+<launch>
+  <!-- 定义 iris_0 group -->
+  <param name="if_simulation" type = "bool" value ="true"/>
+  <group ns="iris_0">
+    <!-- 其他与 iris_0 相关的节点 -->
+
+    <!-- 添加 arm_control 节点到 iris_0 group -->
+    <node pkg="arm_control" type="arm_control_single.py" name="control_arm" output="screen">
+    </node>
+  </group>
+</launch>

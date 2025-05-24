@@ -119,6 +119,11 @@ class ARM:
         self.target_pose.y = msg.pose.position.y
         self.target_pose.z = msg.pose.position.z
 
+    def target_pos_single_callback(self,msg):
+        self.target_pose.x = msg.pose.position.x-0.14
+        self.target_pose.y = -msg.pose.position.y
+        self.target_pose.z = -msg.pose.position.z+0.0278
+
     def real_target_pos_callback(self,msg):
         self.target_pose.x = msg.point.x
         self.target_pose.y = msg.point.y

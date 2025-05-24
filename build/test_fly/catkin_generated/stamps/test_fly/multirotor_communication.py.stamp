@@ -29,6 +29,7 @@ class Communication:
         self.mission = None
         self.last_cmd = None
         self.rate = rospy.Rate(20)
+        self.target_pose = Pose()
             
         '''
         ros subscribers
@@ -43,7 +44,7 @@ class Communication:
         self.cmd_vel_enu_sub = rospy.Subscriber("/xtdrone/"+self.vehicle_type+'_'+self.vehicle_id+"/cmd_vel_enu", Twist, self.cmd_vel_enu_callback,queue_size=1)
         self.cmd_accel_flu_sub = rospy.Subscriber("/xtdrone/"+self.vehicle_type+'_'+self.vehicle_id+"/cmd_accel_flu", Twist, self.cmd_accel_flu_callback,queue_size=1)
         self.cmd_accel_enu_sub = rospy.Subscriber("/xtdrone/"+self.vehicle_type+'_'+self.vehicle_id+"/cmd_accel_enu", Twist, self.cmd_accel_enu_callback,queue_size=1)
-            
+        self.target_post_sub = rospy.Subscriber("/weightless_ball/pose", PoseStamped, self.target_pos_callback)
         ''' 
         ros publishers
         '''
@@ -77,6 +78,10 @@ class Communication:
         self.current_velocity = msg  # 更新当前速度
         # self.current_velocity_time = msg.header.stamp
 
+    def target_pos_callback(self,msg):
+        self.target_pose.position.x = msg.pose.position.x
+        self.target_pose.position.y = msg.pose.position.y
+        self.target_pose.position.z = msg.pose.position.z
     def construct_target(self, x=0, y=0, z=0, vx=0, vy=0, vz=0, afx=0, afy=0, afz=0, yaw=0, yaw_rate=0):
         target_raw_pose = PositionTarget()
         target_raw_pose.coordinate_frame = self.coordinate_frame
