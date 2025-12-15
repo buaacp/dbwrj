@@ -1,0 +1,28 @@
+<!-- 相机节点启动 -->
+
+<launch>
+  <!-- 无人机ID设置 -->
+  <!-- 此参数可在终端启动launch文件时手动输入 -->
+  <arg name="UAV_ID"  default="1"/>
+  <arg name="node_ns" default="UAV$(arg UAV_ID)"/>
+  <!-- Set the namespace -->
+  <!-- 节点启动 命名空间:UAV1 -->
+  <param name="if_simulation" type = "bool" value ="true"/>
+    <!-- Launch the Python node -->
+    <!-- <node pkg="camera" type="test_send.py" name="camera_detect" output="screen">
+    </node> -->
+
+    <node pkg="camera" type="position_test.py" name="position_test" output="screen">
+    </node>
+
+    <node pkg="camera" type="gimbal_target.py" name="gimbal_target" output="screen">
+    </node>
+
+    <node pkg="camera" type="pos_analyze.py" name="pos_analyze" output="screen">
+    </node>
+
+    <node pkg="gimbal_control" type="gimbal_control.py" name="gimbal_control" output="screen">
+    </node>
+    <!-- 启动 RViz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find camera)/rviz/gimbal.rviz" />
+</launch>

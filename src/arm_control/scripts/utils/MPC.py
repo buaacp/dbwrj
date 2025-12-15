@@ -181,6 +181,7 @@ class MPC:
         self.u_pre = u[:, 0]
         return X0, u
     def get_exp_point(self,p_target_local,flag_leave,flag_default):
+        # 调试信息：输入参数
         distance_b = np.linalg.norm(p_target_local)
         L_max = self.L1+self.L2+self.L3
         L_min = self.L1+self.L2
@@ -225,15 +226,14 @@ class MPC:
         theta = np.copy(uav_arm.theta)
         delta = np.copy(uav_arm.delta)
 
-
         for k in range(self.N + 1):
             # 计算无人机是否处于脱离状态
             flag_leave = 0
             flag_default = 0
             uav_tar_dis = pos_target - p_b
-            aim_heading_vector = np.array([uav_tar_dis[0, 0], uav_tar_dis[1, 0]])
+            aim_heading_vector = np.array([uav_tar_dis[0, 0], uav_tar_dis[1, 0]]).flatten()
             real_heading_vector = np.array([-1 * np.sin(delta), np.cos(delta)])
-            if np.dot(aim_heading_vector, real_heading_vector.T) < 0:
+            if np.dot(aim_heading_vector, real_heading_vector) < 0:
                 flag_leave = 1
                 if np.linalg.norm(uav_tar_dis)>10:
                     flag_default = 1

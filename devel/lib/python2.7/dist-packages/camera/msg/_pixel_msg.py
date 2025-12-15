@@ -1,0 +1,1 @@
+/home/zlhq/px4_fly_ws/devel/.private/camera/lib/python2.7/dist-packages/camera/msg/_pixel_msg.py

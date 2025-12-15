@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="arm_control" type="arm_pos_pub_real.py" name="control_arm" output="screen">
+  </node>
+
+  <node pkg="camera" type="camera_biaoding.py" name="biaoding" output="screen">
+  </node>
+</launch>

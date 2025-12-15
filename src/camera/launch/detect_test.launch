@@ -1,0 +1,9 @@
+<!-- 相机节点启动 -->
+
+<launch>
+    <!-- Launch the Python node -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+  </include>
+  <node pkg="camera" type="object_detect.py" name="object_detect" output="screen">
+  </node>
+</launch>

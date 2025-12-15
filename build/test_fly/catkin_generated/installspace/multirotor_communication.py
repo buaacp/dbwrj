@@ -7,6 +7,7 @@ from mavros_msgs.srv import CommandBool, SetMode, ParamSet
 from geometry_msgs.msg import PoseStamped, Pose, TwistStamped,Twist
 from std_msgs.msg import String
 from pyquaternion import Quaternion
+from std_msgs.msg import Int32
 import sys
 
 class Communication:
@@ -30,6 +31,11 @@ class Communication:
         self.last_cmd = None
         self.rate = rospy.Rate(20)
         self.target_pose = Pose()
+        self.default_pose = Pose()
+        self.default_pose.position.x = 0
+        self.default_pose.position.y = 0
+        self.default_pose.position.z = 2
+        self.mission_state = 0
             
         '''
         ros subscribers
@@ -45,6 +51,7 @@ class Communication:
         self.cmd_accel_flu_sub = rospy.Subscriber("/xtdrone/"+self.vehicle_type+'_'+self.vehicle_id+"/cmd_accel_flu", Twist, self.cmd_accel_flu_callback,queue_size=1)
         self.cmd_accel_enu_sub = rospy.Subscriber("/xtdrone/"+self.vehicle_type+'_'+self.vehicle_id+"/cmd_accel_enu", Twist, self.cmd_accel_enu_callback,queue_size=1)
         self.target_post_sub = rospy.Subscriber("/weightless_ball/pose", PoseStamped, self.target_pos_callback)
+        self.mission_state_sub = rospy.Subscriber("/mission_state",Int32,self.mission_state_callback)
         ''' 
         ros publishers
         '''
@@ -65,6 +72,9 @@ class Communication:
         while not rospy.is_shutdown():
             self.target_motion_pub.publish(self.target_motion)
             self.rate.sleep()
+
+    def mission_state_callback(self, msg):
+        self.mission_state = msg.data
 
     def local_pose_callback(self, msg):
         self.current_position = msg.pose.position

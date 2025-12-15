@@ -1,0 +1,20 @@
+<!-- 相机节点启动 -->
+
+<launch>
+  <!-- 无人机ID设置 -->
+  <!-- 此参数可在终端启动launch文件时手动输入 -->
+  <arg name="UAV_ID"  default="1"/>
+  <arg name="node_ns" default="UAV$(arg UAV_ID)"/>
+  <!-- Set the namespace -->
+  <!-- 节点启动 命名空间:UAV1 -->
+  <group ns="$(arg node_ns)">
+
+    <!-- Launch the Python node -->
+    <!-- <node pkg="camera" type="test_send.py" name="camera_detect" output="screen">
+    </node> -->
+
+    <node pkg="camera" type="position_calculate.py" name="position_calculate" output="screen">
+    </node>
+
+  </group>
+</launch>

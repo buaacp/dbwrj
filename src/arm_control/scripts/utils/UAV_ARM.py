@@ -17,7 +17,7 @@ class UAV_ARM:
         self.draw_t = 0.1
         # 飞机参数（单位：弧度）
         self.R_b = np.eye(3)
-        self.p_b = np.array([[0.0], [0.0], [1.0]])  # 位置
+        self.p_b = np.array([[0.0], [0.0], [0.0]])  # 位置
         self.phi = 0.0 * pi / 180  # 滚转角
         self.theta = 0.0 * pi / 180  # 俯仰角
         self.delta = 0.0 * pi / 180  # 偏航角
@@ -34,6 +34,10 @@ class UAV_ARM:
         self.L1 = 0.1049
         self.L2 = 0.0884
         self.L3 = 0.12
+        self.realL1 = 0.0814
+        self.realL2 = 0.07735
+        self.realL3 = 0.13865
+
         self.q = np.deg2rad([0, 45, 45, 0]).reshape(-1, 1)  # 关节角度初始化
         self.d_q = np.zeros((4, 1))  # 关节角速度
 

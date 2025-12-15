@@ -1,0 +1,8 @@
+prefix=/home/zlhq/px4_fly_ws/install
+
+Name: camera
+Description: Description of camera
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs mavros roscpp rospy std_msgs tf2 tf2_geometry_msgs tf2_ros message_runtime

@@ -1,0 +1,1 @@
+/home/zlhq/px4_fly_ws/devel/.private/camera/include/camera/gimbal_msg.h

@@ -1,0 +1,20 @@
+<!-- 相机节点启动 -->
+<launch>
+
+  <!-- IMU 配置 -->
+
+  <!-- 启动 RealSense 相机节点 -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+  </include>
+
+  <!-- 启动你的检测节点 -->
+  <node pkg="camera" type="Imu_get_D435i.py" name="Imu" output="screen">
+  </node>
+
+  <!-- 启动 RViz 可视化 -->
+  <!-- <node pkg="rviz" type="rviz" name="rviz" args="-d $(find camera)/rviz/realsense_visualization.rviz" output="screen">
+  </node> -->
+  <node pkg="rviz" type="rviz" name="rviz" output="screen">
+  </node>
+  
+</launch>

@@ -1,0 +1,49 @@
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target _camera_generate_messages_check_deps_servo_msg
+[  0%] Built target _camera_generate_messages_check_deps_pixel_msg
+[  0%] Built target _camera_generate_messages_check_deps_gimbal_msg
+[  0%] Built target _camera_generate_messages_check_deps_detect_msg
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target _camera_generate_messages_check_deps_neighbor_camera_data
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target _camera_generate_messages_check_deps_pos_message
+[  3%] [34m[1mGenerating EusLisp code from camera/detect_msg.msg[0m
+[  6%] [34m[1mGenerating Javascript code from camera/detect_msg.msg[0m
+[  9%] [34m[1mGenerating Python from MSG camera/detect_msg[0m
+[ 12%] [34m[1mGenerating Lisp code from camera/detect_msg.msg[0m
+[ 15%] [34m[1mGenerating Lisp code from camera/pos_message.msg[0m
+[ 18%] [34m[1mGenerating Javascript code from camera/pos_message.msg[0m
+[ 21%] [34m[1mGenerating EusLisp code from camera/pos_message.msg[0m
+[ 25%] [34m[1mGenerating Lisp code from camera/servo_msg.msg[0m
+[ 28%] [34m[1mGenerating Javascript code from camera/servo_msg.msg[0m
+[ 31%] [34m[1mGenerating Lisp code from camera/neighbor_camera_data.msg[0m
+[ 34%] [34m[1mGenerating EusLisp code from camera/servo_msg.msg[0m
+[ 37%] [34m[1mGenerating Javascript code from camera/neighbor_camera_data.msg[0m
+[ 40%] [34m[1mGenerating Lisp code from camera/gimbal_msg.msg[0m
+[ 43%] [34m[1mGenerating EusLisp code from camera/neighbor_camera_data.msg[0m
+[ 46%] [34m[1mGenerating Python from MSG camera/pos_message[0m
+[ 50%] [34m[1mGenerating Lisp code from camera/pixel_msg.msg[0m
+[ 53%] [34m[1mGenerating Javascript code from camera/gimbal_msg.msg[0m
+[ 53%] Built target camera_generate_messages_lisp
+[ 56%] [34m[1mGenerating C++ code from camera/detect_msg.msg[0m
+[ 59%] [34m[1mGenerating Javascript code from camera/pixel_msg.msg[0m
+[ 62%] [34m[1mGenerating EusLisp code from camera/gimbal_msg.msg[0m
+[ 62%] Built target camera_generate_messages_nodejs
+[ 65%] [34m[1mGenerating EusLisp code from camera/pixel_msg.msg[0m
+[ 68%] [34m[1mGenerating Python from MSG camera/servo_msg[0m
+[ 71%] [34m[1mGenerating EusLisp manifest code for camera[0m
+[ 75%] [34m[1mGenerating Python from MSG camera/neighbor_camera_data[0m
+[ 78%] [34m[1mGenerating C++ code from camera/pos_message.msg[0m
+[ 81%] [34m[1mGenerating Python from MSG camera/gimbal_msg[0m
+[ 84%] [34m[1mGenerating C++ code from camera/servo_msg.msg[0m
+[ 87%] [34m[1mGenerating C++ code from camera/neighbor_camera_data.msg[0m
+[ 90%] [34m[1mGenerating Python from MSG camera/pixel_msg[0m
+[ 93%] [34m[1mGenerating C++ code from camera/pixel_msg.msg[0m
+[ 96%] [34m[1mGenerating C++ code from camera/gimbal_msg.msg[0m
+[100%] [34m[1mGenerating Python msg __init__.py for camera[0m
+[100%] Built target camera_generate_messages_cpp
+[100%] Built target camera_generate_messages_py
+[100%] Built target camera_generate_messages_eus
+[100%] Built target camera_generate_messages

@@ -1,0 +1,21 @@
+<!-- 相机节点启动 -->
+
+<launch>
+  <!-- 无人机ID设置 -->
+  <!-- 此参数可在终端启动launch文件时手动输入 -->
+  <!-- Set the namespace -->
+    <!-- Launch the Python node -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="camera" value="d435"/>
+    <!-- 其他参数传递 -->
+  </include>
+
+  <node pkg="camera" type="camera_biaoding.py" name="camera_biaoding" output="screen">
+  </node>
+
+  <node pkg="gimbal_control" type="get_angle.py" name="get_angle" output="screen">
+  </node>
+
+  <!-- 启动 RViz -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find camera)/rviz/gimbal.rviz" />
+</launch>

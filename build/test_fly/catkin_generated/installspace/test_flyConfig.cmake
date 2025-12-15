@@ -68,7 +68,7 @@ set(test_fly_CONFIG_INCLUDED TRUE)
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
   set(test_fly_SOURCE_PREFIX /home/zlhq/px4_fly_ws/src/test_fly)
-  set(test_fly_DEVEL_PREFIX /home/zlhq/px4_fly_ws/devel)
+  set(test_fly_DEVEL_PREFIX /home/zlhq/px4_fly_ws/devel/.private/test_fly)
   set(test_fly_INSTALL_PREFIX "")
   set(test_fly_PREFIX ${test_fly_DEVEL_PREFIX})
 else()
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/zlhq/px4_fly_ws/install/lib;/home/zlhq/catkin_ws/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/zlhq/px4_fly_ws/install/lib;/home/zlhq/px4_fly_ws/devel/lib;/home/zlhq/catkin_ws/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

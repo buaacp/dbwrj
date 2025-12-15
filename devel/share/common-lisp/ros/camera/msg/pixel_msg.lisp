@@ -1,0 +1,1 @@
+/home/zlhq/px4_fly_ws/devel/.private/camera/share/common-lisp/ros/camera/msg/pixel_msg.lisp

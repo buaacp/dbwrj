@@ -1,0 +1,1 @@
+/home/zlhq/px4_fly_ws/devel/.private/camera/share/gennodejs/ros/camera/msg/pos_message.js

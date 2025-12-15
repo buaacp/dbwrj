@@ -10,7 +10,7 @@ import config
 import math
 import time
 import numpy as np
-import serial
+import rospy
 
 class Pose:
     def __init__(self):
@@ -45,6 +45,7 @@ class ARM:
         self.L1 = 0.104
         self.L2 = 0.0884
         self.L3 = 0.10
+        self.p_delta = np.array([[0.0], [-0.096], [-0.135]])  # 基座偏移
 
     def boundary_q(self,d_q):
         q0 = self.angle[0]+d_q[0]/self.control_rate
@@ -125,9 +126,10 @@ class ARM:
         self.target_pose.z = -msg.pose.position.z+0.0278
 
     def real_target_pos_callback(self,msg):
-        self.target_pose.x = msg.point.x
-        self.target_pose.y = msg.point.y
-        self.target_pose.z = msg.point.z
+        self.target_pose.x = msg.point.x + self.p_delta[0]
+        self.target_pose.y = msg.point.y + self.p_delta[1]
+        self.target_pose.z = msg.point.z + self.p_delta[2] - 0.02
+
         
     def query_all_servos(self): 
         """

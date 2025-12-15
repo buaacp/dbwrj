@@ -1,0 +1,8 @@
+prefix=/home/zlhq/px4_fly_ws/devel/.private/camera
+
+Name: camera
+Description: Description of camera
+Version: 0.0.0
+Cflags: -I/home/zlhq/px4_fly_ws/devel/.private/camera/include -I/home/zlhq/px4_fly_ws/src/camera/include/camera
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs mavros roscpp rospy std_msgs tf2 tf2_geometry_msgs tf2_ros message_runtime

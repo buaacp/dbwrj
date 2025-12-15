@@ -1,0 +1,1 @@
+/home/zlhq/px4_fly_ws/devel/.private/camera/share/camera/cmake/camera-msg-extras.cmake

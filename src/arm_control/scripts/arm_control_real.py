@@ -4,7 +4,7 @@ import rospy
 from std_msgs.msg import Float64MultiArray
 from sensor_msgs.msg import JointState
 from sensor_msgs.msg import Imu,NavSatFix
-from geometry_msgs.msg import PoseStamped, TwistStamped
+from geometry_msgs.msg import PoseStamped, TwistStamped,PointStamped
 from std_msgs.msg import Float64
 from rosgraph_msgs.msg import Clock
 import os
@@ -16,7 +16,6 @@ import casadi as ca
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 import math
-from tf2_geometry_msgs import PointStamped
 
 # 添加当前脚本所在目录到sys.path
 current_dir = os.path.dirname(__file__)
@@ -50,14 +49,16 @@ def query_state_continuously():
     rospy.Subscriber("mavros/vision_pose/pose", PoseStamped, uav.vision_pose_callback)
     rospy.Subscriber("/weightless_ball/pose", PoseStamped, arm.target_pos_callback)
     rospy.Subscriber("/clock", Clock, uav_arm.clock_callback)
-    rospy.Publisher('/object_detection/object_position_tripod', PointStamped, arm.real_target_pos_callback)
+    rospy.Subscriber('/object_detection/object_position_tripod', PointStamped, arm.real_target_pos_callback)
     rospy.spin()
 
 def get_target_pos():
-    pos_target_virtual = np.array([[arm.target_pose.x], [arm.target_pose.y], [arm.target_pose.z]])
-    pos_target = pos_target_virtual
-
-    return pos_target
+    pos_target = np.array([[arm.target_pose.x], 
+                                [arm.target_pose.y], 
+                                [arm.target_pose.z]])
+    rospy.loginfo("计算后坐标: [%.3f, %.3f, %.3f]", 
+                pos_target[0], pos_target[1], pos_target[2])
+    return pos_target.reshape(3,1)
 
 def arm_control(d_q):
     # angel_target = [0,0,0,0]
@@ -105,7 +106,7 @@ def arm_velocity_control():
     # delta = -math.pi/2
     # print("pos_target",uav_arm.pos_target)
     # print("d_xb",uav_arm.d_xb)
-    print("p_b",uav_arm.p_b)
+    # print("p_b",uav_arm.p_b)
     #### DEBUG
     # 机械臂参数（单位：弧度）
     # 参数更新
@@ -176,9 +177,9 @@ if __name__ == '__main__':
         uav = UAV.Myuav()
         mpc = MPC.MPC()
         uav_arm = UAV_ARM.UAV_ARM()
-        mpc.L1 = uav_arm.L1
-        mpc.L2 = uav_arm.L2
-        mpc.L3 = uav_arm.L3
+        mpc.L1 = uav_arm.realL1
+        mpc.L2 = uav_arm.realL2
+        mpc.L3 = uav_arm.realL3
         mpc.step_horizon = uav_arm.dt
         mpc.u0 = ca.DM.zeros((mpc.n_controls, mpc.N)) 
 
@@ -197,6 +198,7 @@ if __name__ == '__main__':
         while not rospy.is_shutdown():
             # 目标位置更新
             uav_arm.pos_target = get_target_pos()
+            # print(f"pos_target 形状: {uav_arm.pos_target.shape}, 值: {uav_arm.pos_target.flatten()}")
 
             current_time = rospy.Time.now()
             uav_arm.real_time = current_time.to_sec() 
