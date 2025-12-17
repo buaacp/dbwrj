@@ -6,9 +6,7 @@ import cv2
 import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image, CameraInfo
-from geometry_msgs.msg import PointStamped
 import tf2_ros
-import tf2_geometry_msgs
 from visualization_msgs.msg import Marker
 import sys
 import os
@@ -25,6 +23,7 @@ class Mycamera:
         self.pixel_pos = []  
         self.pic_deep = None  
         self.intrinsic_ready = False
+        self.obj_depth = 15 #单位 mm 对物体的深度补偿
 
         # ===== 自动更新的相机内参 =====
         self.fx = None
@@ -98,7 +97,7 @@ class Mycamera:
                     if np.isnan(depth_value) or depth_value <= 0:
                         continue
                     
-                    Z = depth_value
+                    Z = depth_value + self.obj_depth
                     X = (x - self.cx) * Z / self.fx
                     Y = (y - self.cy) * Z / self.fy
 
@@ -121,13 +120,6 @@ class Mycamera:
                     marker.color.b = 0.0
                     marker.color.a = 0.3
                     self.pub_marker.publish(marker)
-
-                    # rospy.loginfo("[Camera] X:{X:.3f} Y:{Y:.3f} Z:{Z:.3f}".format(X=X, Y=Y, Z=Z))
-                    # X_UAV = X/10
-                    # Y_UAV = -1*Y/10
-                    # Z_UAV = -1*Z/10
-                    # rospy.loginfo("[无人机坐标系下的位置] X:{X:.3f} Y:{Y:.3f} Z:{Z:.3f}".format(
-                    #     X=X_UAV, Y=Y_UAV, Z=Z_UAV))
 
         except CvBridgeError as e:
             rospy.logerr("Depth error: {}".format(str(e)))

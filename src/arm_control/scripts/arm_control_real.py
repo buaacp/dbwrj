@@ -151,8 +151,9 @@ def arm_velocity_control():
     mpc.set_reference(p)
     mpc.set_x0(X0, mpc.u0)
     X0, mpc.u0 = mpc.get_states_and_control()
-    uav_arm.d_q = mpc.u0[:,0]
-    
+    uav_arm.d_q = mpc.u0[:,0:uav_arm.control_step]
+    # uav_arm.d_q = mpc.u0[:,0]
+    # print("d_q 维度:", uav_arm.d_q.shape)
     return uav_arm.d_q
 
 if __name__ == '__main__':
@@ -195,30 +196,32 @@ if __name__ == '__main__':
         time.sleep(0.5)
         arg_p_arm = ca.DM.zeros(mpc.n_tarpos * (mpc.N + 1))
 
+        print("！！！控制程序启动！！！")
         while not rospy.is_shutdown():
             # 目标位置更新
             uav_arm.pos_target = get_target_pos()
-            # print(f"pos_target 形状: {uav_arm.pos_target.shape}, 值: {uav_arm.pos_target.flatten()}")
 
             current_time = rospy.Time.now()
             uav_arm.real_time = current_time.to_sec() 
             if uav_arm.real_time>uav_arm.last_control_time+uav_arm.dt:
                 uav_arm.last_control_time = uav_arm.gazebo_time
-                d_q = arm_velocity_control()
+                control_sequence = arm_velocity_control()
+                d_q = np.mean(control_sequence, axis=1).reshape(4,1)
 
                 end_time = rospy.Time.now()
                 time_diff = end_time - current_time
                 diff_seconds = time_diff.to_sec() 
                 print("lag_time : ",diff_seconds)
-
-                # print("d_q = ",d_q)
+                print("d_q = ",d_q)
                 # print("arm_angle = ",arm.angle)
                 # print("pos_target = ",uav_arm.pos_target)
                 # angular = arm_control(d_q)
                 # msg_angular = Float64MultiArray()
                 # msg_angular.data = angular  # 设置数据部分
                 # pub_angular.publish(msg_angular)
-                arm.real_angular_control(d_q,uav_arm.dt,type=0)
+                if uav_arm.control_count%uav_arm.control_step == 0:
+                    arm.real_angular_control(d_q,uav_arm.dt*uav_arm.control_step,type=0)
+                uav_arm.control_count += 1
                 
 
     except rospy.ROSInterruptException:

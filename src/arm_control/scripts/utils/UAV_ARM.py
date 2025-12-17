@@ -49,6 +49,8 @@ class UAV_ARM:
         ])
         self.gazebo_time = 0
         self.last_control_time = 0
+        self.control_step = 3
+        self.control_count = 0
 
     def clock_callback(self,msg):
         # 从消息中提取仿真时间（单位：秒）
