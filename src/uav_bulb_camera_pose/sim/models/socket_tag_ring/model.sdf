@@ -1,0 +1,25 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='socket_tag_ring'>
+    <static>true</static>
+    <link name='socket_frame'>
+      <visual name='body'><geometry><cylinder><radius>0.004</radius><length>0.010</length></cylinder></geometry><material><ambient>0.6 0.6 0.6 1</ambient><diffuse>0.6 0.6 0.6 1</diffuse></material></visual>
+
+      <visual name='tag_100'>
+          <geometry><mesh><uri>file:///home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/socket_tag_ring/meshes/tag_100.dae</uri></mesh></geometry>
+      </visual>
+
+      <visual name='tag_101'>
+          <geometry><mesh><uri>file:///home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/socket_tag_ring/meshes/tag_101.dae</uri></mesh></geometry>
+      </visual>
+
+      <visual name='tag_102'>
+          <geometry><mesh><uri>file:///home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/socket_tag_ring/meshes/tag_102.dae</uri></mesh></geometry>
+      </visual>
+
+      <visual name='tag_103'>
+          <geometry><mesh><uri>file:///home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/socket_tag_ring/meshes/tag_103.dae</uri></mesh></geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

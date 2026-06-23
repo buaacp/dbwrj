@@ -1,0 +1,6 @@
+status: ABORTED
+metrics: {}
+abort:
+  reason: MAVROS_STATE_STALE
+  sim_time_s: 18.47
+  state: PRESTREAM_SETPOINTS

@@ -1,0 +1,156 @@
+## rostopic hz /camera/camera/color/image_raw
+subscribed to [/camera/camera/color/image_raw]
+average rate: 30.713
+	min: 0.017s max: 0.044s std dev: 0.00620s window: 26
+average rate: 30.193
+	min: 0.010s max: 0.048s std dev: 0.00748s window: 51
+average rate: 30.291
+	min: 0.010s max: 0.048s std dev: 0.00719s window: 76
+average rate: 30.149
+	min: 0.010s max: 0.048s std dev: 0.00693s window: 102
+average rate: 30.116
+	min: 0.010s max: 0.052s std dev: 0.00691s window: 128
+average rate: 30.122
+	min: 0.010s max: 0.059s std dev: 0.00701s window: 152
+average rate: 30.132
+	min: 0.010s max: 0.059s std dev: 0.00683s window: 177
+average rate: 30.121
+	min: 0.010s max: 0.059s std dev: 0.00698s window: 187
+## rostopic hz /socket/pose_camera
+subscribed to [/socket/pose_camera]
+average rate: 8.974
+	min: 0.094s max: 0.126s std dev: 0.00948s window: 8
+average rate: 9.271
+	min: 0.086s max: 0.126s std dev: 0.01054s window: 16
+average rate: 9.676
+	min: 0.086s max: 0.126s std dev: 0.01123s window: 24
+average rate: 9.694
+	min: 0.086s max: 0.126s std dev: 0.01030s window: 32
+average rate: 9.661
+	min: 0.086s max: 0.126s std dev: 0.01003s window: 40
+average rate: 9.553
+	min: 0.086s max: 0.136s std dev: 0.01061s window: 48
+average rate: 9.570
+	min: 0.086s max: 0.136s std dev: 0.00991s window: 56
+average rate: 9.501
+	min: 0.086s max: 0.136s std dev: 0.01019s window: 60
+## rostopic hz /bulb/pose_camera
+subscribed to [/bulb/pose_camera]
+no new messages
+no new messages
+no new messages
+no new messages
+no new messages
+no new messages
+no new messages
+no new messages
+## diagnostics
+header: 
+  seq: 4
+  stamp: 
+    secs: 85
+    nsecs: 317000000
+  frame_id: ''
+status: 
+  - 
+    level: 0
+    name: "bulb_vision/bundle_pose_node"
+    message: "ok"
+    hardware_id: "d435i_rgb_apriltag"
+    values: 
+      - 
+        key: "image_camera_info_dt_sec"
+        value: "0.000000"
+      - 
+        key: "camera_info_width"
+        value: "1920"
+      - 
+        key: "camera_info_height"
+        value: "1080"
+      - 
+        key: "camera_info_frame_id"
+        value: "camera/camera/color/camera_color_optical_frame"
+      - 
+        key: "distortion_model"
+        value: "plumb_bob"
+      - 
+        key: "socket_visible_tag_count"
+        value: "1"
+      - 
+        key: "socket_precision_valid"
+        value: "False"
+      - 
+        key: "socket_rmse_px"
+        value: "0.015"
+      - 
+        key: "socket_message"
+        value: "single-tag degraded pose"
+      - 
+        key: "bulb_visible_tag_count"
+        value: "2"
+      - 
+        key: "bulb_precision_valid"
+        value: "False"
+      - 
+        key: "bulb_rmse_px"
+        value: "inf"
+      - 
+        key: "bulb_message"
+        value: "solvePnPRansac failed"
+---
+## /socket/pose_camera
+header: 
+  seq: 290
+  stamp: 
+    secs: 86
+    nsecs:  50000000
+  frame_id: "camera_color_optical_frame"
+pose: 
+  position: 
+    x: 0.260018177552
+    y: -0.000203758012385
+    z: 0.450273591085
+  orientation: 
+    x: 0.500237909038
+    y: 0.500054781156
+    z: -0.499951522496
+    w: 0.499755665659
+---
+## /socket/axis_camera
+header: 
+  seq: 1
+  stamp: 
+    secs: 86
+    nsecs: 751000000
+  frame_id: "camera_color_optical_frame"
+vector: 
+  x: -0.000378988422177
+  y: -0.999999756779
+  z: -0.000585499591655
+---
+## /socket/visible_tag_count
+data: 1
+---
+## /socket/inlier_corner_count
+data: 4
+---
+## /socket/reprojection_error_px
+data: 0.0147766293958
+---
+## /socket/precision_valid
+data: False
+---
+## /bulb/pose_camera
+## /bulb/axis_camera
+## /bulb/visible_tag_count
+data: 2
+---
+## /bulb/inlier_corner_count
+data: 0
+---
+## /bulb/reprojection_error_px
+data: -1.0
+---
+## /bulb/precision_valid
+data: False
+---

@@ -1,0 +1,11 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <world name='bulb_pose_test'>
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+    <include><uri>model://d435i_color_camera_rig</uri><pose>0 0 0 0 0 0</pose></include>
+    <include><uri>model://socket_tag_ring</uri><pose>0.60 0 -0.10 0 0 0</pose></include>
+    <include><uri>model://bulb_tag_ring</uri><pose>0.60 0 0.10 0 0 0</pose></include>
+    <include><uri>model://occluder</uri><pose>0.20 0.60 0.68 0 0 0</pose></include>
+  </world>
+</sdf>

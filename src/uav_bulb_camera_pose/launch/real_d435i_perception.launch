@@ -1,0 +1,10 @@
+<launch>
+  <arg name="bundle_yaml" default="$(find uav_bulb_camera_pose)/config/bundles.yaml"/>
+  <arg name="profile_yaml" default="$(find uav_bulb_camera_pose)/config/real_d435i_profile.yaml"/>
+
+  <node pkg="uav_bulb_camera_pose" type="bundle_pose_node.py" name="bundle_pose_node" output="screen">
+    <rosparam command="load" file="$(find uav_bulb_camera_pose)/config/perception.yaml"/>
+    <rosparam command="load" file="$(arg profile_yaml)"/>
+    <param name="bundle_yaml" value="$(arg bundle_yaml)"/>
+  </node>
+</launch>

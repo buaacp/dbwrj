@@ -1,0 +1,25 @@
+image_topic: /camera/camera/color/image_raw
+camera_info_topic: /camera/camera/color/camera_info
+camera_frame_override: ""
+transport_hint: raw
+use_depth_validation: false
+aligned_depth_topic: /camera/camera/aligned_depth_to_color/image_raw
+socket_bundle_yaml: "$(find uav_bulb_camera_pose)/config/bundles.yaml"
+bulb_bundle_yaml: "$(find uav_bulb_camera_pose)/config/bundles.yaml"
+bundle_yaml: "$(find uav_bulb_camera_pose)/config/bundles.yaml"
+min_precision_visible_tags: 2
+min_inlier_corners: 8
+max_reprojection_rmse_px: 2.5
+max_image_camera_info_dt_sec: 0.050
+min_positive_depth_m: 0.10
+max_positive_depth_m: 5.0
+ransac_reprojection_error_px: 6.0
+ransac_iterations: 100
+enable_filter: true
+filter_alpha: 0.55
+filter_max_jump_m: 0.15
+publish_debug_image: true
+expected_color_width: 1920
+expected_color_height: 1080
+expected_color_fps: 30
+expected_color_hfov_deg: 69.0

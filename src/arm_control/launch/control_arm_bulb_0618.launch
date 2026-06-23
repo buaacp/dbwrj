@@ -1,0 +1,62 @@
+<launch>
+  <arg name="mission_topic" default="/mission_state"/>
+  <arg name="bulb_target_topic" default="/light_bulb/body_pose"/>
+  <arg name="socket_target_topic" default="/light_bulb_fixture/socket_pose"/>
+  <arg name="stow_joint_deg" default="[-45.0, 90.0, 45.0, 0.0]"/>
+  <arg name="stow_kp" default="1.2"/>
+  <arg name="stow_max_velocity" default="0.4"/>
+  <arg name="bulb_axis_local" default="[0.0, 0.0, -1.0]"/>
+  <arg name="socket_axis_local" default="[0.0, 0.0, -1.0]"/>
+  <arg name="bulb_center_axis_offset" default="-0.07"/>
+  <arg name="socket_center_axis_offset" default="-0.15"/>
+  <arg name="gripper_open" default="0.55"/>
+  <arg name="gripper_closed" default="0.12"/>
+  <arg name="unscrew_turns" default="-1.0"/>
+  <arg name="screw_turns" default="1.0"/>
+  <arg name="wrist_roll_rate" default="0.8"/>
+  <arg name="socket_screw_duration" default="6.0"/>
+  <arg name="align_pos_tolerance" default="0.04"/>
+  <arg name="align_axis_tolerance_deg" default="3.0"/>
+  <arg name="centerline_tolerance" default="0.025"/>
+  <arg name="align_ready_duration" default="0.5"/>
+  <arg name="grasp_close_duration" default="1.0"/>
+  <arg name="enable_wrist_roll" default="true"/>
+  <arg name="enable_gripper_action" default="true"/>
+  <arg name="enable_kinematic_bulb_interaction" default="true"/>
+  <arg name="safe_demo_mode" default="false"/>
+  <arg name="bulb_model_name" default="light_bulb"/>
+
+  <param name="if_simulation" type="bool" value="true"/>
+  <group ns="iris_0">
+    <!-- 0 IDLE, 1 PICK_ALIGN, 2 GRASP_BULB, 3 UNSCREW_BULB, 4 TRANSFER_TO_SOCKET, 5 FINE_ALIGN_SOCKET, 6 SCREW_IN_BULB, 7 FINISH, 99 ABORT -->
+    <param name="mission_topic" value="$(arg mission_topic)"/>
+    <param name="bulb_target_topic" value="$(arg bulb_target_topic)"/>
+    <param name="socket_target_topic" value="$(arg socket_target_topic)"/>
+    <param name="stow_joint_deg" value="$(arg stow_joint_deg)"/>
+    <param name="stow_kp" value="$(arg stow_kp)"/>
+    <param name="stow_max_velocity" value="$(arg stow_max_velocity)"/>
+    <param name="bulb_axis_local" value="$(arg bulb_axis_local)"/>
+    <param name="socket_axis_local" value="$(arg socket_axis_local)"/>
+    <param name="bulb_center_axis_offset" value="$(arg bulb_center_axis_offset)"/>
+    <param name="socket_center_axis_offset" value="$(arg socket_center_axis_offset)"/>
+    <param name="gripper_open" value="$(arg gripper_open)"/>
+    <param name="gripper_closed" value="$(arg gripper_closed)"/>
+    <param name="unscrew_turns" value="$(arg unscrew_turns)"/>
+    <param name="screw_turns" value="$(arg screw_turns)"/>
+    <param name="wrist_roll_rate" value="$(arg wrist_roll_rate)"/>
+    <param name="socket_screw_duration" value="$(arg socket_screw_duration)"/>
+    <param name="align_pos_tolerance" value="$(arg align_pos_tolerance)"/>
+    <param name="align_axis_tolerance_deg" value="$(arg align_axis_tolerance_deg)"/>
+    <param name="centerline_tolerance" value="$(arg centerline_tolerance)"/>
+    <param name="align_ready_duration" value="$(arg align_ready_duration)"/>
+    <param name="grasp_close_duration" value="$(arg grasp_close_duration)"/>
+    <param name="enable_wrist_roll" value="$(arg enable_wrist_roll)"/>
+    <param name="enable_gripper_action" value="$(arg enable_gripper_action)"/>
+    <param name="enable_kinematic_bulb_interaction" value="$(arg enable_kinematic_bulb_interaction)"/>
+    <param name="safe_demo_mode" value="$(arg safe_demo_mode)"/>
+    <param name="bulb_model_name" value="$(arg bulb_model_name)"/>
+
+    <node pkg="arm_control" type="arm_control_bulb_0618.py" name="control_arm_bulb_0618" output="screen">
+    </node>
+  </group>
+</launch>

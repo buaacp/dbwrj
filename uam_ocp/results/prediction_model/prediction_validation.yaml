@@ -1,0 +1,105 @@
+pass: true
+dimensions:
+  nq: 13
+  nv: 12
+  nx: 25
+  ndx: 24
+  nu: 10
+  Fx:
+  - 24
+  - 24
+  Fu:
+  - 24
+  - 10
+test_a_single_step:
+  pass: true
+  samples: 8
+  errors:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  max_error: 0.0
+  threshold: 1.0e-10
+test_b_rollout:
+  pass: true
+  steps: 10
+  errors:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  max_error: 0.0
+  threshold: 1.0e-09
+test_c_linearization:
+  pass: true
+  source: Crocoddyl calcDiff
+  epsilons:
+  - 0.001
+  - 0.0001
+  - 1.0e-05
+  errors:
+  - 8.480711039024282e-05
+  - 8.478431582576177e-07
+  - 8.478199408661951e-09
+  successive_error_ratios:
+  - 100.02688535522053
+  - 100.0027384814043
+test_d_hover:
+  pass: true
+  duration_s: 2.0
+  dt_s: 0.01
+  equal_mg_over_4_zero_arm_torque:
+    control:
+    - 4.210942499999999
+    - 4.210942499999999
+    - 4.210942499999999
+    - 4.210942499999999
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    drift:
+      position_displacement_m: 14.731951308409922
+      base_angular_velocity_radps: 12.046413006771203
+      arm_joint_velocity_norm_radps: 177.84608350528805
+      finite: true
+  full_model_static_trim:
+    control:
+    - 4.276921198014797
+    - 4.144963801985201
+    - 4.271349767342855
+    - 4.150535232657143
+    - 3.1890136901673714e-06
+    - -0.2119502127233871
+    - -0.12108626609194358
+    - -0.05427129156314088
+    - -0.0007213093783659827
+    - -3.238826922451618e-05
+    drift:
+      position_displacement_m: 4.842608098432261e-11
+      base_angular_velocity_radps: 4.78585156711144e-09
+      arm_joint_velocity_norm_radps: 1.7777370542701384e-06
+      finite: true
+  analysis:
+  - Equal mg/4 thrust with zero arm torque is a nominal input, not an equilibrium
+    for the offset free arm.
+  - The arm joints receive no gravity compensation, damping, servo-loop torque, or
+    hard joint-limit reaction.
+  - Arm motion changes the center of mass and reacts on the base; small source inertias
+    amplify the response.
+  - The static trim includes arm gravity torque and asymmetric rotor allocation and
+    remains near equilibrium over this test.

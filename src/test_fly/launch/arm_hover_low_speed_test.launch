@@ -1,0 +1,39 @@
+<launch>
+    <arg name="vehicle_type" default="iris"/>
+    <arg name="vehicle_id" default="0"/>
+    <arg name="target_height" default="2.0"/>
+    <arg name="hover_duration" default="20.0"/>
+    <arg name="low_speed_duration" default="30.0"/>
+    <arg name="low_speed" default="0.2"/>
+    <arg name="low_speed_axis" default="x"/>
+    <arg name="settle_duration" default="8.0"/>
+    <arg name="pd_gain_xy" default="1.5"/>
+    <arg name="pd_gain_z" default="1.8"/>
+    <arg name="max_xy_speed" default="0.45"/>
+    <arg name="max_z_speed" default="0.35"/>
+    <arg name="control_rate" default="20.0"/>
+    <arg name="log_enabled" default="true"/>
+    <arg name="hold_after_test" default="true"/>
+
+    <node
+        pkg="test_fly"
+        type="arm_hover_low_speed_test.py"
+        name="arm_hover_low_speed_test"
+        output="screen">
+        <param name="vehicle_type" value="$(arg vehicle_type)"/>
+        <param name="vehicle_id" value="$(arg vehicle_id)"/>
+        <param name="target_height" value="$(arg target_height)"/>
+        <param name="hover_duration" value="$(arg hover_duration)"/>
+        <param name="low_speed_duration" value="$(arg low_speed_duration)"/>
+        <param name="low_speed" value="$(arg low_speed)"/>
+        <param name="low_speed_axis" value="$(arg low_speed_axis)"/>
+        <param name="settle_duration" value="$(arg settle_duration)"/>
+        <param name="pd_gain_xy" value="$(arg pd_gain_xy)"/>
+        <param name="pd_gain_z" value="$(arg pd_gain_z)"/>
+        <param name="max_xy_speed" value="$(arg max_xy_speed)"/>
+        <param name="max_z_speed" value="$(arg max_z_speed)"/>
+        <param name="control_rate" value="$(arg control_rate)"/>
+        <param name="log_enabled" value="$(arg log_enabled)"/>
+        <param name="hold_after_test" value="$(arg hold_after_test)"/>
+    </node>
+</launch>

@@ -161,7 +161,27 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/test_fly" TYPE PROGRAM FILES "/home/zlhq/px4_fly_ws/build/test_fly/catkin_generated/installspace/l1_adaptive.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/test_fly" TYPE PROGRAM FILES "/home/zlhq/px4_fly_ws/build/test_fly/catkin_generated/installspace/test_velocity_control.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/test_fly" TYPE PROGRAM FILES "/home/zlhq/px4_fly_ws/build/test_fly/catkin_generated/installspace/test_fly_bulb.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/test_fly" TYPE PROGRAM FILES "/home/zlhq/px4_fly_ws/build/test_fly/catkin_generated/installspace/test_fly_bulb_0615.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/test_fly" TYPE PROGRAM FILES "/home/zlhq/px4_fly_ws/build/test_fly/catkin_generated/installspace/test_fly_bulb_0618.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/test_fly" TYPE PROGRAM FILES "/home/zlhq/px4_fly_ws/build/test_fly/catkin_generated/installspace/arm_hover_low_speed_test.py")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)

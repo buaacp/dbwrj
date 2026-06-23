@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>uam_ocp_gazebo_bridge</name>
+  <version>0.1.0</version>
+  <description>Gazebo/PX4 validation bridge for UAM OCP models.</description>
+  <maintainer email="zlhq@todo.todo">zlhq</maintainer>
+  <license>BSD-3-Clause</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>mavros_msgs</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>rosgraph_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+</package>

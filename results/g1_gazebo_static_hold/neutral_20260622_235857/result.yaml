@@ -1,0 +1,81 @@
+status: ABORTED
+metrics: {}
+abort:
+  reason: TAKEOFF_NO_ASCENT
+  state: TAKEOFF_TRANSITION
+  sim_time_s: 16.495
+  actual_position:
+  - 0.005696783307939768
+  - 0.0018566736252978444
+  - -0.12116838246583939
+  actual_joint_position_rad:
+  - -0.008267287930925349
+  - 0.02522761473685975
+  - 0.03171699035327169
+  - 0.02529939472840681
+  - 0.009932054996247608
+  - -0.00010685844227342756
+  active_reference_position:
+  - -0.0033154058767408887
+  - 0.001343377723896184
+  - 0.04696514545284958
+  active_reference_kind: TAKEOFF_TRANSITION
+  active_joint_reference_rad:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  active_joint_reference_kind: NEUTRAL_HOLD
+  takeoff_tracking_diagnostics:
+    sim_elapsed_s: 2.019000000000002
+    takeoff_duration_s: 8.0
+    actual_position:
+    - 0.005696783307939768
+    - 0.0018566736252978444
+    - -0.12116838246583939
+    reference_position:
+    - -0.0033154058767408887
+    - 0.001343377723896184
+    - 0.04696514545284958
+    position_error_xyz:
+    - 0.009012189184680656
+    - 0.0005132959014016603
+    - -0.16813352791868896
+    position_error_norm_m: 0.16837566996738998
+    actual_velocity:
+    - 0.021123185753822327
+    - -0.004915627650916576
+    - -0.10249988734722137
+    speed_mps: 0.10476917140927483
+    initial_position:
+    - -0.003708658507093787
+    - 0.0015027207555249333
+    - -0.06607786566019058
+    final_hold_position:
+    - 0.0
+    - 0.0
+    - 1.0
+    actual_ascent_m: -0.055090516805648804
+    reference_ascent_m: 0.11304301111304016
+    offboard: true
+    armed: true
+interface_failure: null
+startup_telemetry:
+  mavros_state_first_seen_wall_s: 0.06827477499973611
+  pose_first_seen_wall_s: 0.06698750499890593
+  velocity_first_seen_wall_s: 0.06655694899927767
+  imu_first_seen_wall_s: 0.12151627299863321
+  joint_state_first_seen_wall_s: 0.04699033299948496
+  clock_first_seen_wall_s: 0.061899820999315125
+  all_required_topics_seen: true
+  seen_mavros_state: true
+  seen_pose: true
+  seen_velocity: true
+  seen_imu: true
+  seen_joint_state: true
+  seen_clock: true
+  initial_telemetry_wait_s: 0.12151627299863321
+  missing_topics: []
+joint_failure: null

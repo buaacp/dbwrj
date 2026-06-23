@@ -1,0 +1,8 @@
+# Gazebo T1 commands actually run
+cd /home/zlhq/px4_fly_ws
+source devel/setup.bash
+roslaunch uav_bulb_camera_pose sim_perception.launch gui:=false
+roslaunch uav_bulb_camera_pose evaluator.launch scenario_name:=T1_static_clear_20260619_224543 result_dir:=/home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/results/gazebo_online/T1_static_clear_20260619_224543
+rostopic hz /camera/camera/color/image_raw
+rostopic hz /socket/pose_camera
+rostopic echo -n1 /bulb_vision/diagnostics

@@ -1,0 +1,3 @@
+label,samples,duration_s,final_state,final_ready,uav_pos_rmse,uav_xy_rmse,uav_yaw_rmse_deg,arm_pos_final,arm_axis_final_deg,arm_centerline_final,arm_centerline_max
+anti_orbit_off,727,36.308,99.0,0.0,0.5382208099416179,0.4963902425151412,0.6832915466241685,0.166146,9.780925,0.063146,0.732261
+anti_orbit_on,881,44.0,2.0,2.0,0.3931493459669756,0.3511615581467317,1.0256452573019428,0.018681,0.395664,0.013487,0.5432

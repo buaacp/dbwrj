@@ -33,9 +33,9 @@
       </link>
     </model>
 
-    <!-- 添加无重量小球 -->
+    <!-- 添加无重量小球，作为灯泡中心目标点 -->
     <model name="weightless_ball">
-      <pose>0 0 0.72 0 0 0</pose>  <!-- 初始位置（离地10cm） -->
+      <pose>0.6 -0.35 0.235 0 0 0</pose>
       <link name="ball_link">
         <!-- 关闭重力影响 -->
         <gravity>0</gravity>
@@ -65,6 +65,158 @@
             <izz>0.0000001</izz>
           </inertia>
         </inertial>
+      </link>
+    </model>
+
+    <!-- 灯泡底座：静态地面灯座，供动态灯泡放置和对准 -->
+    <model name="light_bulb_fixture">
+      <static>true</static>
+      <pose>0.6 0.35 0 0 0 0</pose>
+
+      <!-- 地面固定底板 -->
+      <link name="fixture_mount_link">
+        <pose>0 0 0.0125 0 0 0</pose>
+        <collision name="mount_collision">
+          <geometry>
+            <box>
+              <size>0.22 0.22 0.025</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="mount_visual">
+          <geometry>
+            <box>
+              <size>0.22 0.22 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.18 1</ambient>
+            <diffuse>0.22 0.22 0.22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+
+      <!-- 竖直朝上的灯泡底座/灯座外壳 -->
+      <link name="socket_base_link">
+        <pose>0 0 0.085 0 0 0</pose>
+        <collision name="socket_collision">
+          <geometry>
+            <cylinder>
+              <radius>0.055</radius>
+              <length>0.12</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1.5</mu>
+                <mu2>1.5</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="socket_visual">
+          <geometry>
+            <cylinder>
+              <radius>0.055</radius>
+              <length>0.12</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.55 0.55 0.50 1</ambient>
+            <diffuse>0.65 0.65 0.58 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 动态灯泡：可被夹爪抓住并通过 wrist_roll_joint 带动旋转 -->
+    <model name="light_bulb">
+      <static>false</static>
+      <pose>0.6 -0.35 0.165 0 0 0</pose>
+      <link name="bulb_body_link">
+        <gravity>false</gravity>
+        <inertial>
+          <pose>0 0 0.035 0 0 0</pose>
+          <mass>0.05</mass>
+          <inertia>
+            <ixx>0.00008</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00008</iyy>
+            <iyz>0</iyz>
+            <izz>0.00005</izz>
+          </inertia>
+        </inertial>
+
+        <!-- 灯泡螺口，轴线竖直，机械臂从上方夹住后绕 z 轴旋转 -->
+        <collision name="thread_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.038</radius>
+              <length>0.055</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <contact>
+              <collide_bitmask>0</collide_bitmask>
+            </contact>
+            <friction>
+              <ode>
+                <mu>2.0</mu>
+                <mu2>2.0</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="thread_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.038</radius>
+              <length>0.055</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.85 0.72 0.35 1</ambient>
+            <diffuse>0.95 0.80 0.42 1</diffuse>
+          </material>
+        </visual>
+
+        <!-- 灯泡玻璃泡。中心与 weightless_ball 对齐，便于复用现有目标点 -->
+        <collision name="bulb_collision">
+          <pose>0 0 0.07 0 0 0</pose>
+          <geometry>
+            <sphere>
+              <radius>0.045</radius>
+            </sphere>
+          </geometry>
+          <surface>
+            <contact>
+              <collide_bitmask>0</collide_bitmask>
+            </contact>
+            <friction>
+              <ode>
+                <mu>2.0</mu>
+                <mu2>2.0</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="bulb_visual">
+          <pose>0 0 0.07 0 0 0</pose>
+          <geometry>
+            <sphere>
+              <radius>0.045</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <ambient>1.0 0.92 0.55 0.65</ambient>
+            <diffuse>1.0 0.92 0.55 0.65</diffuse>
+            <emissive>0.35 0.28 0.08 1</emissive>
+          </material>
+        </visual>
       </link>
     </model>
   </world>

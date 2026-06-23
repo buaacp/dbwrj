@@ -1,0 +1,10 @@
+image_topic: /camera/camera/color/image_raw
+camera_info_topic: /camera/camera/color/camera_info
+camera_frame_override: ""
+transport_hint: raw
+use_depth_validation: false
+aligned_depth_topic: /camera/camera/aligned_depth_to_color/image_raw
+expected_color_width: 1920
+expected_color_height: 1080
+expected_color_fps: 30
+expected_color_hfov_deg: 69.0

@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/zlhq/px4_fly_ws/devel/.private/uav_bulb_camera_pose/setup.sh

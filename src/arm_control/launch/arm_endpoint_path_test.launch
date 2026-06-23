@@ -1,0 +1,94 @@
+<launch>
+  <arg name="path_type" default="circle"/>
+  <arg name="target_frame" default="world"/>
+  <arg name="path_center" default="[0.0, 0.0, -0.24]"/>
+  <arg name="path_amplitude" default="[0.04, 0.04, 0.0]"/>
+  <arg name="path_period" default="12.0"/>
+  <arg name="test_duration" default="30.0"/>
+  <arg name="rate_hz" default="20.0"/>
+  <arg name="target_axis_yaw_deg" default="0.0"/>
+  <arg name="target_axis_pitch_deg" default="-90.0"/>
+  <arg name="waypoints" default="[]"/>
+  <arg name="use_current_center" default="true"/>
+  <arg name="use_current_axis" default="true"/>
+  <arg name="output_csv" default=""/>
+  <arg name="enable_gripper_open" default="true"/>
+  <arg name="gripper_open" default="0.55"/>
+  <arg name="stow_before_start" default="false"/>
+  <arg name="stow_joint_deg" default="[-45.0, 90.0, 45.0, 0.0]"/>
+  <arg name="enable_uav_workspace_tracking" default="true"/>
+  <arg name="uav_auto_offboard" default="false"/>
+  <arg name="uav_workspace_desired_local" default="[0.0, 0.0, -0.22]"/>
+  <arg name="use_current_workspace_desired" default="true"/>
+  <arg name="uav_workspace_gain" default="0.45"/>
+  <arg name="uav_workspace_z_scale" default="0.35"/>
+  <arg name="uav_max_xy_velocity" default="0.18"/>
+  <arg name="uav_max_z_velocity" default="0.08"/>
+  <arg name="uav_velocity_feedforward_gain" default="0.0"/>
+  <arg name="uav_follow_mode" default="workspace"/>
+  <arg name="uav_position_gain" default="0.6"/>
+  <arg name="uav_position_z_gain" default="0.25"/>
+  <arg name="uav_feedforward_scale_with_error" default="true"/>
+  <arg name="enable_adaptive_progress" default="true"/>
+  <arg name="continuous_start" default="true"/>
+  <arg name="adaptive_min_scale" default="0.0"/>
+  <arg name="adaptive_pos_slow_error" default="0.08"/>
+  <arg name="adaptive_pos_stop_error" default="0.25"/>
+  <arg name="adaptive_axis_slow_deg" default="8.0"/>
+  <arg name="adaptive_axis_stop_deg" default="30.0"/>
+  <arg name="adaptive_centerline_slow_error" default="0.05"/>
+  <arg name="adaptive_centerline_stop_error" default="0.20"/>
+  <arg name="adaptive_workspace_slow_error" default="0.20"/>
+  <arg name="adaptive_workspace_stop_error" default="0.55"/>
+  <arg name="adaptive_uav_saturation_slow" default="0.80"/>
+  <arg name="adaptive_uav_saturation_min_scale" default="0.25"/>
+
+  <param name="if_simulation" type="bool" value="true"/>
+  <group ns="iris_0">
+    <param name="path_type" value="$(arg path_type)"/>
+    <param name="target_frame" value="$(arg target_frame)"/>
+    <param name="path_center" value="$(arg path_center)"/>
+    <param name="path_amplitude" value="$(arg path_amplitude)"/>
+    <param name="path_period" value="$(arg path_period)"/>
+    <param name="test_duration" value="$(arg test_duration)"/>
+    <param name="rate_hz" value="$(arg rate_hz)"/>
+    <param name="target_axis_yaw_deg" value="$(arg target_axis_yaw_deg)"/>
+    <param name="target_axis_pitch_deg" value="$(arg target_axis_pitch_deg)"/>
+    <param name="waypoints" value="$(arg waypoints)"/>
+    <param name="use_current_center" value="$(arg use_current_center)"/>
+    <param name="use_current_axis" value="$(arg use_current_axis)"/>
+    <param name="output_csv" value="$(arg output_csv)"/>
+    <param name="enable_gripper_open" value="$(arg enable_gripper_open)"/>
+    <param name="gripper_open" value="$(arg gripper_open)"/>
+    <param name="stow_before_start" value="$(arg stow_before_start)"/>
+    <param name="stow_joint_deg" value="$(arg stow_joint_deg)"/>
+    <param name="enable_uav_workspace_tracking" value="$(arg enable_uav_workspace_tracking)"/>
+    <param name="uav_auto_offboard" value="$(arg uav_auto_offboard)"/>
+    <param name="uav_workspace_desired_local" value="$(arg uav_workspace_desired_local)"/>
+    <param name="use_current_workspace_desired" value="$(arg use_current_workspace_desired)"/>
+    <param name="uav_workspace_gain" value="$(arg uav_workspace_gain)"/>
+    <param name="uav_workspace_z_scale" value="$(arg uav_workspace_z_scale)"/>
+    <param name="uav_max_xy_velocity" value="$(arg uav_max_xy_velocity)"/>
+    <param name="uav_max_z_velocity" value="$(arg uav_max_z_velocity)"/>
+    <param name="uav_velocity_feedforward_gain" value="$(arg uav_velocity_feedforward_gain)"/>
+    <param name="uav_follow_mode" value="$(arg uav_follow_mode)"/>
+    <param name="uav_position_gain" value="$(arg uav_position_gain)"/>
+    <param name="uav_position_z_gain" value="$(arg uav_position_z_gain)"/>
+    <param name="uav_feedforward_scale_with_error" value="$(arg uav_feedforward_scale_with_error)"/>
+    <param name="enable_adaptive_progress" value="$(arg enable_adaptive_progress)"/>
+    <param name="continuous_start" value="$(arg continuous_start)"/>
+    <param name="adaptive_min_scale" value="$(arg adaptive_min_scale)"/>
+    <param name="adaptive_pos_slow_error" value="$(arg adaptive_pos_slow_error)"/>
+    <param name="adaptive_pos_stop_error" value="$(arg adaptive_pos_stop_error)"/>
+    <param name="adaptive_axis_slow_deg" value="$(arg adaptive_axis_slow_deg)"/>
+    <param name="adaptive_axis_stop_deg" value="$(arg adaptive_axis_stop_deg)"/>
+    <param name="adaptive_centerline_slow_error" value="$(arg adaptive_centerline_slow_error)"/>
+    <param name="adaptive_centerline_stop_error" value="$(arg adaptive_centerline_stop_error)"/>
+    <param name="adaptive_workspace_slow_error" value="$(arg adaptive_workspace_slow_error)"/>
+    <param name="adaptive_workspace_stop_error" value="$(arg adaptive_workspace_stop_error)"/>
+    <param name="adaptive_uav_saturation_slow" value="$(arg adaptive_uav_saturation_slow)"/>
+    <param name="adaptive_uav_saturation_min_scale" value="$(arg adaptive_uav_saturation_min_scale)"/>
+
+    <node pkg="arm_control" type="arm_endpoint_path_test.py" name="arm_endpoint_path_test" output="screen"/>
+  </group>
+</launch>

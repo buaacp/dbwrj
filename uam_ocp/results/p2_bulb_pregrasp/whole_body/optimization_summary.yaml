@@ -1,0 +1,25 @@
+strategy: WHOLE_BODY
+metrics:
+  pass: true
+  fddp_converged: true
+  iterations: 8
+  rollout_error: 0.0
+  terminal_position_error_m: 0.00019151621487591982
+  terminal_orientation_error_rad: 0.0010809324007665432
+  terminal_ee_linear_velocity_mps: 0.0019460720701383388
+  terminal_ee_angular_velocity_radps: 0.0007256443319961305
+  maximum_base_tilt_rad: 0.1670032124441167
+  maximum_rotor_occupancy: 0.47858177382833045
+  maximum_joint_torque_occupancy: 0.24135649536359147
+  minimum_rotor_margin_N: 0.22749129096109363
+  minimum_joint_torque_margin_Nm: 0.19982508026992568
+  delta_u_cost: 15.643796720512684
+  input_saturation: false
+  terminal_reference_trim_strict: true
+  minimum_arm_distance_to_fully_extended_rad: 1.0
+  passed_near_fully_extended: false
+  left_knuckle_max_abs_torque_Nm: 0.00017491973007434324
+  left_knuckle_static_margin_Nm: 0.19984637956497772
+  pose_source: SCENE_FILE
+delta_u_implementation: two-pass proximal previous-control reference; exact cross-node
+  delta-u requires control-state augmentation

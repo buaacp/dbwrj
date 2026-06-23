@@ -1,0 +1,7 @@
+set(uam_ocp_gazebo_bridge_SETUP_PY_SETUP_MODULE "distutils.core")
+set(uam_ocp_gazebo_bridge_SETUP_PY_VERSION "0.1.0")
+set(uam_ocp_gazebo_bridge_SETUP_PY_SCRIPTS "")
+set(uam_ocp_gazebo_bridge_SETUP_PY_PACKAGES "uam_ocp_gazebo_bridge")
+set(uam_ocp_gazebo_bridge_SETUP_PY_PACKAGE_DIRS "src/uam_ocp_gazebo_bridge")
+set(uam_ocp_gazebo_bridge_SETUP_PY_MODULES "")
+set(uam_ocp_gazebo_bridge_SETUP_PY_MODULE_DIRS "")

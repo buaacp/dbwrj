@@ -1,0 +1,58 @@
+<launch>
+  <arg name="vehicle_ns" default="/iris_0"/>
+  <arg name="target_pose_topic" default="/whole_body_control/target_pose"/>
+  <arg name="control_uav" default="true"/>
+  <arg name="control_arm" default="true"/>
+  <arg name="control_wrist_roll" default="true"/>
+  <arg name="auto_arm_offboard" default="true"/>
+  <arg name="setpoint_warmup_time" default="3.0"/>
+  <arg name="target_x" default="0.0"/>
+  <arg name="target_y" default="0.0"/>
+  <arg name="target_z" default="1.0"/>
+  <arg name="target_roll" default="0.0"/>
+  <arg name="target_pitch" default="0.0"/>
+  <arg name="target_yaw" default="0.0"/>
+  <arg name="kp_pos" default="0.3"/>
+  <arg name="kp_rot" default="0.2"/>
+  <arg name="damping" default="0.15"/>
+  <arg name="max_uav_velocity" default="0.12"/>
+  <arg name="max_uav_yaw_rate" default="0.15"/>
+  <arg name="max_arm_velocity" default="0.12"/>
+  <arg name="max_wrist_roll_velocity" default="0.2"/>
+  <arg name="log_enabled" default="true"/>
+  <arg name="log_rate" default="20.0"/>
+  <arg name="log_directory" default=""/>
+  <arg name="log_csv" default=""/>
+
+  <node pkg="whole_body_control" type="whole_body_pose_control.py" name="whole_body_pose_control" output="screen">
+    <param name="vehicle_ns" value="$(arg vehicle_ns)"/>
+    <param name="target_pose_topic" value="$(arg target_pose_topic)"/>
+    <param name="control_uav" value="$(arg control_uav)"/>
+    <param name="control_arm" value="$(arg control_arm)"/>
+    <param name="control_wrist_roll" value="$(arg control_wrist_roll)"/>
+    <param name="auto_arm_offboard" value="$(arg auto_arm_offboard)"/>
+    <param name="setpoint_warmup_time" value="$(arg setpoint_warmup_time)"/>
+
+    <!-- 爪心在 gripper_base_link 坐标系的估算位置，单位 m -->
+    <param name="gripper_center" value="[-0.00393, 0.00124, 0.10256]"/>
+
+    <!-- 机械臂 arm_base_joint 相对 UAV base_link 的安装位姿，来自 iris_arm_base.xacro -->
+    <param name="arm_mount_xyz" value="[-0.1, 0.0, -0.05]"/>
+    <param name="arm_mount_rpy" value="[0.0, 3.14159265359, 3.14159265359]"/>
+
+    <!-- 没收到 target_pose_topic 时使用这个静态目标；解锁并切 OFFBOARD 后会自动向这里收敛 -->
+    <param name="default_target_position" value="[$(arg target_x), $(arg target_y), $(arg target_z)]"/>
+    <param name="default_target_rpy" value="[$(arg target_roll), $(arg target_pitch), $(arg target_yaw)]"/>
+    <param name="kp_pos" value="$(arg kp_pos)"/>
+    <param name="kp_rot" value="$(arg kp_rot)"/>
+    <param name="damping" value="$(arg damping)"/>
+    <param name="max_uav_velocity" value="$(arg max_uav_velocity)"/>
+    <param name="max_uav_yaw_rate" value="$(arg max_uav_yaw_rate)"/>
+    <param name="max_arm_velocity" value="$(arg max_arm_velocity)"/>
+    <param name="max_wrist_roll_velocity" value="$(arg max_wrist_roll_velocity)"/>
+    <param name="log_enabled" value="$(arg log_enabled)"/>
+    <param name="log_rate" value="$(arg log_rate)"/>
+    <param name="log_directory" value="$(arg log_directory)"/>
+    <param name="log_csv" value="$(arg log_csv)"/>
+  </node>
+</launch>

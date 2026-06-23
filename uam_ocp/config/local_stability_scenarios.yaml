@@ -1,0 +1,45 @@
+linearization:
+  dt_s: 0.01
+  eigenvalue_tolerance: 1.0e-8
+  rank_relative_tolerance: 1.0e-9
+lqr_weights:
+  status: INITIAL_TUNING_NOT_IDENTIFIED
+  tangent_state_order: [base_position, base_rotation, arm_position, base_linear_velocity, base_angular_velocity, arm_velocity]
+  q_position: 10.0
+  q_rotation: 20.0
+  q_arm_position: 5.0
+  q_linear_velocity: 2.0
+  q_angular_velocity: 2.0
+  q_arm_velocity: 0.5
+  r_rotor_thrust: 5.0
+  r_arm_torque: 5.0
+rollout:
+  duration_s: 4.0
+  dt_s: 0.01
+  maximum_saturation_ratio: 0.20
+recovery_thresholds:
+  position_m: 0.01
+  rotation_deg: 1.0
+  arm_position_deg: 1.0
+  velocity_norm: 0.02
+disturbances:
+  body_pose:
+    base_position_m: [0.05, -0.05, 0.05]
+    base_rotation_deg: [3.0, -3.0, 2.0]
+  arm_configuration:
+    requested_joint_delta_deg: 5.0
+    alternating_signs: [1, -1, 1, -1, 1, -1]
+    limit_safety_fraction: 0.5
+  velocity:
+    base_linear_mps: [0.05, 0.05, -0.05]
+    base_angular_radps: [0.05, -0.05, 0.05]
+    joint_velocity_degps: 2.0
+    alternating_signs: [1, -1, 1, -1, 1, -1]
+  combined:
+    scale: 0.5
+selection:
+  required: [neutral, fully_extended, p2_terminal]
+  include_lowest_rotor_margin: true
+  include_lowest_joint_torque_margin: true
+source_static_trim_results: uam_ocp/results/static_trim/trim_results.yaml
+

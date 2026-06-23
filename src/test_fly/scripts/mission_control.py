@@ -20,11 +20,17 @@ class MissionPublisher:
 
 def main():
     pub_node = MissionPublisher()
+    argv = rospy.myargv(argv=sys.argv)
     
     # 模式1：命令行参数发布（支持多参数）
-    if len(sys.argv) > 1:
-        for arg in sys.argv[1:]:
+    if len(argv) > 1:
+        for arg in argv[1:]:
             pub_node.publish_value(arg)
+        return
+
+    if not sys.stdin.isatty():
+        rospy.loginfo("No interactive stdin detected; mission publisher is idle.")
+        rospy.spin()
         return
     
     # 模式2：交互式发布

@@ -1,0 +1,7 @@
+set(uav_bulb_camera_pose_SETUP_PY_SETUP_MODULE "distutils.core")
+set(uav_bulb_camera_pose_SETUP_PY_VERSION "0.1.0")
+set(uav_bulb_camera_pose_SETUP_PY_SCRIPTS "")
+set(uav_bulb_camera_pose_SETUP_PY_PACKAGES "uav_bulb_camera_pose")
+set(uav_bulb_camera_pose_SETUP_PY_PACKAGE_DIRS "./uav_bulb_camera_pose")
+set(uav_bulb_camera_pose_SETUP_PY_MODULES "")
+set(uav_bulb_camera_pose_SETUP_PY_MODULE_DIRS "")

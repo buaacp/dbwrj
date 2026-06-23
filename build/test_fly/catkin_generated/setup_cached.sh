@@ -8,6 +8,7 @@
 
 # modified environment variables
 export CMAKE_PREFIX_PATH="/home/zlhq/px4_fly_ws/devel/.private/test_fly:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH='/home/zlhq/px4_fly_ws/devel/lib:/home/zlhq/catkin_ws/devel/lib:/opt/ros/melodic/lib:/usr/local/lib:/home/zlhq/PX4_Firmware/build/px4_sitl_default/build_gazebo'
+export LD_LIBRARY_PATH="/home/zlhq/px4_fly_ws/devel/.private/test_fly/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/home/zlhq/px4_fly_ws/devel/.private/test_fly/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD='/home/zlhq/px4_fly_ws/build/test_fly'
 export ROS_PACKAGE_PATH="/home/zlhq/px4_fly_ws/src/test_fly:$ROS_PACKAGE_PATH"

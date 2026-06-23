@@ -1,0 +1,8 @@
+status: ABORTED
+historical_classification: ABORTED_FALSE_STALE_STATE
+metrics: {}
+abort:
+  reason: STATE_TIMEOUT
+  sim_time_s: 81.022
+  state: ARM_DEPLOY
+input: results/g1_gazebo_static_hold/neutral

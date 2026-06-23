@@ -1,0 +1,2378 @@
+pass: true
+config:
+  linearization:
+    dt_s: 0.01
+    eigenvalue_tolerance: 1.0e-08
+    rank_relative_tolerance: 1.0e-09
+  lqr_weights:
+    status: INITIAL_TUNING_NOT_IDENTIFIED
+    tangent_state_order:
+    - base_position
+    - base_rotation
+    - arm_position
+    - base_linear_velocity
+    - base_angular_velocity
+    - arm_velocity
+    q_position: 10.0
+    q_rotation: 20.0
+    q_arm_position: 5.0
+    q_linear_velocity: 2.0
+    q_angular_velocity: 2.0
+    q_arm_velocity: 0.5
+    r_rotor_thrust: 5.0
+    r_arm_torque: 5.0
+  rollout:
+    duration_s: 4.0
+    dt_s: 0.01
+    maximum_saturation_ratio: 0.2
+  recovery_thresholds:
+    position_m: 0.01
+    rotation_deg: 1.0
+    arm_position_deg: 1.0
+    velocity_norm: 0.02
+  disturbances:
+    body_pose:
+      base_position_m:
+      - 0.05
+      - -0.05
+      - 0.05
+      base_rotation_deg:
+      - 3.0
+      - -3.0
+      - 2.0
+    arm_configuration:
+      requested_joint_delta_deg: 5.0
+      alternating_signs:
+      - 1
+      - -1
+      - 1
+      - -1
+      - 1
+      - -1
+      limit_safety_fraction: 0.5
+    velocity:
+      base_linear_mps:
+      - 0.05
+      - 0.05
+      - -0.05
+      base_angular_radps:
+      - 0.05
+      - -0.05
+      - 0.05
+      joint_velocity_degps: 2.0
+      alternating_signs:
+      - 1
+      - -1
+      - 1
+      - -1
+      - 1
+      - -1
+    combined:
+      scale: 0.5
+  selection:
+    required:
+    - neutral
+    - fully_extended
+    - p2_terminal
+    include_lowest_rotor_margin: true
+    include_lowest_joint_torque_margin: true
+  source_static_trim_results: uam_ocp/results/static_trim/trim_results.yaml
+selection:
+  source: /home/zlhq/px4_fly_ws/uam_ocp/results/static_trim/trim_results.yaml
+  selected_names:
+  - neutral
+  - fully_extended
+  - p2_terminal
+  - left_offset
+  lowest_rotor_margin:
+    configuration: left_offset
+    rotor_index: 2
+    rotor_id: 2
+    rotor_name: front_left
+    bound_side: lower
+    margin_N: 3.9902111954212214
+  lowest_joint_torque_margin:
+    configuration: fully_extended
+    joint_index_zero_based: 5
+    joint_number_one_based: 6
+    joint_name: left_knuckle_joint
+    margin_Nm: 0.19984637956497772
+scenarios:
+- name: neutral
+  q:
+  - 0.0
+  - 0.0
+  - 1.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 1.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  u_eq:
+  - 4.252582762608844
+  - 4.169302237391154
+  - 4.247059276626706
+  - 4.174825723373292
+  - 3.1890152387133782e-06
+  - -0.1993066758961846
+  - -0.1222725500807977
+  - -0.05423774778269868
+  - -0.0007356237366404112
+  - 3.9518436960619664e-07
+  aba_acceleration_max: 2.2737367544323206e-13
+  open_spectral_radius: 1.0406794982989096
+  closed_spectral_radius: 0.9902571141857062
+  open_unstable_modes: 4
+  closed_unstable_modes: 0
+  controllability:
+    controllability_rank: 24
+    state_tangent_dimension: 24
+    controllability_singular_values:
+    - 38132.91624229233
+    - 3263.594360635774
+    - 994.9877557962029
+    - 841.810377318917
+    - 173.72833413866954
+    - 134.75709385503268
+    - 79.69036324747086
+    - 16.641643083209818
+    - 15.114452758006783
+    - 7.180019925661037
+    - 1.1788808607091423
+    - 0.9159025588816163
+    - 0.5295422919686223
+    - 0.5120926656194438
+    - 0.09875895531609101
+    - 0.07587762405498666
+    - 0.06544842551872537
+    - 0.05746820194479296
+    - 0.027713195144398774
+    - 0.024008819993188966
+    - 0.006729642896476751
+    - 0.003917598256604494
+    - 0.0024553012011862894
+    - 0.001229018161343856
+    rank_threshold: 3.813291624229234e-05
+    pbh_tested_modes: 21
+    pbh_minimum_rank: 24
+    uncontrollable_unstable_modes: []
+    stabilizable: true
+  open_eigenvalues:
+  - - 1.0
+    - 0.0
+  - - 1.0
+    - 0.0
+  - - 1.0000000000000009
+    - 0.0
+  - - 0.9932712829303423
+    - 0.11581087386732378
+  - - 0.9932712829303423
+    - -0.11581087386732378
+  - - 0.9937464428451396
+    - 0.11166023165223175
+  - - 0.9937464428451396
+    - -0.11166023165223175
+  - - 0.9982648161575581
+    - 0.058884266335915265
+  - - 0.9982648161575581
+    - -0.058884266335915265
+  - - 1.0406794982989096
+    - 0.0
+  - - 0.9609106373620275
+    - 0.0
+  - - 1.0238968133509887
+    - 0.0
+  - - 0.9766609163742012
+    - 0.0
+  - - 0.9999460370559607
+    - 0.01038859836938439
+  - - 0.9999460370559607
+    - -0.01038859836938439
+  - - 1.000000230044939
+    - 3.984390328717823e-07
+  - - 1.000000230044939
+    - -3.984390328717823e-07
+  - - 1.0000000070598558
+    - 0.0
+  - - 0.9999999929401395
+    - 0.0
+  - - 0.9999995399101285
+    - 0.0
+  - - 0.9999999999999759
+    - 0.0
+  - - 1.000000000000003
+    - 0.0
+  - - 1.000000000000023
+    - 0.0
+  - - 1.0000000000000002
+    - 0.0
+  closed_eigenvalues:
+  - - 0.6228217236081152
+    - 0.0
+  - - 0.40724749341138367
+    - 0.0
+  - - 0.0062142021067960445
+    - 0.0
+  - - 0.00013031667592094574
+    - 0.0
+  - - 8.480921224688422e-05
+    - 0.0
+  - - 1.7245302490225203e-07
+    - 0.0
+  - - 0.943279071588641
+    - 0.0
+  - - 0.9780315422981267
+    - 0.022135474215462726
+  - - 0.9780315422981267
+    - -0.022135474215462726
+  - - 0.9770824033846697
+    - 0.019326128773078585
+  - - 0.9770824033846697
+    - -0.019326128773078585
+  - - 0.9902230629432648
+    - 0.008212052767840438
+  - - 0.9902230629432648
+    - -0.008212052767840438
+  - - 0.9845556433000988
+    - 0.012440048553693652
+  - - 0.9845556433000988
+    - -0.012440048553693652
+  - - 0.9680780880806787
+    - 0.009305795803220222
+  - - 0.9680780880806787
+    - -0.009305795803220222
+  - - 0.9608421991045512
+    - 0.0
+  - - 0.9731679991641137
+    - 0.0
+  - - 0.9744069774732703
+    - 0.0
+  - - 0.9688619674736078
+    - 0.0
+  - - 0.9688730655389352
+    - 0.0
+  - - 0.9688732192776299
+    - 0.0
+  - - 0.9688732707985726
+    - 0.0
+  cases:
+  - case: body_pose
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: true
+      failure_reason: ERROR_THRESHOLDS_NOT_REACHED
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.08660254037844384
+          peak: 5.826462761098988
+          terminal: 5.826462761098988
+          threshold: 0.01
+        rotation:
+          initial: 0.0818631982963504
+          peak: 0.0818631983229557
+          terminal: 0.0818631983229557
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 6.365457951811087e-08
+          terminal: 6.365457951811087e-08
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 2.904834158568256
+          terminal: 2.904834158568256
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.252582762608844
+      - 4.169302237391154
+      - 4.247059276626706
+      - 4.174825723373292
+      rotor_maximum_N:
+      - 4.252582762608844
+      - 4.169302237391154
+      - 4.247059276626706
+      - 4.174825723373292
+      joint_maximum_absolute_torque_Nm:
+      - 3.1890152387133782e-06
+      - 0.1993066758961846
+      - 0.1222725500807977
+      - 0.05423774778269868
+      - 0.0007356237366404112
+      - 3.9518436960619664e-07
+      maximum_rotor_occupancy: 0.41112456206383274
+      maximum_joint_torque_occupancy: 0.1993066758961846
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 2.21
+      errors:
+        position:
+          initial: 0.08660254037844384
+          peak: 0.08660254037844384
+          terminal: 0.0011792390323232416
+          threshold: 0.01
+        rotation:
+          initial: 0.0818631982963504
+          peak: 0.0818631982963504
+          terminal: 6.690398870225866e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 0.02319193040277828
+          terminal: 5.9216169537563584e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 0.3182628438874683
+          terminal: 0.0005377681987594388
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.216493786631994
+      - 4.136165621997015
+      - 3.869579418989224
+      - 4.094017238720191
+      rotor_maximum_N:
+      - 4.301502815827212
+      - 4.193526624375047
+      - 4.298000873798132
+      - 4.397740957516032
+      joint_maximum_absolute_torque_Nm:
+      - 0.04522351769815214
+      - 0.238984382972835
+      - 0.1479751309034028
+      - 0.06665735952363284
+      - 0.0011334753838931596
+      - 0.00010214151772487576
+      maximum_rotor_occupancy: 0.425157939576416
+      maximum_joint_torque_occupancy: 0.238984382972835
+      maximum_control_deviation: 0.4473348449701388
+  - case: arm_configuration
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.0
+          peak: 3.610457605808062e+62
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 2.9392441983712816
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.21375830502697735
+          peak: 4.844452643480908e+66
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 4.844529483670347e+68
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.252582762608844
+      - 4.169302237391154
+      - 4.247059276626706
+      - 4.174825723373292
+      rotor_maximum_N:
+      - 4.252582762608844
+      - 4.169302237391154
+      - 4.247059276626706
+      - 4.174825723373292
+      joint_maximum_absolute_torque_Nm:
+      - 3.1890152387133782e-06
+      - 0.1993066758961846
+      - 0.1222725500807977
+      - 0.05423774778269868
+      - 0.0007356237366404112
+      - 3.9518436960619664e-07
+      maximum_rotor_occupancy: 0.41112456206383274
+      maximum_joint_torque_occupancy: 0.1993066758961846
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.12
+      errors:
+        position:
+          initial: 0.0
+          peak: 0.0015483178572377068
+          terminal: 1.765667222727144e-05
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 0.0020299513479308793
+          terminal: 6.156911252526399e-06
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.21375830502697735
+          peak: 0.21375830502697735
+          terminal: 1.7518273362435293e-06
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 0.6897878583137765
+          terminal: 2.4565106692067693e-05
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.252576225740017
+      - 4.150401211819202
+      - 4.241959434223332
+      - 4.173702615934699
+      rotor_maximum_N:
+      - 4.267154688144986
+      - 4.169942098248854
+      - 4.247279300605847
+      - 4.183622469251599
+      joint_maximum_absolute_torque_Nm:
+      - 0.05771628654731906
+      - 0.20576310695413372
+      - 0.12343888214836322
+      - 0.054941622390101
+      - 0.0007356202260706242
+      - 0.0001914934295409019
+      maximum_rotor_occupancy: 0.41253332394782205
+      maximum_joint_torque_occupancy: 0.20576310695413372
+      maximum_control_deviation: 0.06789802646799807
+  - case: velocity
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.0
+          peak: 2.7423196915163646e+54
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 2.9167894432238093
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 5.829922055083169e+58
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.14936806243263992
+          peak: 5.829925649780357e+60
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.252582762608844
+      - 4.169302237391154
+      - 4.247059276626706
+      - 4.174825723373292
+      rotor_maximum_N:
+      - 4.252582762608844
+      - 4.169302237391154
+      - 4.247059276626706
+      - 4.174825723373292
+      joint_maximum_absolute_torque_Nm:
+      - 3.1890152387133782e-06
+      - 0.1993066758961846
+      - 0.1222725500807977
+      - 0.05423774778269868
+      - 0.0007356237366404112
+      - 3.9518436960619664e-07
+      maximum_rotor_occupancy: 0.41112456206383274
+      maximum_joint_torque_occupancy: 0.1993066758961846
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.85
+      errors:
+        position:
+          initial: 0.0
+          peak: 0.029558558303497583
+          terminal: 0.00020488620148821824
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 0.018534247138766214
+          terminal: 7.356814445163254e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 0.0029996384412093696
+          terminal: 2.2311485266934892e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.14936806243263992
+          peak: 0.14936806243263992
+          terminal: 0.0007898805838561755
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.249212638651548
+      - 4.166219092600567
+      - 4.23558401494782
+      - 4.170445548570422
+      rotor_maximum_N:
+      - 4.319932327489361
+      - 4.259047291093529
+      - 4.260150270890107
+      - 4.201870436035502
+      joint_maximum_absolute_torque_Nm:
+      - 0.004916759282030898
+      - 0.20135596717395798
+      - 0.1236390192402043
+      - 0.05484366097825024
+      - 0.0007664497894207062
+      - 1.824894094437822e-05
+      maximum_rotor_occupancy: 0.41763567822837877
+      maximum_joint_torque_occupancy: 0.20135596717395798
+      maximum_control_deviation: 0.1134199531802167
+  - case: combined
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.043301270189221905
+          peak: 1.460901645895259e+64
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.040931599148175214
+          peak: 2.679913408747973
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.10687915251348867
+          peak: 9.400065469440915e+69
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.07468403121631996
+          peak: 9.40047777320466e+71
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.252582762608844
+      - 4.169302237391154
+      - 4.247059276626706
+      - 4.174825723373292
+      rotor_maximum_N:
+      - 4.252582762608844
+      - 4.169302237391154
+      - 4.247059276626706
+      - 4.174825723373292
+      joint_maximum_absolute_torque_Nm:
+      - 3.1890152387133782e-06
+      - 0.1993066758961846
+      - 0.1222725500807977
+      - 0.05423774778269868
+      - 0.0007356237366404112
+      - 3.9518436960619664e-07
+      maximum_rotor_occupancy: 0.41112456206383274
+      maximum_joint_torque_occupancy: 0.1993066758961846
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.68
+      errors:
+        position:
+          initial: 0.043301270189221905
+          peak: 0.043301270189221905
+          terminal: 0.0005026090019318635
+          threshold: 0.01
+        rotation:
+          initial: 0.040931599148175214
+          peak: 0.04103952730384494
+          terminal: 6.457518538564853e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.10687915251348867
+          peak: 0.10687915251348867
+          terminal: 2.3192860360182563e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.07468403121631996
+          peak: 0.3542561250186313
+          terminal: 0.0005979756452881658
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.2525221826821795
+      - 4.1668620428617
+      - 4.063601278273221
+      - 4.14587495191326
+      rotor_maximum_N:
+      - 4.314311712566407
+      - 4.206557883741006
+      - 4.269670332657308
+      - 4.28849162598238
+      joint_maximum_absolute_torque_Nm:
+      - 0.053929876271370414
+      - 0.20290720231792367
+      - 0.12583771908403718
+      - 0.05557926923444898
+      - 0.0007928798279577322
+      - 0.00015574435192027485
+      maximum_rotor_occupancy: 0.41709229718732144
+      maximum_joint_torque_occupancy: 0.20290720231792367
+      maximum_control_deviation: 0.23192086130906442
+  all_closed_recovered: true
+- name: fully_extended
+  q:
+  - 0.0
+  - 0.0
+  - 1.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 1.0
+  - 0.0
+  - -1.2
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  u_eq:
+  - 4.158005066795607
+  - 4.26387993320439
+  - 4.152667890915404
+  - 4.269217109084594
+  - 3.1890213087050966e-06
+  - -0.15017465238704034
+  - -0.05017548305098306
+  - -0.024882924417762173
+  - -0.00026819692475862737
+  - -0.00015362043502229736
+  aba_acceleration_max: 1.5276668818842154e-13
+  open_spectral_radius: 1.2677371015070216
+  closed_spectral_radius: 0.9902551349353982
+  open_unstable_modes: 4
+  closed_unstable_modes: 0
+  controllability:
+    controllability_rank: 24
+    state_tangent_dimension: 24
+    controllability_singular_values:
+    - 200245.9252907166
+    - 57084.64604180435
+    - 1367.4899644152301
+    - 922.1618893555524
+    - 562.2952081338473
+    - 148.04025209578822
+    - 25.55347635544537
+    - 17.457823610481718
+    - 10.70316805066478
+    - 6.1418934158855905
+    - 2.0358734484704972
+    - 0.6751402833682475
+    - 0.6070985293318261
+    - 0.32588176962403087
+    - 0.10070152414327938
+    - 0.08013558719373025
+    - 0.05749307254949834
+    - 0.04645597268351458
+    - 0.026930996846317296
+    - 0.013087769491451615
+    - 0.0068602397566138494
+    - 0.003918217722092265
+    - 0.001124061283704074
+    - 0.0005425985948365351
+    rank_threshold: 0.00020024592529071662
+    pbh_tested_modes: 20
+    pbh_minimum_rank: 24
+    uncontrollable_unstable_modes: []
+    stabilizable: true
+  open_eigenvalues:
+  - - 1.0
+    - 0.0
+  - - 1.0000000000000007
+    - 0.0
+  - - 0.9999999999999999
+    - 0.0
+  - - 1.2677371015070216
+    - 0.0
+  - - 0.7888070790160298
+    - 0.0
+  - - 1.1484413881466922
+    - 0.0
+  - - 0.870745351326776
+    - 0.0
+  - - 1.1147946813472545
+    - 0.0
+  - - 0.8970261669991781
+    - 0.0
+  - - 0.9976951324096124
+    - 0.06785589706253856
+  - - 0.9976951324096124
+    - -0.06785589706253856
+  - - 1.0542739304587614
+    - 0.0
+  - - 0.9485200867718079
+    - 0.0
+  - - 0.9999414338258408
+    - 0.010822611437280909
+  - - 0.9999414338258408
+    - -0.010822611437280909
+  - - 1.0000000013723502
+    - 0.0
+  - - 0.9999999986276507
+    - 0.0
+  - - 1.0000000014017603
+    - 0.0
+  - - 0.9999999985982441
+    - 0.0
+  - - 0.9999999999999998
+    - 1.4469388857177633e-09
+  - - 0.9999999999999998
+    - -1.4469388857177633e-09
+  - - 0.9999999999999984
+    - 1.2790736255229202e-15
+  - - 0.9999999999999984
+    - -1.2790736255229202e-15
+  - - 0.9999999999999996
+    - 0.0
+  closed_eigenvalues:
+  - - 0.22141000052245446
+    - 0.0
+  - - 0.6396491457648384
+    - 0.0
+  - - 0.006674016656622507
+    - 0.0
+  - - 0.00013522050548047177
+    - 0.0
+  - - 7.58867317564539e-05
+    - 0.0
+  - - 1.738426657550947e-07
+    - 0.0
+  - - 0.9253453126072755
+    - 0.0
+  - - 0.961483541501565
+    - 0.011265177319151807
+  - - 0.961483541501565
+    - -0.011265177319151807
+  - - 0.9765960187509116
+    - 0.0202837321499264
+  - - 0.9765960187509116
+    - -0.0202837321499264
+  - - 0.9770817365887909
+    - 0.018900503142009698
+  - - 0.9770817365887909
+    - -0.018900503142009698
+  - - 0.990221078385807
+    - 0.008212684480323472
+  - - 0.990221078385807
+    - -0.008212684480323472
+  - - 0.984370499383169
+    - 0.01254075261187393
+  - - 0.984370499383169
+    - -0.01254075261187393
+  - - 0.9739945253020235
+    - 0.0
+  - - 0.974312470839293
+    - 0.0
+  - - 0.9668613546840962
+    - 0.0
+  - - 0.9688513237913926
+    - 0.0
+  - - 0.9688683343859408
+    - 0.0
+  - - 0.9688732338836195
+    - 0.0
+  - - 0.9688732698752974
+    - 0.0
+  cases:
+  - case: body_pose
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.08660254037844384
+          peak: 4.63737754165336e+50
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.0818631982963504
+          peak: 3.0917647868668134
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 4.6743665945327285e+55
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 4.674368140119946e+57
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.158005066795607
+      - 4.26387993320439
+      - 4.152667890915404
+      - 4.269217109084594
+      rotor_maximum_N:
+      - 4.158005066795607
+      - 4.26387993320439
+      - 4.152667890915404
+      - 4.269217109084594
+      joint_maximum_absolute_torque_Nm:
+      - 3.1890213087050966e-06
+      - 0.15017465238704034
+      - 0.05017548305098306
+      - 0.024882924417762173
+      - 0.00026819692475862737
+      - 0.00015362043502229736
+      maximum_rotor_occupancy: 0.412732711461933
+      maximum_joint_torque_occupancy: 0.15017465238704034
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 2.18
+      errors:
+        position:
+          initial: 0.08660254037844384
+          peak: 0.08660254037844384
+          terminal: 0.0011706762213065788
+          threshold: 0.01
+        rotation:
+          initial: 0.0818631982963504
+          peak: 0.0818631982963504
+          terminal: 5.447181539493589e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 0.019488247267035165
+          terminal: 1.5219650923545046e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 0.3412362578959943
+          terminal: 0.0005145805630054732
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.120026153238737
+      - 4.223606256415588
+      - 3.7726798358966076
+      - 4.198655267935198
+      rotor_maximum_N:
+      - 4.2082518101803315
+      - 4.286353825535647
+      - 4.1910257949322425
+      - 4.493025298423178
+      joint_maximum_absolute_torque_Nm:
+      - 0.0005448484839155053
+      - 0.15085738598618006
+      - 0.050719120635907076
+      - 0.025038368583261354
+      - 0.0003116602683003461
+      - 0.00015727451593742852
+      maximum_rotor_occupancy: 0.4343696904378994
+      maximum_joint_torque_occupancy: 0.15085738598618006
+      maximum_control_deviation: 0.4456769360351761
+  - case: arm_configuration
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.0
+          peak: 7.142147356989862e+86
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 2.452102241697887
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.2137583050269773
+          peak: 3.1791178025465645e+90
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 3.179152999927319e+92
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.158005066795607
+      - 4.26387993320439
+      - 4.152667890915404
+      - 4.269217109084594
+      rotor_maximum_N:
+      - 4.158005066795607
+      - 4.26387993320439
+      - 4.152667890915404
+      - 4.269217109084594
+      joint_maximum_absolute_torque_Nm:
+      - 3.1890213087050966e-06
+      - 0.15017465238704034
+      - 0.05017548305098306
+      - 0.024882924417762173
+      - 0.00026819692475862737
+      - 0.00015362043502229736
+      maximum_rotor_occupancy: 0.412732711461933
+      maximum_joint_torque_occupancy: 0.15017465238704034
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.1300000000000001
+      errors:
+        position:
+          initial: 0.0
+          peak: 0.0017257018742484636
+          terminal: 1.528798982535899e-05
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 0.0008352804046536437
+          terminal: 2.516897038082575e-06
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.2137583050269773
+          peak: 0.2137583050269773
+          terminal: 1.029691287320154e-06
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 0.7404456853940783
+          terminal: 1.0522466418149663e-05
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.151590821017066
+      - 4.262971180569253
+      - 4.118238164316165
+      - 4.269225075718732
+      rotor_maximum_N:
+      - 4.158760552706297
+      - 4.268610464772635
+      - 4.152709948961894
+      - 4.304440641122879
+      joint_maximum_absolute_torque_Nm:
+      - 0.04095242034813122
+      - 0.1501862510516811
+      - 0.05019334794910188
+      - 0.024883458789378275
+      - 0.0008699443714285601
+      - 0.00015362114543379136
+      maximum_rotor_occupancy: 0.4161379971417107
+      maximum_joint_torque_occupancy: 0.1501862510516811
+      maximum_control_deviation: 0.08612835497675626
+  - case: velocity
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.0
+          peak: 1.2295944976959906e+78
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 3.0874504145880652
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 8.005274329405017e+82
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.14936806243263992
+          peak: 8.00527621682719e+84
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.158005066795607
+      - 4.26387993320439
+      - 4.152667890915404
+      - 4.269217109084594
+      rotor_maximum_N:
+      - 4.158005066795607
+      - 4.26387993320439
+      - 4.152667890915404
+      - 4.269217109084594
+      joint_maximum_absolute_torque_Nm:
+      - 3.1890213087050966e-06
+      - 0.15017465238704034
+      - 0.05017548305098306
+      - 0.024882924417762173
+      - 0.00026819692475862737
+      - 0.00015362043502229736
+      maximum_rotor_occupancy: 0.412732711461933
+      maximum_joint_torque_occupancy: 0.15017465238704034
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.86
+      errors:
+        position:
+          initial: 0.0
+          peak: 0.028866218127518488
+          terminal: 0.00020674637118590775
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 0.018550079288019116
+          terminal: 6.638995872251681e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 0.0055534023250648264
+          terminal: 1.1084040613637474e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.14936806243263992
+          peak: 0.14936806243263992
+          terminal: 0.0007890274153814956
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.154874959908913
+      - 4.260698608446988
+      - 4.144270601081795
+      - 4.2654035321079755
+      rotor_maximum_N:
+      - 4.2276915796178205
+      - 4.350389808337106
+      - 4.1671003774262845
+      - 4.294149115386327
+      joint_maximum_absolute_torque_Nm:
+      - 0.006842703008379418
+      - 0.15292277386897565
+      - 0.05169003989930852
+      - 0.025608322214615363
+      - 0.0002838214552027515
+      - 0.0001551037715430881
+      maximum_rotor_occupancy: 0.4205801990464557
+      maximum_joint_torque_occupancy: 0.15292277386897565
+      maximum_control_deviation: 0.11323482257042213
+  - case: combined
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.043301270189221905
+          peak: 1.0430026917198676e+88
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.040931599148175214
+          peak: 1.9582714932292524
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.10687915251348865
+          peak: 6.023576270583756e+91
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.07468403121631996
+          peak: 6.023615326758679e+93
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.158005066795607
+      - 4.26387993320439
+      - 4.152667890915404
+      - 4.269217109084594
+      rotor_maximum_N:
+      - 4.158005066795607
+      - 4.26387993320439
+      - 4.152667890915404
+      - 4.269217109084594
+      joint_maximum_absolute_torque_Nm:
+      - 3.1890213087050966e-06
+      - 0.15017465238704034
+      - 0.05017548305098306
+      - 0.024882924417762173
+      - 0.00026819692475862737
+      - 0.00015362043502229736
+      maximum_rotor_occupancy: 0.412732711461933
+      maximum_joint_torque_occupancy: 0.15017465238704034
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.6500000000000001
+      errors:
+        position:
+          initial: 0.043301270189221905
+          peak: 0.043301270189221905
+          terminal: 0.0004966858886765484
+          threshold: 0.01
+        rotation:
+          initial: 0.040931599148175214
+          peak: 0.04119772472527701
+          terminal: 5.58508938909627e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.10687915251348865
+          peak: 0.10687915251348865
+          terminal: 7.0336554861895005e-06
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.07468403121631996
+          peak: 0.3479708219116375
+          terminal: 0.0005934378148170677
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.157951097263856
+      - 4.263821580136018
+      - 3.9526752433618264
+      - 4.248129505863642
+      rotor_maximum_N:
+      - 4.215558841314065
+      - 4.309222309957893
+      - 4.168149890102588
+      - 4.396826181284719
+      joint_maximum_absolute_torque_Nm:
+      - 0.023760813139072086
+      - 0.15042617153683147
+      - 0.05031357520781042
+      - 0.02494177644323435
+      - 0.00038594302700340963
+      - 0.00015365682608409857
+      maximum_rotor_occupancy: 0.4250695022670256
+      maximum_joint_torque_occupancy: 0.15042617153683147
+      maximum_control_deviation: 0.24909869845020532
+  all_closed_recovered: true
+- name: p2_terminal
+  q:
+  - 0.0
+  - 0.0
+  - 1.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 1.0
+  - -1.0429661330771637e-07
+  - -0.1816346618818667
+  - -0.01072821595925482
+  - -0.0076325911212867
+  - -1.2852902611568645e-07
+  - 2.1386733524119963e-06
+  u_eq:
+  - 4.274938230689971
+  - 4.146946769310027
+  - 4.269370755967829
+  - 4.152514244032169
+  - 3.188980559057056e-06
+  - -0.21092009671286374
+  - -0.12118243022063102
+  - -0.05427131510585027
+  - -0.000721309883665362
+  - -3.238768477809232e-05
+  aba_acceleration_max: 8.526512829121202e-14
+  open_spectral_radius: 1.1006890518372536
+  closed_spectral_radius: 0.990257706060025
+  open_unstable_modes: 4
+  closed_unstable_modes: 0
+  controllability:
+    controllability_rank: 24
+    state_tangent_dimension: 24
+    controllability_singular_values:
+    - 56859.487374359116
+    - 3180.700805439622
+    - 2518.441146798503
+    - 838.7177501331811
+    - 144.3654825074973
+    - 132.81395455988536
+    - 49.876097053451396
+    - 18.242225526054888
+    - 13.177167869944457
+    - 7.170554135840114
+    - 1.106837767607764
+    - 0.8572337181135466
+    - 0.502456255251679
+    - 0.49963107034406595
+    - 0.09845025353017652
+    - 0.07534369680471058
+    - 0.06176823594496229
+    - 0.057441358099976615
+    - 0.026327012989288683
+    - 0.023101199601420305
+    - 0.006708567743928535
+    - 0.003917332579044348
+    - 0.0021607441412244592
+    - 0.0011220463317557212
+    rank_threshold: 5.685948737435912e-05
+    pbh_tested_modes: 20
+    pbh_minimum_rank: 24
+    uncontrollable_unstable_modes: []
+    stabilizable: true
+  open_eigenvalues:
+  - - 0.999999999999999
+    - 0.0
+  - - 0.9999999999999999
+    - 0.0
+  - - 0.9999999999999998
+    - 0.0
+  - - 0.9935905982190016
+    - 0.11303859133416111
+  - - 0.9935905982190016
+    - -0.11303859133416111
+  - - 1.1006890518372536
+    - 0.0
+  - - 0.9955037879777187
+    - 0.09472174049294806
+  - - 0.9955037879777187
+    - -0.09472174049294806
+  - - 1.0723801643246522
+    - 0.0
+  - - 0.9085218012578726
+    - 0.0
+  - - 0.93250512576365
+    - 0.0
+  - - 0.9788874194289919
+    - 0.0
+  - - 0.974565524652889
+    - 0.0
+  - - 1.0260982711820943
+    - 0.0
+  - - 1.0215679353437013
+    - 0.0
+  - - 1.0000000000000013
+    - 1.2024580965269234e-09
+  - - 1.0000000000000013
+    - -1.2024580965269234e-09
+  - - 0.9999999999999969
+    - 1.8997762801543976e-09
+  - - 0.9999999999999969
+    - -1.8997762801543976e-09
+  - - 1.0000000000000013
+    - 2.0712446397640188e-10
+  - - 1.0000000000000013
+    - -2.0712446397640188e-10
+  - - 1.0000000000000016
+    - 2.993744743494415e-15
+  - - 1.0000000000000016
+    - -2.993744743494415e-15
+  - - 1.0
+    - 0.0
+  closed_eigenvalues:
+  - - 0.6285068250398443
+    - 0.0
+  - - 0.45206273176435724
+    - 0.0
+  - - 0.006582574019627427
+    - 0.0
+  - - 0.00013009270562077934
+    - 0.0
+  - - 8.367918805119367e-05
+    - 0.0
+  - - 1.726152042325913e-07
+    - 0.0
+  - - 0.9390298598603919
+    - 0.0
+  - - 0.9779752515713965
+    - 0.02174477567373615
+  - - 0.9779752515713965
+    - -0.02174477567373615
+  - - 0.9770775986562974
+    - 0.019183149830682415
+  - - 0.9770775986562974
+    - -0.019183149830682415
+  - - 0.9902236606289123
+    - 0.008211354452200672
+  - - 0.9902236606289123
+    - -0.008211354452200672
+  - - 0.9845863969718152
+    - 0.012422506091106705
+  - - 0.9845863969718152
+    - -0.012422506091106705
+  - - 0.967509325205487
+    - 0.00640872229041439
+  - - 0.967509325205487
+    - -0.00640872229041439
+  - - 0.9612680937393043
+    - 0.0
+  - - 0.9725005717245521
+    - 0.0
+  - - 0.97444038762761
+    - 0.0
+  - - 0.9688709178398952
+    - 0.0
+  - - 0.9688732702298548
+    - 0.0
+  - - 0.9688730794871894
+    - 0.0
+  - - 0.968873072471764
+    - 0.0
+  cases:
+  - case: body_pose
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: true
+      failure_reason: ERROR_THRESHOLDS_NOT_REACHED
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.08660254037844384
+          peak: 5.826382501536544
+          terminal: 5.826382501536544
+          threshold: 0.01
+        rotation:
+          initial: 0.0818631982963504
+          peak: 0.13103627987996772
+          terminal: 0.13103627987996772
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 4.073174185395308
+          terminal: 3.504797067233511
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 63.79171943996106
+          terminal: 63.79171943996106
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.274938230689971
+      - 4.146946769310027
+      - 4.269370755967829
+      - 4.152514244032169
+      rotor_maximum_N:
+      - 4.274938230689971
+      - 4.146946769310027
+      - 4.269370755967829
+      - 4.152514244032169
+      joint_maximum_absolute_torque_Nm:
+      - 3.188980559057056e-06
+      - 0.21092009671286374
+      - 0.12118243022063102
+      - 0.05427131510585027
+      - 0.000721309883665362
+      - 3.238768477809232e-05
+      maximum_rotor_occupancy: 0.41328580913123775
+      maximum_joint_torque_occupancy: 0.21092009671286374
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 2.2
+      errors:
+        position:
+          initial: 0.08660254037844384
+          peak: 0.08660254037844384
+          terminal: 0.0011803398099031117
+          threshold: 0.01
+        rotation:
+          initial: 0.0818631982963504
+          peak: 0.0818631982963504
+          terminal: 6.680191264665351e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 0.01956216787394248
+          terminal: 5.4704972764227165e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 0.32395582701984776
+          terminal: 0.0005323980005709617
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.23786374825744
+      - 4.115266848539487
+      - 3.89162680005034
+      - 4.073175944408149
+      rotor_maximum_N:
+      - 4.323805817875984
+      - 4.172080572614033
+      - 4.31743668918018
+      - 4.377278491265239
+      joint_maximum_absolute_torque_Nm:
+      - 0.042352533221807695
+      - 0.24243486577571075
+      - 0.14148499296523803
+      - 0.06402760585857015
+      - 0.0010768900008302509
+      - 5.6928018803739064e-05
+      maximum_rotor_occupancy: 0.42317970118677856
+      maximum_joint_torque_occupancy: 0.24243486577571075
+      maximum_control_deviation: 0.447097402974446
+  - case: arm_configuration
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.0
+          peak: 6.788540449092258e+64
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 3.087935453855213
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.21375830502697735
+          peak: 4.0712277944100884e+68
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 4.071297384726838e+70
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.274938230689971
+      - 4.146946769310027
+      - 4.269370755967829
+      - 4.152514244032169
+      rotor_maximum_N:
+      - 4.274938230689971
+      - 4.146946769310027
+      - 4.269370755967829
+      - 4.152514244032169
+      joint_maximum_absolute_torque_Nm:
+      - 3.188980559057056e-06
+      - 0.21092009671286374
+      - 0.12118243022063102
+      - 0.05427131510585027
+      - 0.000721309883665362
+      - 3.238768477809232e-05
+      maximum_rotor_occupancy: 0.41328580913123775
+      maximum_joint_torque_occupancy: 0.21092009671286374
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.1300000000000001
+      errors:
+        position:
+          initial: 0.0
+          peak: 0.0014570461060102635
+          terminal: 1.922946055627393e-05
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 0.002031274638744
+          terminal: 6.8893998844686714e-06
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.21375830502697735
+          peak: 0.21375830502697735
+          terminal: 1.6168722873258835e-06
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 0.6851094525947604
+          terminal: 2.6138839615452785e-05
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.274932416746022
+      - 4.129424189667041
+      - 4.261018107337387
+      - 4.151634125500817
+      rotor_maximum_N:
+      - 4.28736432375285
+      - 4.1475962733229235
+      - 4.269422390713362
+      - 4.167023868504482
+      joint_maximum_absolute_torque_Nm:
+      - 0.061701516832214844
+      - 0.21567277026217072
+      - 0.12167465597862098
+      - 0.05436351635473328
+      - 0.0007213064947435927
+      - 0.0001625706284540925
+      maximum_rotor_occupancy: 0.4144871195709919
+      maximum_joint_torque_occupancy: 0.21567277026217072
+      maximum_control_deviation: 0.0733527017358222
+  - case: velocity
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.0
+          peak: 6.385666514981653e+99
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 3.1295678369732114
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 1.673988729352738e+104
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.14936806243263992
+          peak: 1.674081139801054e+106
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.274938230689971
+      - 4.146946769310027
+      - 4.269370755967829
+      - 4.152514244032169
+      rotor_maximum_N:
+      - 4.274938230689971
+      - 4.146946769310027
+      - 4.269370755967829
+      - 4.152514244032169
+      joint_maximum_absolute_torque_Nm:
+      - 3.188980559057056e-06
+      - 0.21092009671286374
+      - 0.12118243022063102
+      - 0.05427131510585027
+      - 0.000721309883665362
+      - 3.238768477809232e-05
+      maximum_rotor_occupancy: 0.41328580913123775
+      maximum_joint_torque_occupancy: 0.21092009671286374
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.85
+      errors:
+        position:
+          initial: 0.0
+          peak: 0.029408980148898176
+          terminal: 0.00020409768887021703
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 0.01851369022584383
+          terminal: 7.425304286035189e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 0.0031371494670277816
+          terminal: 2.043507745020823e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.14936806243263992
+          peak: 0.14936806243263992
+          terminal: 0.0007887105477720794
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.271594399712143
+      - 4.143847661959172
+      - 4.258695846508142
+      - 4.147519587021621
+      rotor_maximum_N:
+      - 4.34248464841382
+      - 4.235881535260854
+      - 4.283433851411236
+      - 4.178951094787427
+      joint_maximum_absolute_torque_Nm:
+      - 0.006221088795915049
+      - 0.21312507948519255
+      - 0.12257793930334462
+      - 0.05489547348846063
+      - 0.0007521754160951381
+      - 3.336706167084631e-05
+      maximum_rotor_occupancy: 0.41981595632787033
+      maximum_joint_torque_occupancy: 0.21312507948519255
+      maximum_control_deviation: 0.11317847816087921
+  - case: combined
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.043301270189221905
+          peak: 2.4793893565001337e+82
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.040931599148175214
+          peak: 2.4415798734536867
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.10687915251348867
+          peak: 1.0722777534376841e+86
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.07468403121631996
+          peak: 1.0723413833033691e+88
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.274938230689971
+      - 4.146946769310027
+      - 4.269370755967829
+      - 4.152514244032169
+      rotor_maximum_N:
+      - 4.274938230689971
+      - 4.146946769310027
+      - 4.269370755967829
+      - 4.152514244032169
+      joint_maximum_absolute_torque_Nm:
+      - 3.188980559057056e-06
+      - 0.21092009671286374
+      - 0.12118243022063102
+      - 0.05427131510585027
+      - 0.000721309883665362
+      - 3.238768477809232e-05
+      maximum_rotor_occupancy: 0.41328580913123775
+      maximum_joint_torque_occupancy: 0.21092009671286374
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.67
+      errors:
+        position:
+          initial: 0.043301270189221905
+          peak: 0.043301270189221905
+          terminal: 0.0005044158172781825
+          threshold: 0.01
+        rotation:
+          initial: 0.040931599148175214
+          peak: 0.04106208917054022
+          terminal: 6.449923763458027e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.10687915251348867
+          peak: 0.10687915251348867
+          terminal: 2.2592585378651324e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.07468403121631996
+          peak: 0.3442903043561187
+          terminal: 0.0005962850058086474
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.274887138669064
+      - 4.144921356217087
+      - 4.083718510431281
+      - 4.125119297767017
+      rotor_maximum_N:
+      - 4.336733851290254
+      - 4.185100331811959
+      - 4.290251045160154
+      - 4.269653851379586
+      joint_maximum_absolute_torque_Nm:
+      - 0.055139163915248326
+      - 0.21271974479233532
+      - 0.12167677661287617
+      - 0.05451303545132366
+      - 0.0007690597729676052
+      - 0.00011949722743848627
+      maximum_rotor_occupancy: 0.4192599897351135
+      maximum_joint_torque_occupancy: 0.21271974479233532
+      maximum_control_deviation: 0.23561881811697036
+  all_closed_recovered: true
+- name: left_offset
+  q:
+  - 0.0
+  - 0.0
+  - 1.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 1.0
+  - 0.8
+  - -0.7
+  - 0.5
+  - -0.1
+  - 0.0
+  - 0.0
+  u_eq:
+  - 4.364407534424724
+  - 4.057477465575274
+  - 3.9902111954212214
+  - 4.431673804578777
+  - 0.00024989486586069804
+  - -0.22902511905422673
+  - -0.12027691986535946
+  - -0.053468200834299894
+  - -0.000707009848088573
+  - -4.87631345314796e-05
+  aba_acceleration_max: 3.836930773104541e-13
+  open_spectral_radius: 1.1298149130769177
+  closed_spectral_radius: 0.9902621586068213
+  open_unstable_modes: 4
+  closed_unstable_modes: 0
+  controllability:
+    controllability_rank: 24
+    state_tangent_dimension: 24
+    controllability_singular_values:
+    - 68564.16712547171
+    - 7609.8588413125635
+    - 2327.333942680229
+    - 832.9385341101784
+    - 314.47228919056954
+    - 134.27585739259084
+    - 67.2607268829467
+    - 17.74933736128352
+    - 11.062402345268888
+    - 7.679537437867347
+    - 0.9844486001280719
+    - 0.7707566542369125
+    - 0.4623079218129122
+    - 0.41152895352019403
+    - 0.0958627847912055
+    - 0.07488969646721215
+    - 0.0574271471186986
+    - 0.055998054624252114
+    - 0.027025155492438818
+    - 0.02060057360545089
+    - 0.006528039978813681
+    - 0.0039129231313360605
+    - 0.0014192552577489068
+    - 0.001113968607290233
+    rank_threshold: 6.856416712547171e-05
+    pbh_tested_modes: 20
+    pbh_minimum_rank: 24
+    uncontrollable_unstable_modes: []
+    stabilizable: true
+  open_eigenvalues:
+  - - 1.0
+    - 0.0
+  - - 1.0
+    - 0.0
+  - - 0.9999999999999991
+    - 0.0
+  - - 1.1298149130769177
+    - 0.0
+  - - 0.99382040090701
+    - 0.11100004838303174
+  - - 0.99382040090701
+    - -0.11100004838303174
+  - - 0.8851007261681642
+    - 0.0
+  - - 1.086003586938588
+    - 0.0
+  - - 0.9208072717503362
+    - 0.0
+  - - 1.0436294330099045
+    - 0.0
+  - - 0.9581945165305725
+    - 0.0
+  - - 0.9993214734606226
+    - 0.03683195189628943
+  - - 0.9993214734606226
+    - -0.03683195189628943
+  - - 1.0175925225552291
+    - 0.0
+  - - 0.9827116235965914
+    - 0.0
+  - - 0.9999999999999976
+    - 3.613641346495321e-09
+  - - 0.9999999999999976
+    - -3.613641346495321e-09
+  - - 1.0000000000000016
+    - 3.5135570827537263e-09
+  - - 1.0000000000000016
+    - -3.5135570827537263e-09
+  - - 0.9999999999999998
+    - 1.0306258916354238e-09
+  - - 0.9999999999999998
+    - -1.0306258916354238e-09
+  - - 1.0
+    - 0.0
+  - - 0.9999999999999994
+    - 0.0
+  - - 1.0000000000000004
+    - 0.0
+  closed_eigenvalues:
+  - - 0.507670858366849
+    - 0.0
+  - - 0.6408017522063275
+    - 0.0
+  - - 0.00319798735765836
+    - 0.0
+  - - 8.33285175008552e-05
+    - 0.0
+  - - 5.64078543341841e-05
+    - 0.0
+  - - 1.7319436949395364e-07
+    - 0.0
+  - - 0.9384737909616665
+    - 0.0
+  - - 0.9627359980041512
+    - 0.012449439525449605
+  - - 0.9627359980041512
+    - -0.012449439525449605
+  - - 0.9769796509961353
+    - 0.0209544240054633
+  - - 0.9769796509961353
+    - -0.0209544240054633
+  - - 0.9770597864071342
+    - 0.01923467838873116
+  - - 0.9770597864071342
+    - -0.01923467838873116
+  - - 0.9848381153942187
+    - 0.012304803106576325
+  - - 0.9848381153942187
+    - -0.012304803106576325
+  - - 0.9902281405159634
+    - 0.008208075227397613
+  - - 0.9902281405159634
+    - -0.008208075227397613
+  - - 0.9743920467467868
+    - 0.0
+  - - 0.9733766616324564
+    - 0.0
+  - - 0.9687161031517284
+    - 0.0
+  - - 0.968872744804706
+    - 0.0
+  - - 0.9688730344926884
+    - 0.0
+  - - 0.9688730839085063
+    - 0.0
+  - - 0.968873270614779
+    - 0.0
+  cases:
+  - case: body_pose
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.08660254037844384
+          peak: 1.177673998074506e+99
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.0818631982963504
+          peak: 3.090801718262765
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 2.1938893222067945e+102
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 2.1944958232325334e+104
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.364407534424724
+      - 4.057477465575274
+      - 3.9902111954212214
+      - 4.431673804578777
+      rotor_maximum_N:
+      - 4.364407534424724
+      - 4.057477465575274
+      - 3.9902111954212214
+      - 4.431673804578777
+      joint_maximum_absolute_torque_Nm:
+      - 0.00024989486586069804
+      - 0.22902511905422673
+      - 0.12027691986535946
+      - 0.053468200834299894
+      - 0.000707009848088573
+      - 4.87631345314796e-05
+      maximum_rotor_occupancy: 0.428438446427667
+      maximum_joint_torque_occupancy: 0.22902511905422673
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 2.19
+      errors:
+        position:
+          initial: 0.08660254037844384
+          peak: 0.08660254037844384
+          terminal: 0.001163949468940988
+          threshold: 0.01
+        rotation:
+          initial: 0.0818631982963504
+          peak: 0.0818631982963504
+          terminal: 6.808657133814819e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 0.017247764750559003
+          terminal: 3.8580472354600624e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 0.32537501466181035
+          terminal: 0.0005328733153813137
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.335209522539887
+      - 4.015160471607745
+      - 3.6117992623307
+      - 4.353754021744277
+      rotor_maximum_N:
+      - 4.4076100874015705
+      - 4.078480381361821
+      - 4.037467799379044
+      - 4.640575332891955
+      joint_maximum_absolute_torque_Nm:
+      - 0.05244307177825746
+      - 0.23853334840063484
+      - 0.1260889242811575
+      - 0.05628629522912809
+      - 0.00110925529969935
+      - 7.425823041000667e-05
+      maximum_rotor_occupancy: 0.4486343024842186
+      maximum_joint_torque_occupancy: 0.23853334840063484
+      maximum_control_deviation: 0.4413960488350646
+  - case: arm_configuration
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.0
+          peak: 6.222943147247213e+64
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 2.972822187274626
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.21375830502697735
+          peak: 3.082119630931454e+69
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 3.0823340131710845e+71
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.364407534424724
+      - 4.057477465575274
+      - 3.9902111954212214
+      - 4.431673804578777
+      rotor_maximum_N:
+      - 4.364407534424724
+      - 4.057477465575274
+      - 3.9902111954212214
+      - 4.431673804578777
+      joint_maximum_absolute_torque_Nm:
+      - 0.00024989486586069804
+      - 0.22902511905422673
+      - 0.12027691986535946
+      - 0.053468200834299894
+      - 0.000707009848088573
+      - 4.87631345314796e-05
+      maximum_rotor_occupancy: 0.428438446427667
+      maximum_joint_torque_occupancy: 0.22902511905422673
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.1400000000000001
+      errors:
+        position:
+          initial: 0.0
+          peak: 0.0013424079527255466
+          terminal: 2.2289736585097505e-05
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 0.0029369009785832198
+          terminal: 9.258523537050597e-06
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.21375830502697735
+          peak: 0.21375830502697735
+          terminal: 8.021026773561044e-07
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.0
+          peak: 0.614419758340944
+          terminal: 3.810325464292165e-05
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.340633209749891
+      - 4.057458167841957
+      - 3.9689478464540953
+      - 4.431095733448071
+      rotor_maximum_N:
+      - 4.365705769896087
+      - 4.070598000197661
+      - 3.990256036147536
+      - 4.4623188383851495
+      joint_maximum_absolute_torque_Nm:
+      - 0.07179791892332757
+      - 0.23015545963959178
+      - 0.12056011577889511
+      - 0.05347702437636799
+      - 0.0007070029192805811
+      - 0.00014222445103337665
+      maximum_rotor_occupancy: 0.4314010991980853
+      maximum_joint_torque_occupancy: 0.23015545963959178
+      maximum_control_deviation: 0.0934901414158966
+  - case: velocity
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.0
+          peak: 6.410925242152688e+93
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 3.1198376068742237
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 8.89315999164369e+98
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.14936806243263992
+          peak: 8.893162310733325e+100
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.364407534424724
+      - 4.057477465575274
+      - 3.9902111954212214
+      - 4.431673804578777
+      rotor_maximum_N:
+      - 4.364407534424724
+      - 4.057477465575274
+      - 3.9902111954212214
+      - 4.431673804578777
+      joint_maximum_absolute_torque_Nm:
+      - 0.00024989486586069804
+      - 0.22902511905422673
+      - 0.12027691986535946
+      - 0.053468200834299894
+      - 0.000707009848088573
+      - 4.87631345314796e-05
+      maximum_rotor_occupancy: 0.428438446427667
+      maximum_joint_torque_occupancy: 0.22902511905422673
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.87
+      errors:
+        position:
+          initial: 0.0
+          peak: 0.029419876258649752
+          terminal: 0.0002086016821845637
+          threshold: 0.01
+        rotation:
+          initial: 0.0
+          peak: 0.018436367096088074
+          terminal: 8.327196743917781e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.0
+          peak: 0.006704433128430351
+          terminal: 3.625588443947651e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.14936806243263992
+          peak: 0.14936806243263992
+          terminal: 0.0008027309879415736
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.360970994591873
+      - 4.054195688067424
+      - 3.9796293320198455
+      - 4.4256542487115675
+      rotor_maximum_N:
+      - 4.436990838467943
+      - 4.1433874960283585
+      - 4.007173392793953
+      - 4.457359023860084
+      joint_maximum_absolute_torque_Nm:
+      - 0.0112520724374836
+      - 0.23127102850587233
+      - 0.1214637873285447
+      - 0.05399900775877132
+      - 0.0007466893535136306
+      - 5.129959843306688e-05
+      maximum_rotor_occupancy: 0.43092160198701057
+      maximum_joint_torque_occupancy: 0.23127102850587233
+      maximum_control_deviation: 0.11447791606718222
+  - case: combined
+    open:
+      status: NOT_RECOVERED
+      recovered: false
+      finite: false
+      failure_reason: NONFINITE_ROLLOUT
+      recovery_time_s: null
+      errors:
+        position:
+          initial: 0.043301270189221905
+          peak: 1.3367306524602914e+54
+          terminal: .nan
+          threshold: 0.01
+        rotation:
+          initial: 0.040931599148175214
+          peak: 2.574749361598496
+          terminal: .nan
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.10687915251348862
+          peak: 1.7313233524810122e+57
+          terminal: .nan
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.07468403121631996
+          peak: 1.7313475628636358e+59
+          terminal: .nan
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.364407534424724
+      - 4.057477465575274
+      - 3.9902111954212214
+      - 4.431673804578777
+      rotor_maximum_N:
+      - 4.364407534424724
+      - 4.057477465575274
+      - 3.9902111954212214
+      - 4.431673804578777
+      joint_maximum_absolute_torque_Nm:
+      - 0.00024989486586069804
+      - 0.22902511905422673
+      - 0.12027691986535946
+      - 0.053468200834299894
+      - 0.000707009848088573
+      - 4.87631345314796e-05
+      maximum_rotor_occupancy: 0.428438446427667
+      maximum_joint_torque_occupancy: 0.22902511905422673
+      maximum_control_deviation: 0.0
+    closed:
+      status: RECOVERED
+      recovered: true
+      finite: true
+      failure_reason: null
+      recovery_time_s: 1.6500000000000001
+      errors:
+        position:
+          initial: 0.043301270189221905
+          peak: 0.043301270189221905
+          terminal: 0.0004948955219243309
+          threshold: 0.01
+        rotation:
+          initial: 0.040931599148175214
+          peak: 0.04100691660655101
+          terminal: 6.988927584782849e-05
+          threshold: 0.017453292519943295
+        arm_position:
+          initial: 0.10687915251348862
+          peak: 0.10687915251348862
+          terminal: 2.5306734526744805e-05
+          threshold: 0.017453292519943295
+        velocity:
+          initial: 0.07468403121631996
+          peak: 0.37161002636293333
+          terminal: 0.0006062014040979648
+          threshold: 0.02
+      saturated_steps: 0
+      saturation_ratio: 0.0
+      saturated_channels: 0
+      rotor_minimum_N:
+      - 4.364337617415762
+      - 4.057340571768949
+      - 3.7993746956113545
+      - 4.410347660688976
+      rotor_maximum_N:
+      - 4.41041330059734
+      - 4.102668426025677
+      - 4.006521844628778
+      - 4.548437307704948
+      joint_maximum_absolute_torque_Nm:
+      - 0.06787147900246462
+      - 0.2344080554083677
+      - 0.1231626908675187
+      - 0.05465627801597782
+      - 0.0007944434180716902
+      - 0.00010831759975837212
+      maximum_rotor_occupancy: 0.4397267262255037
+      maximum_joint_torque_occupancy: 0.2344080554083677
+      maximum_control_deviation: 0.2431390736190689
+  all_closed_recovered: true
+maximum_closed_spectral_radius: 0.9902621586068213
+maximum_recovery_time_s: 2.21
+maximum_rotor_occupancy: 0.4486343024842186
+maximum_joint_torque_occupancy: 0.24243486577571075
+maximum_saturation_ratio: 0.0
+case_count: 16

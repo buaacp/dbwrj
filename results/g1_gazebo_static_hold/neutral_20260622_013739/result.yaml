@@ -1,0 +1,39 @@
+status: ABORTED
+metrics: {}
+abort:
+  reason: MAVROS_STATE_STALE
+  state_machine_state: TAKEOFF_TRANSITION
+  sim_time_s: 13.962
+  actual_position:
+  - -0.007051864173263311
+  - 0.004797105677425861
+  - -0.04080105572938919
+  active_reference_position:
+  - 0.006856172077702202
+  - 0.006937898538243942
+  - 0.10165433822964165
+  active_reference_kind: TAKEOFF_TRANSITION
+  final_hold_position:
+  - 0.0
+  - 0.0
+  - 1.0
+  position_error_to_active_reference_m: 0.14314871894101525
+  position_error_to_final_hold_m: 1.0408359998667462
+interface_failure: null
+startup_telemetry:
+  mavros_state_first_seen_wall_s: -0.001341535999927146
+  pose_first_seen_wall_s: 0.061965955999767175
+  velocity_first_seen_wall_s: 0.06238683599985961
+  imu_first_seen_wall_s: 0.06843964800009417
+  joint_state_first_seen_wall_s: 0.08723995399941487
+  clock_first_seen_wall_s: 0.048273307000272325
+  all_required_topics_seen: true
+  seen_mavros_state: true
+  seen_pose: true
+  seen_velocity: true
+  seen_imu: true
+  seen_joint_state: true
+  seen_clock: true
+  initial_telemetry_wait_s: 0.08723995399941487
+  missing_topics: []
+joint_failure: null

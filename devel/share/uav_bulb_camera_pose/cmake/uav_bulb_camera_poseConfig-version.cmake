@@ -1,0 +1,1 @@
+/home/zlhq/px4_fly_ws/devel/.private/uav_bulb_camera_pose/share/uav_bulb_camera_pose/cmake/uav_bulb_camera_poseConfig-version.cmake

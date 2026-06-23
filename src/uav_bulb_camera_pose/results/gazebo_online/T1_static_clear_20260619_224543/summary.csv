@@ -1,0 +1,2 @@
+object,samples,position_rmse_m,position_mean_m,position_max_m,rotation_rmse_deg,rotation_mean_deg,rotation_max_deg,axis_rmse_deg,axis_mean_deg,axis_max_deg,precision_valid_ratio,note
+socket,257,0.15001856500000002,0.1500185650000005,0.150018565,179.99927099999965,179.99927100000045,179.999271,0.03996100000000003,0.03996099999999993,0.039961,0.0,FAILED_T1_precision_valid_false

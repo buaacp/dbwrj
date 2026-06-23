@@ -1,0 +1,8 @@
+prefix=/home/zlhq/px4_fly_ws/install
+
+Name: whole_body_control
+Description: Description of whole_body_control
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

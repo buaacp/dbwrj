@@ -31,7 +31,12 @@ catkin_install_python(PROGRAMS
 catkin_install_python(PROGRAMS
   scripts/test_cmd.py
   scripts/get_local_pose.py
+  scripts/l1_adaptive.py
   scripts/test_velocity_control.py
+  scripts/test_fly_bulb.py
+  scripts/test_fly_bulb_0615.py
+  scripts/test_fly_bulb_0618.py
+  scripts/arm_hover_low_speed_test.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

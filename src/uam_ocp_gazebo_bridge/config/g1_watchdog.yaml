@@ -1,0 +1,12 @@
+watchdog:
+  # MAVROS /state is approximately 1 Hz. This timeout must not be shared with
+  # high-rate pose, velocity, IMU, or joint feedback.
+  mavros_state_timeout_s: 2.5
+  pose_timeout_s: 0.5
+  velocity_timeout_s: 0.5
+  imu_timeout_s: 0.3
+  joint_state_timeout_s: 0.5
+  clock_timeout_s: 1.0
+  setpoint_publish_timeout_s: 0.2
+  stale_confirm_cycles: 2
+  watchdog_rate_hz: 20.0

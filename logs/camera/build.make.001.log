@@ -1,0 +1,17 @@
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target _camera_generate_messages_check_deps_detect_msg
+[  0%] Built target _camera_generate_messages_check_deps_gimbal_msg
+[  0%] Built target _camera_generate_messages_check_deps_neighbor_camera_data
+[  0%] Built target _camera_generate_messages_check_deps_pixel_msg
+[  0%] Built target _camera_generate_messages_check_deps_pos_message
+[  0%] Built target _camera_generate_messages_check_deps_servo_msg
+[  0%] Built target std_msgs_generate_messages_cpp
+[ 21%] Built target camera_generate_messages_lisp
+[ 40%] Built target camera_generate_messages_eus
+[ 75%] Built target camera_generate_messages_py
+[ 81%] Built target camera_generate_messages_cpp
+[100%] Built target camera_generate_messages_nodejs
+[100%] Built target camera_generate_messages

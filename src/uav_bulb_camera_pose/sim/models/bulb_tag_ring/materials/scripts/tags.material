@@ -1,0 +1,76 @@
+material tag36h11_200
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 1 1 1 1
+      emissive 1 1 1 1
+      specular 0 0 0 1 1
+      texture_unit
+      {
+        texture /home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/tag_textures/tag36h11_200.png
+        scale 25.0 25.0
+        filtering none
+      }
+    }
+  }
+}
+material tag36h11_201
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 1 1 1 1
+      emissive 1 1 1 1
+      specular 0 0 0 1 1
+      texture_unit
+      {
+        texture /home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/tag_textures/tag36h11_201.png
+        scale 25.0 25.0
+        filtering none
+      }
+    }
+  }
+}
+material tag36h11_202
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 1 1 1 1
+      emissive 1 1 1 1
+      specular 0 0 0 1 1
+      texture_unit
+      {
+        texture /home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/tag_textures/tag36h11_202.png
+        scale 25.0 25.0
+        filtering none
+      }
+    }
+  }
+}
+material tag36h11_203
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 1 1 1 1
+      emissive 1 1 1 1
+      specular 0 0 0 1 1
+      texture_unit
+      {
+        texture /home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/tag_textures/tag36h11_203.png
+        scale 25.0 25.0
+        filtering none
+      }
+    }
+  }
+}

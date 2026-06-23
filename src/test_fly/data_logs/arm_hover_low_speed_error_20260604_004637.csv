@@ -1,0 +1,1 @@
+elapsed_time,phase,ref_x,ref_y,ref_z,actual_x,actual_y,actual_z,error_x,error_y,error_z,pos_error,ref_vx,ref_vy,ref_vz,actual_vx,actual_vy,actual_vz,vel_error,cmd_vx,cmd_vy,cmd_vz,ref_yaw,actual_yaw

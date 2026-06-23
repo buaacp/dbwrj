@@ -1,0 +1,100 @@
+run_id: neutral_20260622_020335
+scenario: neutral
+git_commit: 161e63e0b3710d63d0079a7e9468144011fca5f3
+ros_version: ROS1 melodic
+gazebo_version: 9.19.0
+px4_commit: 746b3124abe9df486c6d88a3d9ec0c438e63654d
+launch_command: roslaunch le_arm iris_arm.launch
+world_file: /home/zlhq/catkin_ws/src/le_arm/worlds/weightless_ball.world
+topics:
+  uav_pose: /iris_0/mavros/local_position/pose
+  uav_velocity: /iris_0/mavros/local_position/velocity_local
+  uav_imu: /iris_0/mavros/imu/data
+  uav_state: /iris_0/mavros/state
+  uav_setpoint: /iris_0/mavros/setpoint_raw/local
+  arm_state: /joint_states
+  arm_group_velocity_command: /le_arm_controller/command
+  wrist_position_command: /wrist_roll_controller/command
+  gripper_trajectory_command: /gripper_controller/command
+  simulation_clock: /clock
+  motor_output: MOTOR_OUTPUT_UNAVAILABLE
+  joint_effort: JOINT_EFFORT_UNAVAILABLE
+startup_telemetry:
+  mavros_state_first_seen_wall_s: -0.04460032000042702
+  pose_first_seen_wall_s: -0.018720574999861128
+  velocity_first_seen_wall_s: 0.031587701999342244
+  imu_first_seen_wall_s: 0.036554403999616625
+  joint_state_first_seen_wall_s: 0.05374557100003585
+  clock_first_seen_wall_s: 0.0019186849995094235
+  all_required_topics_seen: true
+  seen_mavros_state: true
+  seen_pose: true
+  seen_velocity: true
+  seen_imu: true
+  seen_joint_state: true
+  seen_clock: true
+  initial_telemetry_wait_s: 0.05374557100003585
+  missing_topics: []
+takeoff_reference:
+  initial_position_world:
+  - 0.0031591341830790043
+  - -0.0030818204395473003
+  - 0.05460048466920853
+  hold_position_world:
+  - 0.0
+  - 0.0
+  - 1.0
+  initial_to_hold_distance_m: 0.9454098166053194
+  initial_pose_frame: MAVROS_LOCAL_ENU
+  hold_setpoint_frame: MAVROS_LOCAL_ENU
+  initial_yaw_rad: -0.06860051782818527
+arm_startup_reference:
+  joint_names:
+  - shoulder_pan_joint
+  - shoulder_lift_joint
+  - elbow_joint
+  - wrist_1_joint
+  - wrist_roll_joint
+  - left_knuckle_joint
+  q_initial_rad:
+  - -0.34043894473432434
+  - -0.11363553947222993
+  - 0.17454933905105818
+  - 0.1305179973789965
+  - 0.025740893982431956
+  - 0.0006327256512763668
+  q_neutral_rad:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  q_initial_minus_neutral_rad:
+  - -0.34043894473432434
+  - -0.11363553947222993
+  - 0.17454933905105818
+  - 0.1305179973789965
+  - 0.025740893982431956
+  - 0.0006327256512763668
+  q_initial_minus_neutral_deg:
+  - -19.505714715164267
+  - -6.510836814451049
+  - 10.00094044442368
+  - 7.47813040031604
+  - 1.474844586087049
+  - 0.03625250940780213
+  max_abs_initial_error_deg: 19.505714715164267
+  actual_neutralize_duration_s: 3.0
+simulation_time_used: true
+simulation_time_status: SIM_TIME_AVAILABLE
+wall_duration_s: 49.64809581099962
+sim_duration_s: 11.476
+clock_enabled: true
+motor_output_available: false
+joint_effort_available: false
+joint_effort_note: 'JOINT_EFFORT_UNAVAILABLE: /joint_states effort is identically
+  zero and not validated as measured torque.'
+abort_triggered: true
+actual_neutralize_duration_s: 3.0
+actual_deploy_duration_s: 4.0

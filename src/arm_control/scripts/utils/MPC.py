@@ -9,10 +9,10 @@ class MPC:
         # state weight matrix ( q1, ..., q4)[4]
         self.Q = ca.diagcat(0, 2, 0.5, 0)
         # controls weights matrix
-        Ra = 1
+        Ra = 0.45
         # (q1, ..., q4)[4]
         self.R = ca.diagcat(Ra, Ra, Ra/4, Ra/8)
-        R_delta = 0.2
+        R_delta = 0.06
         self.R_delta = ca.diagcat(R_delta, R_delta, R_delta, R_delta)
         self.step_horizon = 0.05  # time between steps in seconds
         self.N = 50  # number of look ahead steps
@@ -21,16 +21,21 @@ class MPC:
         self.n_states = 4
         # control symbolic variables
         self.n_controls = 4
-        self.n_tarpos = 6
+        self.n_tarpos = 9
         # arm tip
         self.state_target = ca.DM([0, 0, 0, 0])  # target state
         self.u_pre = ca.DM([0, 0, 0, 0])  # target state
         # set the para of arm
         self.Qa = ca.diag([400, 400, 400])
-        self.Qa_rot = ca.diag([1])
+        self.Qa_axis = ca.diag([220, 220, 220])
+        self.Qa_axis_dot = 120
+        self.Qa_centerline = 1800
+        self.terminal_position_weight = 100
+        self.terminal_axis_weight = 60
+        self.terminal_centerline_weight = 120
         # control limit
-        self.v_arm_max = 0.4
-        self.v_arm_min = -0.4
+        self.v_arm_max = 0.65
+        self.v_arm_min = -0.65
         self.L1 = 0.1049
         self.L2 = 0.0884
         self.L3 = 0.12
@@ -65,6 +70,20 @@ class MPC:
         arm_x = -sin(q0) * (self.L1 * sin(q1) + self.L2 * sin(q1 + q2) + self.L3 * sin(q1 + q2 + q3))
         attitude_arm = ca.vertcat(-sin(q0)*sin(q1 + q2 + q3), cos(q0)*sin(q1 + q2 + q3), -cos(q1 + q2 + q3))
         return ca.vertcat(arm_x, arm_y, arm_z), attitude_arm
+
+    def axis_tracking_cost(self, attitude_arm, target_axis):
+        target_norm = ca.sqrt(target_axis.T @ target_axis + 1e-12)
+        target_unit = target_axis / target_norm
+        cross_error = ca.cross(attitude_arm, target_unit)
+        dot_error = 1 - attitude_arm.T @ target_unit
+        return cross_error.T @ self.Qa_axis @ cross_error + self.Qa_axis_dot * dot_error ** 2
+
+    def centerline_tracking_cost(self, x_arm, line_point, line_axis):
+        axis_norm = ca.sqrt(line_axis.T @ line_axis + 1e-12)
+        axis_unit = line_axis / axis_norm
+        radial_error = ca.cross(x_arm - line_point, axis_unit)
+        return self.Qa_centerline * (radial_error.T @ radial_error)
+
     def build_cost_function(self):
         self.cost_fn = 0  # cost function
         self.g = self.X[:, 0] - self.P[:self.n_states]  # constraints in the equation
@@ -74,22 +93,26 @@ class MPC:
             st = self.X[:, k]
             con = self.U[:, k]
             x_arm, attitude_arm = self.RobFki(st)
-            attitude_error = ca.exp(-(attitude_arm.T @ self.P_arm[3:6, k]))
+            position_error = x_arm - self.P_arm[:3, k]
+            axis_cost = self.axis_tracking_cost(attitude_arm, self.P_arm[3:6, k])
+            centerline_cost = self.centerline_tracking_cost(x_arm, self.P_arm[6:9, k], self.P_arm[3:6, k])
             delta_u = u_pre - con
             if k==self.N-1:
                 self.cost_fn = (self.cost_fn\
                             + delta_u.T @ self.R_delta @ delta_u\
                             + st.T @ self.Q @ st \
                             + con.T @ self.R @ con \
-                            + 100*(x_arm - self.P_arm[:3, k]).T @ self.Qa @ (x_arm - self.P_arm[:3, k]) \
-                            + 10*attitude_error.T @ self.Qa_rot @ attitude_error)
+                            + self.terminal_position_weight * position_error.T @ self.Qa @ position_error \
+                            + self.terminal_axis_weight * axis_cost \
+                            + self.terminal_centerline_weight * centerline_cost)
             else:
                 self.cost_fn = (self.cost_fn\
                             + delta_u.T @ self.R_delta @ delta_u\
                             + st.T @ self.Q @ st \
                             + con.T @ self.R @ con \
-                            + (x_arm - self.P_arm[:3, k]).T @ self.Qa @ (x_arm - self.P_arm[:3, k]) \
-                            + attitude_error.T @ self.Qa_rot @ attitude_error)
+                            + position_error.T @ self.Qa @ position_error \
+                            + axis_cost \
+                            + centerline_cost)
             st_next = self.X[:, k + 1]
             k1 = self.f(st, con)
             k2 = self.f(st + self.step_horizon / 2 * k1, con)
@@ -258,8 +281,18 @@ class MPC:
             R_b_inv = np.linalg.inv(R_b)  # 逆矩阵
             p_target_local = np.dot(R_b_inv, (pos_target - p_b)) - uav_arm.p_delta
             p_exp,pose_exp = self.get_exp_point(p_target_local,flag_leave,flag_default)
+            if getattr(uav_arm, 'use_grasp_axis', False):
+                pose_exp = np.dot(R_b_inv, uav_arm.grasp_axis_world)
+                pose_norm = np.linalg.norm(pose_exp)
+                if pose_norm > 1e-6:
+                    pose_exp = pose_exp / pose_norm
 
-            pose_target = [p_exp[0], p_exp[1], p_exp[2], pose_exp[0], pose_exp[1], pose_exp[2]]
+            line_point = p_target_local
+            pose_target = [
+                p_exp[0], p_exp[1], p_exp[2],
+                pose_exp[0], pose_exp[1], pose_exp[2],
+                line_point[0], line_point[1], line_point[2],
+            ]
 
             for j in range(self.n_tarpos):
                 arg_p_arm[k * self.n_tarpos + j] = pose_target[j]

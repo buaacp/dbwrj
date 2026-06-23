@@ -1,0 +1,10 @@
+socket
+position_error_m median=0.049585 mean=0.049585 p95=0.049585
+axis_error_deg median=0.151559 mean=0.151559 p95=0.151559
+valid_ratio=0.996390
+
+bulb
+position_error_m median=0.029666 mean=0.029666 p95=0.029666
+axis_error_deg median=0.858954 mean=0.858954 p95=0.858954
+valid_ratio=1.000000
+

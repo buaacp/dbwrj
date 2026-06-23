@@ -1,0 +1,52 @@
+frame: base_link
+thrust_unit: N
+torque_unit: N_m
+rotors:
+  - id: 0
+    name: front_right
+    position: [0.13, -0.22, 0.023]
+    direction: [0.0, 0.0, 1.0]
+    spin: ccw
+    min_thrust: 0.0
+    max_thrust: 10.3437818
+    torque_per_thrust: 0.06
+    source: "/home/zlhq/catkin_ws/src/le_arm/urdf/iris.xacro and gazebo_motor_model.cpp"
+    calibration_status: "Gazebo parameter; TODO_NEEDS_CALIBRATION for hardware"
+  - id: 1
+    name: back_left
+    position: [-0.13, 0.20, 0.023]
+    direction: [0.0, 0.0, 1.0]
+    spin: ccw
+    min_thrust: 0.0
+    max_thrust: 10.3437818
+    torque_per_thrust: 0.06
+    source: "/home/zlhq/catkin_ws/src/le_arm/urdf/iris.xacro and gazebo_motor_model.cpp"
+    calibration_status: "Gazebo parameter; TODO_NEEDS_CALIBRATION for hardware"
+  - id: 2
+    name: front_left
+    position: [0.13, 0.22, 0.023]
+    direction: [0.0, 0.0, 1.0]
+    spin: cw
+    min_thrust: 0.0
+    max_thrust: 10.3437818
+    torque_per_thrust: 0.06
+    source: "/home/zlhq/catkin_ws/src/le_arm/urdf/iris.xacro and gazebo_motor_model.cpp"
+    calibration_status: "Gazebo parameter; TODO_NEEDS_CALIBRATION for hardware"
+  - id: 3
+    name: back_right
+    position: [-0.13, -0.20, 0.023]
+    direction: [0.0, 0.0, 1.0]
+    spin: cw
+    min_thrust: 0.0
+    max_thrust: 10.3437818
+    torque_per_thrust: 0.06
+    source: "/home/zlhq/catkin_ws/src/le_arm/urdf/iris.xacro and gazebo_motor_model.cpp"
+    calibration_status: "Gazebo parameter; TODO_NEEDS_CALIBRATION for hardware"
+joint_torque_limits:
+  shoulder_pan_joint: {lower: -1.0, upper: 1.0, status: TODO_NEEDS_CALIBRATION, source: "Conservative optimization placeholder; URDF effort=1000 is not credible"}
+  shoulder_lift_joint: {lower: -1.0, upper: 1.0, status: TODO_NEEDS_CALIBRATION, source: "Conservative optimization placeholder; URDF effort=1000 is not credible"}
+  elbow_joint: {lower: -1.0, upper: 1.0, status: TODO_NEEDS_CALIBRATION, source: "Conservative optimization placeholder; URDF effort=1000 is not credible"}
+  wrist_1_joint: {lower: -1.0, upper: 1.0, status: TODO_NEEDS_CALIBRATION, source: "Conservative optimization placeholder; URDF effort=1000 is not credible"}
+  wrist_roll_joint: {lower: -0.5, upper: 0.5, status: TODO_NEEDS_CALIBRATION, source: "Conservative optimization placeholder; URDF effort=1000 is not credible"}
+  left_knuckle_joint: {lower: -0.2, upper: 0.2, status: TODO_NEEDS_CALIBRATION, source: "Pre-grasp placeholder; contact/gripping excluded from P2"}
+

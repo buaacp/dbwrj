@@ -1,0 +1,3 @@
+object,samples,position_rmse_m,position_mean_m,position_max_m,rotation_rmse_deg,rotation_mean_deg,rotation_max_deg,axis_rmse_deg,axis_mean_deg,axis_max_deg,precision_valid_ratio,visible_tag_min,visible_tag_mean,inlier_corner_min,inlier_corner_mean,reprojection_rmse_mean_px,reprojection_rmse_max_px,bad_valid_geometry_rows,note
+socket,145,0.04958503100000001,0.0495850310000001,0.049585031,0.1515610000000001,0.15156099999999997,0.151561,0.15155900000000017,0.1515589999999999,0.151559,1.0,4.0,4.0,8.0,8.0,0.31754600000000005,0.317546,0,PASS
+bulb,145,0.029666400000000044,0.02966639999999999,0.0296664,0.8589549999999988,0.858954999999998,0.858955,0.8589539999999996,0.858953999999998,0.858954,1.0,4.0,4.0,8.0,8.0,0.12068500000000008,0.120685,0,PASS

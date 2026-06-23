@@ -1,0 +1,40 @@
+bulb_pose:
+  translation:
+    pose_source: SCENE_FILE
+    verified: true
+    scene_file: /home/zlhq/catkin_ws/src/le_arm/worlds/weightless_ball.world
+    model_name: light_bulb
+  position:
+  - 0.6
+  - -0.35
+  - 0.165
+pregrasp:
+  position:
+  - 0.6
+  - -0.35
+  - 0.265
+  rotation:
+  - - 1.0
+    - 0.0
+    - 0.0
+  - - 0.0
+    - -1.0
+    - 0.0
+  - - 0.0
+    - 0.0
+    - -1.0
+diagnostics:
+  bulb_axis_local:
+  - 0.0
+  - 0.0
+  - -1.0
+  gripper_axis_local:
+  - 0.0
+  - 0.0
+  - 1.0
+  offset_bulb_frame:
+  - -0.0
+  - -0.0
+  - 0.1
+  distance_m: 0.1
+  axis_alignment_error: 0.0

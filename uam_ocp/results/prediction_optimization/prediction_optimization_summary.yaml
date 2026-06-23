@@ -1,0 +1,82 @@
+status: PASS
+prediction_equation: x[k+1] = f_pred(x[k], u[k], dt)
+prediction_class: uam_ocp.prediction_model.UAMPredictionModel
+action_model: IntegratedActionModelEuler(DifferentialActionModelFreeFwdDynamics)
+solver: SolverBoxFDDP
+dimensions:
+  nq: 13
+  nv: 12
+  nx: 25
+  ndx: 24
+  nu: 10
+p2_prediction_single_step_error: 0.0
+solver_converged: true
+solver_iterations: 3
+terminal_metrics:
+  solver_converged: true
+  iterations: 3
+  final_cost: 0.05294443116532032
+  rollout_state_error: 0.0
+  terminal_ee_position_error_m: 5.59913104582943e-07
+  terminal_ee_rotation_error_rad: 7.35225727196492e-07
+  terminal_ee_linear_velocity_mps: 4.051648487991121e-06
+  terminal_ee_angular_velocity_radps: 1.3121175818875722e-06
+  terminal_base_rpy_rad:
+  - 1.1329534643778061e-07
+  - -3.7920005033775794e-06
+  - -4.924754914981122e-08
+  control_minimum:
+  - 3.9444917158034367
+  - 2.58125413944763
+  - 3.936090082463069
+  - 2.5768876986983824
+  - -0.00044579208160881224
+  - -0.22331878079790593
+  - -0.13206444168859416
+  - -0.05929651351893917
+  - -0.0007805516382373691
+  - -4.986156094219988e-05
+  control_maximum:
+  - 4.481474063759665
+  - 4.8057818914338
+  - 4.4619006698038906
+  - 4.81138095312155
+  - 0.0012266564399393224
+  - -0.14608686959354775
+  - -0.07656092861444237
+  - -0.03477602133488794
+  - -0.0004798829602592022
+  - -8.023708168925767e-06
+  minimum_lower_bound_margin:
+  - 3.9444917158034367
+  - 2.58125413944763
+  - 3.936090082463069
+  - 2.5768876986983824
+  - 0.9995542079183912
+  - 0.7766812192020941
+  - 0.8679355583114059
+  - 0.9407034864810608
+  - 0.49921944836176263
+  - 0.19995013843905782
+  minimum_upper_bound_margin:
+  - 5.862307736240336
+  - 5.5379999085662
+  - 5.88188113019611
+  - 5.53240084687845
+  - 0.9987733435600606
+  - 1.1460868695935478
+  - 1.0765609286144424
+  - 1.034776021334888
+  - 0.5004798829602592
+  - 0.20000802370816895
+  control_bounds_satisfied: true
+  checks:
+    solver: true
+    rollout: true
+    control_bounds: true
+    ee_position: true
+    ee_rotation: true
+    ee_linear_velocity: true
+    ee_angular_velocity: true
+    base_attitude: true
+  pass: true

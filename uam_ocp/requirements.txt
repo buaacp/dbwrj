@@ -1,0 +1,9 @@
+# Tested versions are supplied by /home/zlhq/micromamba-root/envs/eagle_mpc.
+pin==4.0.0
+crocoddyl==3.2.1
+numpy==2.2.6
+scipy==1.15.2
+matplotlib==3.10.9
+PyYAML==6.0.3
+pytest>=7
+

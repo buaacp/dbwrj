@@ -1,0 +1,43 @@
+topic_rates_hz:
+  mavros_state:
+    samples: 10
+    mean_hz: 0.23255003267249136
+    min_hz: 0.20674887097708314
+    max_hz: 0.5097712920478056
+    max_interarrival_s: 4.8367857839999715
+  pose:
+    samples: 436
+    mean_hz: 10.891524914037031
+    min_hz: 3.7198844847909958
+    max_hz: 39.43614981706012
+    max_interarrival_s: 0.26882555199995295
+  velocity:
+    samples: 434
+    mean_hz: 10.870108092462825
+    min_hz: 3.7146684694795757
+    max_hz: 34.07841818882295
+    max_interarrival_s: 0.26920302799999263
+  imu:
+    samples: 433
+    mean_hz: 10.858646236872335
+    min_hz: 3.668481862062629
+    max_hz: 38.449252446604135
+    max_interarrival_s: 0.2725923250000051
+  joint_state:
+    samples: 433
+    mean_hz: 10.85742193292687
+    min_hz: 3.6468550548588237
+    max_hz: 47.89025698598238
+    max_interarrival_s: 0.2742088690000628
+  clock:
+    samples: 8004
+    mean_hz: 200.26259932428925
+    min_hz: 8.419590423463672
+    max_hz: 16928.207475397736
+    max_interarrival_s: 0.11877062300004582
+  setpoint_publish:
+    samples: 996
+    mean_hz: 25.519290284346457
+    min_hz: 5.753796508849751
+    max_hz: 28.724333120822575
+    max_interarrival_s: 0.17379829100002553

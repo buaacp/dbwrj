@@ -1,0 +1,22 @@
+<launch>
+  <arg name="bundle_yaml" default="$(find uav_bulb_camera_pose)/config/bundles.yaml"/>
+  <arg name="perception_yaml" default="$(find uav_bulb_camera_pose)/config/perception.yaml"/>
+  <arg name="world" default="$(find uav_bulb_camera_pose)/sim/worlds/bulb_pose_test.world"/>
+  <arg name="use_gazebo" default="true"/>
+  <arg name="gui" default="true"/>
+
+  <env name="GAZEBO_MODEL_PATH" value="$(find uav_bulb_camera_pose)/sim/models:$(optenv GAZEBO_MODEL_PATH)"/>
+
+  <include if="$(arg use_gazebo)" file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(arg world)"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+
+  <node pkg="uav_bulb_camera_pose" type="bundle_pose_node.py" name="bundle_pose_node" output="screen">
+    <rosparam command="load" file="$(arg perception_yaml)"/>
+    <param name="bundle_yaml" value="$(arg bundle_yaml)"/>
+    <param name="camera_frame_override" value="camera_color_optical_frame"/>
+  </node>
+</launch>

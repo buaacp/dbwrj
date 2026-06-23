@@ -1,0 +1,15 @@
+image_topic: /camera/camera/color/image_raw
+camera_info_topic: /camera/camera/color/camera_info
+camera_frame_override: camera_color_optical_frame
+transport_hint: raw
+expected_color_width: 1920
+expected_color_height: 1080
+expected_color_fps: 30
+expected_color_hfov_deg: 69.0
+image_noise_stddev: 0.0
+motion_blur_kernel: 0
+brightness_gain: 1.0
+contrast_gain: 1.0
+frame_delay_ms: 0
+frame_drop_probability: 0.0
+jpeg_quality: 100

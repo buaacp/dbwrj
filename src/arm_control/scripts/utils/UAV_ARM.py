@@ -28,6 +28,8 @@ class UAV_ARM:
         self.d_xb = np.array([[0.0], [0.0], [0.0], [d_theta], [d_phi], [d_delta]])
         # 目标位置 x y z
         self.pos_target = np.array([[0], [3], [0.65]])
+        self.use_grasp_axis = False
+        self.grasp_axis_world = np.array([[0.0], [0.0], [-1.0]])
 
         # 机械臂参数（单位：弧度）
         self.p_delta = np.array([[0.0], [-0.096], [-0.135]])  # 基座偏移

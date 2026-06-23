@@ -1,0 +1,4 @@
+Symlinking /home/zlhq/px4_fly_ws/devel/lib/pkgconfig/uam_ocp_gazebo_bridge.pc
+Symlinking /home/zlhq/px4_fly_ws/devel/lib/python2.7/dist-packages/uam_ocp_gazebo_bridge/__init__.py
+Symlinking /home/zlhq/px4_fly_ws/devel/share/uam_ocp_gazebo_bridge/cmake/uam_ocp_gazebo_bridgeConfig.cmake
+Symlinking /home/zlhq/px4_fly_ws/devel/share/uam_ocp_gazebo_bridge/cmake/uam_ocp_gazebo_bridgeConfig-version.cmake

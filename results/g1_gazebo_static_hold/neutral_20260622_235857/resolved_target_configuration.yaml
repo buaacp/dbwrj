@@ -1,0 +1,10 @@
+status: RESOLVED
+joints:
+  shoulder_pan_joint: 0.0
+  shoulder_lift_joint: 0.0
+  elbow_joint: 0.0
+  wrist_1_joint: 0.0
+  wrist_roll_joint: 0.0
+  left_knuckle_joint: 0.0
+source: URDF neutral configuration
+missing: []

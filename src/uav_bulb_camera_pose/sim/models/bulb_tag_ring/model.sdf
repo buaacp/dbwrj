@@ -1,0 +1,25 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='bulb_tag_ring'>
+    <static>true</static>
+    <link name='bulb_frame'>
+      <visual name='body'><geometry><sphere><radius>0.004</radius></sphere></geometry><material><ambient>0.6 0.6 0.6 1</ambient><diffuse>0.6 0.6 0.6 1</diffuse></material></visual>
+
+      <visual name='tag_200'>
+          <geometry><mesh><uri>file:///home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/bulb_tag_ring/meshes/tag_200.dae</uri></mesh></geometry>
+      </visual>
+
+      <visual name='tag_201'>
+          <geometry><mesh><uri>file:///home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/bulb_tag_ring/meshes/tag_201.dae</uri></mesh></geometry>
+      </visual>
+
+      <visual name='tag_202'>
+          <geometry><mesh><uri>file:///home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/bulb_tag_ring/meshes/tag_202.dae</uri></mesh></geometry>
+      </visual>
+
+      <visual name='tag_203'>
+          <geometry><mesh><uri>file:///home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/sim/models/bulb_tag_ring/meshes/tag_203.dae</uri></mesh></geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

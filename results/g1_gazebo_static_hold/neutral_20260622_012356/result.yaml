@@ -1,0 +1,38 @@
+status: ABORTED
+metrics: {}
+abort:
+  reason: JOINT_TRACKING_ERROR
+  state_machine_state: PRESTREAM_SETPOINTS
+  sim_time_s: 10.108
+  actual_position:
+  - -0.0175323523581028
+  - 0.008819369599223137
+  - 0.023748526349663734
+  active_reference_position:
+  - -0.0175323523581028
+  - 0.008819369599223137
+  - 0.023748526349663734
+  active_reference_kind: INITIAL_HOLD
+  final_hold_position:
+  - 0.0
+  - 0.0
+  - 1.0
+  position_error_to_active_reference_m: 0.0
+  position_error_to_final_hold_m: 0.9764487208572653
+interface_failure: null
+startup_telemetry:
+  mavros_state_first_seen_wall_s: 0.04180506900002001
+  pose_first_seen_wall_s: 0.1166511179999361
+  velocity_first_seen_wall_s: 0.11692621400015923
+  imu_first_seen_wall_s: 0.12550950600007127
+  joint_state_first_seen_wall_s: 0.09691086900011214
+  clock_first_seen_wall_s: -0.011789449999923818
+  all_required_topics_seen: true
+  seen_mavros_state: true
+  seen_pose: true
+  seen_velocity: true
+  seen_imu: true
+  seen_joint_state: true
+  seen_clock: true
+  initial_telemetry_wait_s: 0.12550950600007127
+  missing_topics: []

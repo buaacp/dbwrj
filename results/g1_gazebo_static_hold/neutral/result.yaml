@@ -1,0 +1,6 @@
+status: ABORTED
+metrics: {}
+abort:
+  reason: STATE_TIMEOUT
+  sim_time_s: 81.022
+  state: ARM_DEPLOY

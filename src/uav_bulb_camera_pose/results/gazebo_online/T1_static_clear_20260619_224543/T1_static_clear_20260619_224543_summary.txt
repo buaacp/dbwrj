@@ -1,0 +1,5 @@
+socket
+position_error_m median=0.150019 mean=0.150019 p95=0.150019
+axis_error_deg median=0.039961 mean=0.039961 p95=0.039961
+valid_ratio=0.000000
+

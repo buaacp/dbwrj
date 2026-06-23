@@ -1,0 +1,12 @@
+<launch>
+  <arg name="scenario_name" default="gazebo_manual"/>
+  <arg name="result_dir" default="$(find uav_bulb_camera_pose)/results"/>
+  <node pkg="uav_bulb_camera_pose" type="pose_evaluator.py" name="pose_evaluator" output="screen">
+    <param name="scenario_name" value="$(arg scenario_name)"/>
+    <param name="result_dir" value="$(arg result_dir)"/>
+    <param name="camera_model_name" value="d435i_color_camera_rig"/>
+    <param name="socket_model_name" value="socket_tag_ring"/>
+    <param name="bulb_model_name" value="bulb_tag_ring"/>
+    <param name="gazebo_camera_link_to_optical" value="true"/>
+  </node>
+</launch>

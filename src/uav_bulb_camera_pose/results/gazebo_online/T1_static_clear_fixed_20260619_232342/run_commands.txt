@@ -1,0 +1,9 @@
+# Gazebo online T1 fixed commands actually run
+cd /home/zlhq/px4_fly_ws
+source devel/setup.bash
+PYTHONPATH=$PWD/src/uav_bulb_camera_pose:$PYTHONPATH python3 src/uav_bulb_camera_pose/sim/scripts/generate_tag_textures.py --bundle-yaml src/uav_bulb_camera_pose/config/bundles.yaml --output-dir src/uav_bulb_camera_pose/sim/models/tag_textures
+PYTHONPATH=$PWD/src/uav_bulb_camera_pose:$PYTHONPATH python3 src/uav_bulb_camera_pose/sim/scripts/generate_scene_from_yaml.py --bundle-yaml src/uav_bulb_camera_pose/config/bundles.yaml --output-root src/uav_bulb_camera_pose/sim --texture-dir src/uav_bulb_camera_pose/sim/models/tag_textures
+roslaunch uav_bulb_camera_pose sim_perception.launch gui:=false
+PYTHONPATH=$PWD/src/uav_bulb_camera_pose:$PYTHONPATH python3 src/uav_bulb_camera_pose/scripts/check_bundle_geometry_consistency.py --bundle-yaml src/uav_bulb_camera_pose/config/bundles.yaml --model-root src/uav_bulb_camera_pose/sim/models --output-csv /home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/results/gazebo_online/T1_static_clear_fixed_20260619_232342/geometry_consistency.csv --output-md /home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/results/gazebo_online/T1_static_clear_fixed_20260619_232342/geometry_consistency.md --wait-gazebo
+PYTHONPATH=$PWD/src/uav_bulb_camera_pose:$PYTHONPATH python3 src/uav_bulb_camera_pose/scripts/capture_pnp_debug_frame.py --bundle-yaml src/uav_bulb_camera_pose/config/bundles.yaml --output-dir /home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/results/gazebo_online/T1_static_clear_fixed_20260619_232342/layout_probe_front_facing --ransac-px 6.0
+roslaunch uav_bulb_camera_pose evaluator.launch scenario_name:=T1_static_clear_fixed_20260619_232342 result_dir:=/home/zlhq/px4_fly_ws/src/uav_bulb_camera_pose/results/gazebo_online/T1_static_clear_fixed_20260619_232342

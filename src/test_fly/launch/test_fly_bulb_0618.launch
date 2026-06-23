@@ -1,0 +1,78 @@
+<launch>
+    <arg name="vehicle_type" default="iris"/>
+    <arg name="vehicle_id" default="0"/>
+    <arg name="target_topic" default="/weightless_ball/pose"/>
+    <arg name="ball_target_topic" default="/weightless_ball/pose"/>
+    <arg name="bulb_target_topic" default="/light_bulb/body_pose"/>
+    <arg name="socket_target_topic" default="/light_bulb_fixture/socket_pose"/>
+    <arg name="default_height" default="1.0"/>
+    <arg name="default_max_velocity" default="0.45"/>
+    <arg name="target_max_velocity" default="0.18"/>
+    <arg name="transfer_max_velocity" default="0.10"/>
+    <arg name="hold_max_velocity" default="0.05"/>
+    <arg name="transfer_entry_hold_duration" default="0.8"/>
+    <arg name="pd_gain" default="0.8"/>
+    <arg name="auto_start" default="true"/>
+    <arg name="position_tolerance" default="0.07"/>
+    <arg name="require_arm_ready" default="true"/>
+    <arg name="grasp_duration" default="3.0"/>
+    <arg name="unscrew_duration" default="6.0"/>
+    <arg name="screw_duration" default="6.0"/>
+    <arg name="finish_duration" default="4.0"/>
+    <arg name="bulb_center_axis_offset" default="-0.07"/>
+    <arg name="socket_center_axis_offset" default="-0.15"/>
+    <arg name="pick_uav_offset" default="[0.0, 0.096, 0.150]"/>
+    <arg name="socket_uav_offset" default="[0.0, 0.096, 0.150]"/>
+    <arg name="retreat_offset" default="[-0.35, 0.0, 0.25]"/>
+    <arg name="target_yaw_deg" default=""/>
+    <arg name="manual_mission_control" default="false"/>
+    <arg name="start_pose_bridge" default="true"/>
+
+    <node
+        pkg="test_fly"
+        type="test_fly_bulb_0618.py"
+        name="test_fly_bulb_0618"
+        output="screen">
+        <!-- 0 IDLE, 1 PICK_ALIGN, 2 GRASP_BULB, 3 UNSCREW_BULB, 4 TRANSFER_TO_SOCKET, 5 FINE_ALIGN_SOCKET, 6 SCREW_IN_BULB, 7 FINISH, 99 ABORT -->
+        <param name="vehicle_type" value="$(arg vehicle_type)"/>
+        <param name="vehicle_id" value="$(arg vehicle_id)"/>
+        <param name="target_topic" value="$(arg target_topic)"/>
+        <param name="ball_target_topic" value="$(arg ball_target_topic)"/>
+        <param name="bulb_target_topic" value="$(arg bulb_target_topic)"/>
+        <param name="socket_target_topic" value="$(arg socket_target_topic)"/>
+        <param name="default_height" value="$(arg default_height)"/>
+        <param name="default_max_velocity" value="$(arg default_max_velocity)"/>
+        <param name="target_max_velocity" value="$(arg target_max_velocity)"/>
+        <param name="transfer_max_velocity" value="$(arg transfer_max_velocity)"/>
+        <param name="hold_max_velocity" value="$(arg hold_max_velocity)"/>
+        <param name="transfer_entry_hold_duration" value="$(arg transfer_entry_hold_duration)"/>
+        <param name="pd_gain" value="$(arg pd_gain)"/>
+        <param name="auto_start" value="$(arg auto_start)"/>
+        <param name="position_tolerance" value="$(arg position_tolerance)"/>
+        <param name="require_arm_ready" value="$(arg require_arm_ready)"/>
+        <param name="grasp_duration" value="$(arg grasp_duration)"/>
+        <param name="unscrew_duration" value="$(arg unscrew_duration)"/>
+        <param name="screw_duration" value="$(arg screw_duration)"/>
+        <param name="finish_duration" value="$(arg finish_duration)"/>
+        <param name="bulb_center_axis_offset" value="$(arg bulb_center_axis_offset)"/>
+        <param name="socket_center_axis_offset" value="$(arg socket_center_axis_offset)"/>
+        <param name="pick_uav_offset" value="$(arg pick_uav_offset)"/>
+        <param name="socket_uav_offset" value="$(arg socket_uav_offset)"/>
+        <param name="retreat_offset" value="$(arg retreat_offset)"/>
+        <param name="target_yaw_deg" value="$(arg target_yaw_deg)"/>
+    </node>
+
+    <node if="$(arg start_pose_bridge)"
+        pkg="test_fly"
+        type="get_local_pose.py"
+        name="get_local_pose"
+        output="screen">
+    </node>
+
+    <node if="$(arg manual_mission_control)"
+        pkg="test_fly"
+        type="mission_control.py"
+        name="mission_control"
+        output="screen">
+    </node>
+</launch>

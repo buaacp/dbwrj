@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>uav_bulb_camera_pose</name>
+  <version>0.1.0</version>
+  <description>RGB AprilTag bundle pose estimation for a simulated or real D435i color camera.</description>
+  <maintainer email="zlhq@todo.todo">zlhq</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>rospy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
+  <depend>gazebo_msgs</depend>
+
+  <export/>
+</package>

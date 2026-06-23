@@ -1,0 +1,25 @@
+strategy: UAV_DOMINANT_SOFT_ARM_HOLD
+metrics:
+  pass: true
+  fddp_converged: true
+  iterations: 8
+  rollout_error: 0.0
+  terminal_position_error_m: 0.00024716571366671555
+  terminal_orientation_error_rad: 0.0022872352482213674
+  terminal_ee_linear_velocity_mps: 0.0031304687178786202
+  terminal_ee_angular_velocity_radps: 0.0010686498765134372
+  maximum_base_tilt_rad: 0.15350864242668558
+  maximum_rotor_occupancy: 0.4630348676610315
+  maximum_joint_torque_occupancy: 0.23509267370329479
+  minimum_rotor_margin_N: 0.36420900500519715
+  minimum_joint_torque_margin_Nm: 0.1998277232213068
+  delta_u_cost: 14.39531552988971
+  input_saturation: false
+  terminal_reference_trim_strict: true
+  minimum_arm_distance_to_fully_extended_rad: 1.0
+  passed_near_fully_extended: false
+  left_knuckle_max_abs_torque_Nm: 0.0001722767786932131
+  left_knuckle_static_margin_Nm: 0.19984637956497772
+  pose_source: SCENE_FILE
+delta_u_implementation: two-pass proximal previous-control reference; exact cross-node
+  delta-u requires control-state augmentation

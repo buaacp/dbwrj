@@ -1,0 +1,13 @@
+bulb
+position_error_m median=0.000219 mean=0.000263 p95=0.000574
+axis_error_deg median=0.073780 mean=0.077919 p95=0.154921
+valid_ratio=1.000000
+false_valid_ratio=0.000000
+max_outage_duration_s=0.000
+
+socket
+position_error_m median=0.000080 mean=0.000098 p95=0.000234
+axis_error_deg median=0.035129 mean=0.037683 p95=0.071311
+valid_ratio=1.000000
+false_valid_ratio=0.000000
+max_outage_duration_s=0.000

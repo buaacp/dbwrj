@@ -1,0 +1,32 @@
+run_id: neutral_20260621_235456
+scenario: neutral
+git_commit: 161e63e0b3710d63d0079a7e9468144011fca5f3
+ros_version: ROS1 melodic
+gazebo_version: 9.19.0
+px4_commit: 746b3124abe9df486c6d88a3d9ec0c438e63654d
+launch_command: roslaunch le_arm iris_arm.launch
+world_file: /home/zlhq/catkin_ws/src/le_arm/worlds/weightless_ball.world
+topics:
+  uav_pose: /iris_0/mavros/local_position/pose
+  uav_velocity: /iris_0/mavros/local_position/velocity_local
+  uav_imu: /iris_0/mavros/imu/data
+  uav_state: /iris_0/mavros/state
+  uav_setpoint: /iris_0/mavros/setpoint_raw/local
+  arm_state: /joint_states
+  arm_group_velocity_command: /le_arm_controller/command
+  wrist_position_command: /wrist_roll_controller/command
+  gripper_trajectory_command: /gripper_controller/command
+  simulation_clock: /clock
+  motor_output: MOTOR_OUTPUT_UNAVAILABLE
+  joint_effort: JOINT_EFFORT_UNAVAILABLE
+simulation_time_used: true
+simulation_time_status: SIM_TIME_AVAILABLE
+wall_duration_s: 25.616825919999997
+sim_duration_s: 5.565000000000001
+clock_enabled: true
+motor_output_available: false
+joint_effort_available: false
+joint_effort_note: 'JOINT_EFFORT_UNAVAILABLE: /joint_states effort is identically
+  zero and not validated as measured torque.'
+abort_triggered: true
+actual_deploy_duration_s: 4.0

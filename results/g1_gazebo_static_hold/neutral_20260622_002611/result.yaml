@@ -1,0 +1,23 @@
+status: ABORTED
+metrics: {}
+abort:
+  reason: POSITION_ERROR
+  sim_time_s: 11.58
+  state: TAKEOFF_HOLD
+interface_failure: null
+startup_telemetry:
+  mavros_state_first_seen_wall_s: 0.016880012000001443
+  pose_first_seen_wall_s: 0.0986401480000012
+  velocity_first_seen_wall_s: 0.09912801900000545
+  imu_first_seen_wall_s: 0.11158298200000161
+  joint_state_first_seen_wall_s: 0.11055091999999433
+  clock_first_seen_wall_s: -0.010020308999997951
+  all_required_topics_seen: true
+  seen_mavros_state: true
+  seen_pose: true
+  seen_velocity: true
+  seen_imu: true
+  seen_joint_state: true
+  seen_clock: true
+  initial_telemetry_wait_s: 0.11158298200000161
+  missing_topics: []

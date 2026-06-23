@@ -1,0 +1,100 @@
+<launch>
+    <arg name="vehicle_type" default="iris"/>
+    <arg name="vehicle_id" default="0"/>
+    <arg name="target_topic" default="/weightless_ball/pose"/>
+    <arg name="ball_target_topic" default="/weightless_ball/pose"/>
+    <arg name="bulb_target_topic" default="/light_bulb/body_pose"/>
+    <arg name="socket_target_topic" default="/light_bulb_fixture/socket_pose"/>
+    <arg name="default_height" default="1.0"/>
+    <arg name="default_max_velocity" default="0.45"/>
+    <arg name="target_max_velocity" default="0.18"/>
+    <arg name="fine_max_velocity" default="0.08"/>
+    <arg name="pd_gain" default="0.8"/>
+    <arg name="auto_start" default="true"/>
+    <arg name="position_tolerance" default="0.07"/>
+    <arg name="fine_position_tolerance" default="0.04"/>
+    <arg name="require_arm_ready" default="true"/>
+    <arg name="enable_workspace_assist" default="false"/>
+    <arg name="workspace_assist_max_offset" default="0.12"/>
+    <arg name="workspace_assist_filter_alpha" default="0.85"/>
+    <arg name="workspace_assist_timeout" default="0.5"/>
+    <arg name="enable_anti_orbit_control" default="true"/>
+    <arg name="anti_orbit_damping" default="0.6"/>
+    <arg name="anti_orbit_min_radius" default="0.03"/>
+    <arg name="enable_obs_compensation" default="true"/>
+    <arg name="obs_compensation_gain" default="0.5"/>
+    <arg name="obs_time_constant" default="0.8"/>
+    <arg name="obs_activation_radius" default="0.5"/>
+    <arg name="obs_max_estimate" default="0.25"/>
+    <arg name="grasp_duration" default="3.0"/>
+    <arg name="unscrew_duration" default="6.0"/>
+    <arg name="screw_duration" default="6.0"/>
+    <arg name="finish_duration" default="4.0"/>
+    <arg name="bulb_center_axis_offset" default="-0.07"/>
+    <arg name="socket_center_axis_offset" default="-0.15"/>
+    <arg name="pick_uav_offset" default="[0.0, 0.096, 0.150]"/>
+    <arg name="socket_uav_offset" default="[0.0, 0.096, 0.150]"/>
+    <arg name="retreat_offset" default="[-0.35, 0.0, 0.25]"/>
+    <arg name="target_yaw_deg" default=""/>
+    <arg name="manual_mission_control" default="false"/>
+    <arg name="start_pose_bridge" default="true"/>
+
+    <node
+        pkg="test_fly"
+        type="test_fly_bulb_0615.py"
+        name="test_fly_bulb_0615"
+        output="screen">
+        <!-- 0 IDLE, 1 PICK_ALIGN, 2 GRASP_BULB, 3 UNSCREW_BULB, 4 TRANSFER_TO_SOCKET, 5 FINE_ALIGN_SOCKET, 6 SCREW_IN_BULB, 7 FINISH, 99 ABORT -->
+        <param name="vehicle_type" value="$(arg vehicle_type)"/>
+        <param name="vehicle_id" value="$(arg vehicle_id)"/>
+        <param name="target_topic" value="$(arg target_topic)"/>
+        <param name="ball_target_topic" value="$(arg ball_target_topic)"/>
+        <param name="bulb_target_topic" value="$(arg bulb_target_topic)"/>
+        <param name="socket_target_topic" value="$(arg socket_target_topic)"/>
+        <param name="default_height" value="$(arg default_height)"/>
+        <param name="default_max_velocity" value="$(arg default_max_velocity)"/>
+        <param name="target_max_velocity" value="$(arg target_max_velocity)"/>
+        <param name="fine_max_velocity" value="$(arg fine_max_velocity)"/>
+        <param name="pd_gain" value="$(arg pd_gain)"/>
+        <param name="auto_start" value="$(arg auto_start)"/>
+        <param name="position_tolerance" value="$(arg position_tolerance)"/>
+        <param name="fine_position_tolerance" value="$(arg fine_position_tolerance)"/>
+        <param name="require_arm_ready" value="$(arg require_arm_ready)"/>
+        <param name="enable_workspace_assist" value="$(arg enable_workspace_assist)"/>
+        <param name="workspace_assist_max_offset" value="$(arg workspace_assist_max_offset)"/>
+        <param name="workspace_assist_filter_alpha" value="$(arg workspace_assist_filter_alpha)"/>
+        <param name="workspace_assist_timeout" value="$(arg workspace_assist_timeout)"/>
+        <param name="enable_anti_orbit_control" value="$(arg enable_anti_orbit_control)"/>
+        <param name="anti_orbit_damping" value="$(arg anti_orbit_damping)"/>
+        <param name="anti_orbit_min_radius" value="$(arg anti_orbit_min_radius)"/>
+        <param name="enable_obs_compensation" value="$(arg enable_obs_compensation)"/>
+        <param name="obs_compensation_gain" value="$(arg obs_compensation_gain)"/>
+        <param name="obs_time_constant" value="$(arg obs_time_constant)"/>
+        <param name="obs_activation_radius" value="$(arg obs_activation_radius)"/>
+        <param name="obs_max_estimate" value="$(arg obs_max_estimate)"/>
+        <param name="grasp_duration" value="$(arg grasp_duration)"/>
+        <param name="unscrew_duration" value="$(arg unscrew_duration)"/>
+        <param name="screw_duration" value="$(arg screw_duration)"/>
+        <param name="finish_duration" value="$(arg finish_duration)"/>
+        <param name="bulb_center_axis_offset" value="$(arg bulb_center_axis_offset)"/>
+        <param name="socket_center_axis_offset" value="$(arg socket_center_axis_offset)"/>
+        <param name="pick_uav_offset" value="$(arg pick_uav_offset)"/>
+        <param name="socket_uav_offset" value="$(arg socket_uav_offset)"/>
+        <param name="retreat_offset" value="$(arg retreat_offset)"/>
+        <param name="target_yaw_deg" value="$(arg target_yaw_deg)"/>
+    </node>
+
+    <node if="$(arg start_pose_bridge)"
+        pkg="test_fly"
+        type="get_local_pose.py"
+        name="get_local_pose"
+        output="screen">
+    </node>
+
+    <node if="$(arg manual_mission_control)"
+        pkg="test_fly"
+        type="mission_control.py"
+        name="mission_control"
+        output="screen">
+    </node>
+</launch>

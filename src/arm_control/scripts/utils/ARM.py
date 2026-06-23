@@ -94,27 +94,25 @@ class ARM:
         self.angle[servo_id] = self.uservo.query_servo_angle(servo_id)*math.pi/180
 
     def joint_states_callback(self,data):
-        # joint 0 
-        self.angle[0] = -1*data.position[3]
-        self.angular[0] = -1*data.velocity[3]
-        self.effort[0] = -1*data.effort[3]
-        # joint 1
-        self.angle[1] = -1*data.position[2]+math.pi/4
-        self.angular[1] = -1*data.velocity[2]
-        self.effort[1] = -1*data.effort[2]
-        # joint 2
-        self.angle[2] = -1*data.position[0]+math.pi/4
-        self.angular[2] = -1*data.velocity[0]
-        self.effort[2] = -1*data.effort[0]
-        # joint 3
-        self.angle[3] = -1*data.position[4]
-        self.angular[3] = -1*data.velocity[4]
-        self.effort[3] = -1*data.effort[4]
+        joint_index = {name: index for index, name in enumerate(data.name)}
+        joint_map = {
+            0: ("shoulder_pan_joint", -1, 0.0),
+            1: ("shoulder_lift_joint", -1, math.pi / 4),
+            2: ("elbow_joint", -1, math.pi / 4),
+            3: ("wrist_1_joint", -1, 0.0),
+        }
 
-        # for i in range(len(data.velocity)):
-        #     self.angle[i] = data.position[i]
-        #     self.angular[i] = data.velocity[i]
-        #     self.effort[i] = data.effort[i]
+        for servo_id, (joint_name, direction, offset) in joint_map.items():
+            if joint_name not in joint_index:
+                rospy.logwarn_throttle(2.0, "joint_states缺少关节: %s", joint_name)
+                continue
+
+            index = joint_index[joint_name]
+            self.angle[servo_id] = direction * data.position[index] + offset
+            if index < len(data.velocity):
+                self.angular[servo_id] = direction * data.velocity[index]
+            if index < len(data.effort):
+                self.effort[servo_id] = direction * data.effort[index]
     def target_pos_callback(self,msg):
         self.target_pose.x = msg.pose.position.x
         self.target_pose.y = msg.pose.position.y

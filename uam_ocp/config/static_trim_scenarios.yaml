@@ -1,0 +1,82 @@
+solver:
+  strict_absolute_tolerance: 1.0e-9
+  bound_tolerance: 1.0e-10
+  qp_max_iterations: 1000
+  bias_weights:
+    rotor: 1.0
+    joint: 0.1
+  approximate_residual_weights:
+    force: 1.0
+    moment: 1.0
+    joint: 1.0
+  approximate_bias_regularization: 1.0e-8
+validation:
+  duration_s: 2.0
+  dt_s: 0.01
+  normalized_force_tolerance: 1.0e-8
+  normalized_moment_tolerance: 1.0e-8
+  normalized_joint_tolerance: 1.0e-8
+  acceleration_tolerance: 1.0e-7
+base:
+  position: [0.0, 0.0, 1.0]
+  quaternion_xyzw: [0.0, 0.0, 0.0, 1.0]
+scenarios:
+  folded:
+    source: "iris_arm.launch initial folded configuration"
+    joints:
+      shoulder_pan_joint: 0.0
+      shoulder_lift_joint: -0.2
+      elbow_joint: 0.0
+      wrist_1_joint: 0.0
+      wrist_roll_joint: 0.0
+      left_knuckle_joint: 0.0
+  neutral:
+    source: "URDF neutral configuration"
+    joints:
+      shoulder_pan_joint: 0.0
+      shoulder_lift_joint: 0.0
+      elbow_joint: 0.0
+      wrist_1_joint: 0.0
+      wrist_roll_joint: 0.0
+      left_knuckle_joint: 0.0
+  half_extended:
+    source: "P2.6 validation configuration within URDF limits; TODO_NEEDS_CALIBRATION against task workspace"
+    joints:
+      shoulder_pan_joint: 0.0
+      shoulder_lift_joint: -0.7
+      elbow_joint: 0.7
+      wrist_1_joint: -0.2
+      wrist_roll_joint: 0.0
+      left_knuckle_joint: 0.0
+  fully_extended:
+    source: "P2.6 maximum-forward validation configuration within URDF limits; TODO_NEEDS_CALIBRATION against task workspace"
+    joints:
+      shoulder_pan_joint: 0.0
+      shoulder_lift_joint: -1.2
+      elbow_joint: 0.0
+      wrist_1_joint: 0.0
+      wrist_roll_joint: 0.0
+      left_knuckle_joint: 0.0
+  left_offset:
+    source: "P2.6 lateral validation configuration within URDF limits"
+    joints:
+      shoulder_pan_joint: 0.8
+      shoulder_lift_joint: -0.7
+      elbow_joint: 0.5
+      wrist_1_joint: -0.1
+      wrist_roll_joint: 0.0
+      left_knuckle_joint: 0.0
+  right_offset:
+    source: "P2.6 mirrored lateral validation configuration within URDF limits"
+    joints:
+      shoulder_pan_joint: -0.8
+      shoulder_lift_joint: -0.7
+      elbow_joint: 0.5
+      wrist_1_joint: -0.1
+      wrist_roll_joint: 0.0
+      left_knuckle_joint: 0.0
+trajectory_scenarios:
+  source_npz: uam_ocp/results/p2_pregrasp/trajectory.npz
+  include_terminal: true
+  sampled_nodes: 10
+

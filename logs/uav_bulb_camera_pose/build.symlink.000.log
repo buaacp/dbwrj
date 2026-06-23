@@ -1,0 +1,4 @@
+Symlinking /home/zlhq/px4_fly_ws/devel/lib/pkgconfig/uav_bulb_camera_pose.pc
+Symlinking /home/zlhq/px4_fly_ws/devel/lib/python2.7/dist-packages/uav_bulb_camera_pose/__init__.py
+Symlinking /home/zlhq/px4_fly_ws/devel/share/uav_bulb_camera_pose/cmake/uav_bulb_camera_poseConfig.cmake
+Symlinking /home/zlhq/px4_fly_ws/devel/share/uav_bulb_camera_pose/cmake/uav_bulb_camera_poseConfig-version.cmake

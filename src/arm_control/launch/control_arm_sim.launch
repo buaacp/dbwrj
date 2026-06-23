@@ -1,8 +1,35 @@
 <launch>
+  <arg name="ball_target_topic" default="/weightless_ball/pose"/>
+  <arg name="bulb_target_topic" default="/light_bulb/body_pose"/>
+  <arg name="socket_target_topic" default="/light_bulb_fixture/socket_pose"/>
+  <arg name="mission_topic" default="/mission_state"/>
+  <arg name="above_grasp_yaw_deg" default="0.0"/>
+  <arg name="above_grasp_pitch_deg" default="-90.0"/>
+  <arg name="direct_target_enabled" default="false"/>
+  <arg name="target_position" default="[0.0, 0.0, 0.0]"/>
+  <arg name="target_axis_yaw_deg" default="0.0"/>
+  <arg name="target_axis_pitch_deg" default="-90.0"/>
+  <arg name="socket_target_offset" default="[0.0, 0.0, 0.12]"/>
+  <arg name="stow_joint_deg" default="[-45.0, 90.0, 45.0, 0.0]"/>
+
   <!-- 定义 iris_0 group -->
   <param name="if_simulation" type = "bool" value ="true"/>
   <group ns="iris_0">
-    <!-- 其他与 iris_0 相关的节点 -->
+    <!-- mission_state: 0 收起/悬停, 1 抓小球, 2 抓灯泡, 3 把灯泡安置在灯座上 -->
+    <param name="mission_topic" value="$(arg mission_topic)"/>
+    <param name="ball_target_topic" value="$(arg ball_target_topic)"/>
+    <param name="bulb_target_topic" value="$(arg bulb_target_topic)"/>
+    <param name="socket_target_topic" value="$(arg socket_target_topic)"/>
+    <!-- pitch=-90 表示末端方向沿世界 -Z，即从目标上方接近 -->
+    <param name="above_grasp_yaw_deg" value="$(arg above_grasp_yaw_deg)"/>
+    <param name="above_grasp_pitch_deg" value="$(arg above_grasp_pitch_deg)"/>
+    <!-- direct_target_enabled=true 时，不依赖 mission_state，直接控制爪心到 target_position，并保持末端全局方向 -->
+    <param name="direct_target_enabled" value="$(arg direct_target_enabled)"/>
+    <param name="target_position" value="$(arg target_position)"/>
+    <param name="target_axis_yaw_deg" value="$(arg target_axis_yaw_deg)"/>
+    <param name="target_axis_pitch_deg" value="$(arg target_axis_pitch_deg)"/>
+    <param name="socket_target_offset" value="$(arg socket_target_offset)"/>
+    <param name="stow_joint_deg" value="$(arg stow_joint_deg)"/>
 
     <!-- 添加 arm_control 节点到 iris_0 group -->
     <node pkg="arm_control" type="arm_control_mpc.py" name="control_arm" output="screen">
