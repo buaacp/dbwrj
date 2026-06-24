@@ -25,6 +25,9 @@ def validate_prediction_model(
     planner = planner or P2Planner(
         prediction.robot, prediction.actuation, prediction_model=prediction)
     problem, scenario, _, _, trim = planner.build_problem("pregrasp")
+    trim_reference = np.asarray(trim, dtype=float)
+    if trim_reference.ndim == 2:
+        trim_reference = trim_reference[0]
     dt = float(scenario["dt_s"])
     state = prediction.state
     rng = np.random.default_rng(seed)
@@ -40,7 +43,7 @@ def validate_prediction_model(
         x = state.integrate(problem.x0, tangent)
         perturbation = np.concatenate((rng.normal(0.0, 0.05, prediction.actuation.n_rotors),
                                        rng.normal(0.0, 1e-4, prediction.robot.n_arm)))
-        u = np.clip(trim + perturbation, lower, upper)
+        u = np.clip(trim_reference + perturbation, lower, upper)
         p2_next = _action_step(problem.runningModels[0], x, u)
         pred_next = prediction.step(x, u, dt)
         single_errors.append(float(np.linalg.norm(state.diff(p2_next, pred_next))))
@@ -48,7 +51,7 @@ def validate_prediction_model(
     # Test B: short finite P2 rollout versus the shared prediction model.
     horizon = 10
     indices = np.arange(horizon, dtype=float)
-    controls = np.tile(trim, (horizon, 1))
+    controls = np.tile(trim_reference, (horizon, 1))
     rotor_pattern = np.array([1.0, -1.0, 1.0, -1.0])
     controls[:, :prediction.actuation.n_rotors] += (
         0.02 * np.sin(0.4 * indices)[:, None] * rotor_pattern)
@@ -62,7 +65,7 @@ def validate_prediction_model(
 
     # Test C: calcDiff derivatives should show second-order remainder scaling.
     x = problem.x0.copy()
-    u = trim.copy()
+    u = trim_reference.copy()
     dx = rng.normal(size=prediction.ndx)
     du = rng.normal(size=prediction.nu)
     dx /= np.linalg.norm(dx)
@@ -186,4 +189,3 @@ def save_validation(summary: Dict[str, Any], results_dir: Path, report_path: Pat
         f"- Hover simulation finite: {'PASS' if test_d['pass'] else 'FAIL'}", "",
     ]
     report_path.write_text("\n".join(lines), encoding="utf-8")
-

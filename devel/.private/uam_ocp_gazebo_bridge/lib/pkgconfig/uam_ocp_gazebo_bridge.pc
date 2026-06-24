@@ -1,8 +1,0 @@
-prefix=/home/zlhq/px4_fly_ws/devel/.private/uam_ocp_gazebo_bridge
-
-Name: uam_ocp_gazebo_bridge
-Description: Description of uam_ocp_gazebo_bridge
-Version: 0.1.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

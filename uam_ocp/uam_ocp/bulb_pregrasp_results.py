@@ -12,6 +12,8 @@ from .actuation import UamActuation
 from .bulb_pregrasp_planner import BulbPregraspPlanner, BulbStrategySolution
 from .model_loader import UamModel
 from .static_trim import StaticTrimSolver
+from .terminal_rest import metrics_from_state, terminal_rest_config
+from .visualization import save_plots
 
 
 def evaluate_solution(robot: UamModel, actuation: UamActuation,
@@ -34,14 +36,18 @@ def evaluate_solution(robot: UamModel, actuation: UamActuation,
     rotor=controls[:,:actuation.n_rotors]; joint=controls[:,actuation.n_rotors:]
     joint_limits=np.maximum(np.abs(lower[actuation.n_rotors:]),np.abs(upper[actuation.n_rotors:]))
     terminal_trim=StaticTrimSolver(robot,actuation).solve_trim(planner.q_seed)
+    rest=terminal_rest_config(solution.scenario)
+    rest_metrics=metrics_from_state(robot,solution.states[-1],rest)
     trim_results=yaml.safe_load((Path(__file__).resolve().parents[1]/"results/static_trim/trim_results.yaml").read_text())
     fully_entry=next(entry for entry in trim_results["entries"] if entry["name"]=="fully_extended")
     fully=np.asarray(fully_entry["result"]["q"])
     arm_indices=[item.idx_q for item in robot.arm_joints]
     min_distance_fully=float(np.min([np.linalg.norm(state[:robot.model.nq][arm_indices]-fully[arm_indices]) for state in solution.states]))
     metrics={
-        "pass": bool(solution.converged and poserr[-1]<solution.scenario["terminal_position_tolerance_m"] and roterr[-1]<solution.scenario["terminal_orientation_tolerance_rad"] and np.linalg.norm(linear[-1])<solution.scenario["terminal_ee_linear_velocity_tolerance_mps"] and np.linalg.norm(angular[-1])<solution.scenario["terminal_ee_angular_velocity_tolerance_radps"]),
-        "fddp_converged":solution.converged,"iterations":solution.iterations,"rollout_error":solution.rollout_error,
+        "pass": bool(solution.converged and poserr[-1]<solution.scenario["terminal_position_tolerance_m"] and roterr[-1]<solution.scenario["terminal_orientation_tolerance_rad"] and np.linalg.norm(linear[-1])<solution.scenario["terminal_ee_linear_velocity_tolerance_mps"] and np.linalg.norm(angular[-1])<solution.scenario["terminal_ee_angular_velocity_tolerance_radps"] and rest_metrics["terminal_rest_pass"]),
+        "fddp_converged":solution.converged,"iterations":solution.iterations,
+        "final_cost":float(solution.costs[-1]) if solution.costs else None,
+        "rollout_error":solution.rollout_error,
         "terminal_position_error_m":float(poserr[-1]),"terminal_orientation_error_rad":float(roterr[-1]),
         "terminal_ee_linear_velocity_mps":float(np.linalg.norm(linear[-1])),"terminal_ee_angular_velocity_radps":float(np.linalg.norm(angular[-1])),
         "maximum_base_tilt_rad":float(np.max(np.linalg.norm(rpy[:,:2],axis=1))),
@@ -51,6 +57,7 @@ def evaluate_solution(robot: UamModel, actuation: UamActuation,
         "minimum_joint_torque_margin_Nm":float(np.min(joint_limits-np.abs(joint))),
         "delta_u_cost":float(np.sum(np.diff(controls,axis=0)**2)),
         "input_saturation":bool(np.any(controls<=lower+1e-9) or np.any(controls>=upper-1e-9)),
+        "control_bounds_satisfied":bool(np.all(controls>=lower-1e-10) and np.all(controls<=upper+1e-10)),
         "terminal_reference_trim_strict":terminal_trim.strict_feasible,
         "minimum_arm_distance_to_fully_extended_rad":min_distance_fully,
         "passed_near_fully_extended":bool(min_distance_fully<0.15),
@@ -58,6 +65,7 @@ def evaluate_solution(robot: UamModel, actuation: UamActuation,
         "left_knuckle_static_margin_Nm":0.19984637956497772,
         "pose_source":solution.bulb_diagnostics["pose_source"],
     }
+    metrics.update(rest_metrics)
     arrays={"ee_position":positions,"ee_rotation":rotations,"ee_linear":linear,"ee_angular":angular,"base_rpy":rpy,"position_error":np.asarray(poserr),"orientation_error":np.asarray(roterr)}
     return metrics,arrays
 
@@ -67,11 +75,18 @@ def save_strategy(robot: UamModel, actuation: UamActuation, solution: BulbStrate
     """Save required per-strategy trajectory artifacts."""
     import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
     output.mkdir(parents=True,exist_ok=True); dt=float(solution.scenario["dt"])
-    np.savez_compressed(output/"trajectory.npz",states=solution.states,controls=solution.controls,trim_references=solution.trim_references,reference_states=solution.reference_states,costs=np.asarray(solution.costs),**arrays)
     qnames=["base_x","base_y","base_z","base_qx","base_qy","base_qz","base_qw"]+[j.name for j in robot.arm_joints]
     vnames=["base_vx_body","base_vy_body","base_vz_body","base_wx_body","base_wy_body","base_wz_body"]+[j.name+"_velocity" for j in robot.arm_joints]
-    _csv(output/"states.csv",["time_s"]+qnames+vnames,[dict([("time_s",i*dt)]+list(zip(qnames+vnames,x))) for i,x in enumerate(solution.states)])
     unames=[f"rotor_{r['id']}_thrust_N" for r in actuation.rotors]+[n+"_torque_Nm" for n in actuation.joint_names]
+    np.savez_compressed(output/"trajectory.npz",
+        time_s=np.arange(len(solution.states))*dt,dt_s=np.asarray([dt]),
+        states=solution.states,controls=solution.controls,solver_states=solution.states,
+        trim_references=solution.trim_references,reference_states=solution.reference_states,
+        costs=np.asarray(solution.costs),q_names=np.asarray(qnames),v_names=np.asarray(vnames),
+        control_names=np.asarray(unames),world_frame=np.asarray(["Gazebo ENU / Pinocchio world"]),
+        body_velocity_frame=np.asarray(["body frame"]),base_angular_velocity_frame=np.asarray(["body frame"]),
+        terminal_rest_config=np.asarray([terminal_rest_config(solution.scenario)],dtype=object),**arrays)
+    _csv(output/"states.csv",["time_s"]+qnames+vnames,[dict([("time_s",i*dt)]+list(zip(qnames+vnames,x))) for i,x in enumerate(solution.states)])
     _csv(output/"controls.csv",["time_s"]+unames,[dict([("time_s",i*dt)]+list(zip(unames,u))) for i,u in enumerate(solution.controls)])
     _csv(output/"trim_reference.csv",["time_s"]+unames,[dict([("time_s",i*dt)]+list(zip(unames,u))) for i,u in enumerate(solution.trim_references)])
     rows=[]
@@ -88,6 +103,7 @@ def save_strategy(robot: UamModel, actuation: UamActuation, solution: BulbStrate
     axes[1,0].plot(t,arrays["position_error"],label="position");axes[1,0].plot(t,arrays["orientation_error"],label="orientation");axes[1,0].legend()
     axes[1,1].plot(t[:-1],solution.controls[:,:4]);axes[1,1].set_ylabel("rotor thrust [N]")
     fig.tight_layout();fig.savefig(output/"state_control_timeseries.png",dpi=160);plt.close(fig)
+    save_plots(robot,actuation,solution,output,solution.report_name)
 
 
 def save_comparison(solutions: List[BulbStrategySolution], evaluations: Dict[str,Tuple[Dict[str,Any],Dict[str,np.ndarray]]], output: Path) -> None:

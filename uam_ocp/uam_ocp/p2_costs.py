@@ -6,6 +6,7 @@ import numpy as np
 import pinocchio as pin
 
 from .model_loader import UamModel
+from .terminal_rest import add_terminal_rest_costs
 
 
 def add_weighted_residual(costs: Any, name: str, state: Any, residual: Any,
@@ -24,7 +25,9 @@ def add_weighted_residual(costs: Any, name: str, state: Any, residual: Any,
 def create_cost_sum(robot: UamModel, nu: int, target_state: np.ndarray,
                     target_pose: pin.SE3, base_rotation: np.ndarray,
                     hover_control: np.ndarray, weights: Dict[str, float],
-                    terminal: bool = False, terminal_velocity: bool = True):
+                    terminal: bool = False, terminal_velocity: bool = True,
+                    terminal_rest: Dict[str, float] = None,
+                    terminal_rest_window_scale: float = 0.0):
     """Create running or terminal costs without hard-coded state dimensions."""
     import crocoddyl
     state = robot.state
@@ -63,6 +66,14 @@ def create_cost_sum(robot: UamModel, nu: int, target_state: np.ndarray,
         add_weighted_residual(
             costs, "ee_velocity", state, velocity, weights["terminal_ee_velocity"],
             np.ones(6))
+    if terminal_rest is not None:
+        if terminal:
+            add_terminal_rest_costs(
+                costs, robot, nu, target_state, terminal_rest, terminal=True, window_scale=1.0)
+        elif terminal_rest_window_scale > 0.0:
+            add_terminal_rest_costs(
+                costs, robot, nu, target_state, terminal_rest,
+                terminal=False, window_scale=terminal_rest_window_scale)
     if not terminal:
         control = crocoddyl.ResidualModelControl(state, np.asarray(hover_control, dtype=float))
         add_weighted_residual(costs, "control", state, control, weights["running_control"])

@@ -12,6 +12,7 @@ from .model_loader import MODULE_ROOT, UamModel, load_yaml
 from .p2_costs import create_cost_sum
 from .prediction_model import UAMPredictionModel
 from .static_trim import StaticTrimSolver
+from .terminal_rest import terminal_rest_config
 
 
 @dataclass
@@ -110,26 +111,50 @@ class P2Planner:
                 f"Unknown control_reference_mode {mode!r}; expected fixed_initial_trim or static_trim")
         self.last_control_references = control_references.copy()
         weights = scenario["weights"]
+        rest = terminal_rest_config(scenario)
+        rest_window = max(0, int(rest["window_steps"]))
         if mode == "fixed_initial_trim":
             running_cost = create_cost_sum(
                 self.robot, self.actuation.nu, xref, target_pose, np.eye(3),
-                control_references[0], weights, terminal=False)
-            running_models = [self.prediction_model.build_action_model(dt, running_cost)] * steps
+                control_references[0], weights, terminal=False,
+                terminal_rest=rest, terminal_rest_window_scale=0.0)
+            running_models = []
+            for index in range(steps):
+                scale = self._terminal_rest_window_scale(index, steps, rest_window)
+                if scale > 0.0:
+                    running_cost = create_cost_sum(
+                        self.robot, self.actuation.nu, xref, target_pose, np.eye(3),
+                        control_references[0], weights, terminal=False,
+                        terminal_rest=rest, terminal_rest_window_scale=scale)
+                running_models.append(self.prediction_model.build_action_model(dt, running_cost))
         else:
             running_models = []
-            for control_reference in control_references:
+            for index, control_reference in enumerate(control_references):
+                scale = self._terminal_rest_window_scale(index, steps, rest_window)
                 running_cost = create_cost_sum(
                     self.robot, self.actuation.nu, xref, target_pose, np.eye(3),
-                    control_reference, weights, terminal=False)
+                    control_reference, weights, terminal=False,
+                    terminal_rest=rest, terminal_rest_window_scale=scale)
                 running_models.append(
                     self.prediction_model.build_action_model(dt, running_cost))
         terminal_cost = create_cost_sum(
             self.robot, self.actuation.nu, xref, target_pose, np.eye(3),
             control_references[-1], weights,
-            terminal=True, terminal_velocity=bool(scenario["terminal_ee_velocity"]))
+            terminal=True, terminal_velocity=bool(scenario["terminal_ee_velocity"]),
+            terminal_rest=rest)
         terminal = self.prediction_model.build_action_model(0.0, terminal_cost)
         problem = crocoddyl.ShootingProblem(x0, running_models, terminal)
         return problem, scenario, target_pose, xref, hover
+
+    @staticmethod
+    def _terminal_rest_window_scale(index: int, steps: int, window_steps: int) -> float:
+        """Ramp terminal-rest running cost over the final configured nodes."""
+        if window_steps <= 0:
+            return 0.0
+        first = max(0, int(steps) - int(window_steps))
+        if int(index) < first:
+            return 0.0
+        return float(index - first + 1) / float(max(1, int(steps) - first))
 
     def warm_start(self, problem: Any, target_state: np.ndarray,
                    hover: np.ndarray):

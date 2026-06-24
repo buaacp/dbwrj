@@ -1,0 +1,38 @@
+bulb_pose:
+  translation:
+    pose_source: MANUAL_UNVALIDATED
+    verified: false
+  position:
+  - 0.6
+  - -0.32999999999999996
+  - 0.165
+pregrasp:
+  position:
+  - 0.6
+  - -0.32999999999999996
+  - 0.265
+  rotation:
+  - - 1.0
+    - 0.0
+    - 0.0
+  - - 0.0
+    - -1.0
+    - 0.0
+  - - 0.0
+    - 0.0
+    - -1.0
+diagnostics:
+  bulb_axis_local:
+  - 0.0
+  - 0.0
+  - -1.0
+  gripper_axis_local:
+  - 0.0
+  - 0.0
+  - 1.0
+  offset_bulb_frame:
+  - -0.0
+  - -0.0
+  - 0.1
+  distance_m: 0.1
+  axis_alignment_error: 0.0

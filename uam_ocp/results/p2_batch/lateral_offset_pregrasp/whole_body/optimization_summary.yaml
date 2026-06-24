@@ -1,0 +1,34 @@
+strategy: WHOLE_BODY
+metrics:
+  pass: true
+  fddp_converged: true
+  iterations: 17
+  final_cost: 12.593019396810366
+  rollout_error: 0.0
+  terminal_position_error_m: 0.0003770433498218584
+  terminal_orientation_error_rad: 0.0030494887821654122
+  terminal_ee_linear_velocity_mps: 0.0008388367447736378
+  terminal_ee_angular_velocity_radps: 0.00016155481676021787
+  maximum_base_tilt_rad: 0.17452291551189328
+  maximum_rotor_occupancy: 0.4821242109155828
+  maximum_joint_torque_occupancy: 0.24342372951283858
+  minimum_rotor_margin_N: 0.14823653893711783
+  minimum_joint_torque_margin_Nm: 0.19981678630216673
+  delta_u_cost: 18.08059448968181
+  input_saturation: false
+  control_bounds_satisfied: true
+  terminal_reference_trim_strict: true
+  minimum_arm_distance_to_fully_extended_rad: 1.0
+  passed_near_fully_extended: false
+  left_knuckle_max_abs_torque_Nm: 0.00018321369783327136
+  left_knuckle_static_margin_Nm: 0.19984637956497772
+  pose_source: MANUAL_UNVALIDATED
+  terminal_base_linear_velocity_norm_mps: 0.0008786092438768552
+  terminal_base_angular_velocity_norm_radps: 0.00016274677091406665
+  terminal_max_arm_joint_velocity_radps: 7.964431606868275e-05
+  terminal_full_body_velocity_norm: 0.0009009794167577623
+  terminal_rest_pass: true
+  terminal_rest_mode: strong-soft terminal rest condition
+  terminal_rest_window_steps: 4
+delta_u_implementation: two-pass proximal previous-control reference; exact cross-node
+  delta-u requires control-state augmentation

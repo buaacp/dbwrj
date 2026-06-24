@@ -1,1 +1,0 @@
-/home/zlhq/px4_fly_ws/devel/.private/uam_ocp_gazebo_bridge/share/uam_ocp_gazebo_bridge/cmake/uam_ocp_gazebo_bridgeConfig.cmake

@@ -1,0 +1,103 @@
+run_id: neutral_20260623_012218
+scenario: neutral
+git_commit: 5e996cbcdf4b9d4f1a44e19bf214359c333aea4f
+ros_version: ROS1 melodic
+gazebo_version: 9.19.0
+px4_commit: 746b3124abe9df486c6d88a3d9ec0c438e63654d
+topics:
+  uav_pose: /iris_0/mavros/local_position/pose
+  uav_velocity: /iris_0/mavros/local_position/velocity_local
+  uav_imu: /iris_0/mavros/imu/data
+  uav_state: /iris_0/mavros/state
+  uav_setpoint: /iris_0/mavros/setpoint_raw/local
+  arm_state: /joint_states
+  arm_group_velocity_command: /le_arm_controller/command
+  wrist_position_command: /wrist_roll_controller/command
+  gripper_trajectory_command: /gripper_controller/command
+  simulation_clock: /clock
+  motor_output: MOTOR_OUTPUT_UNAVAILABLE
+  joint_effort: JOINT_EFFORT_UNAVAILABLE
+startup_telemetry:
+  mavros_state_first_seen_wall_s: -0.017622179999989385
+  pose_first_seen_wall_s: 1.773374368000006
+  velocity_first_seen_wall_s: 1.7735134730000084
+  imu_first_seen_wall_s: 1.7830966660000058
+  joint_state_first_seen_wall_s: 0.1480075360000086
+  clock_first_seen_wall_s: 0.02422315399999775
+  all_required_topics_seen: true
+  seen_mavros_state: true
+  seen_pose: true
+  seen_velocity: true
+  seen_imu: true
+  seen_joint_state: true
+  seen_clock: true
+  initial_telemetry_wait_s: 1.7830966660000058
+  missing_topics: []
+takeoff_reference:
+  initial_position_world:
+  - -4.474532943277154e-06
+  - -1.3095572057864047e-06
+  - 2.1214100343058817e-06
+  transition_start_position_world:
+  - -0.002866206457838416
+  - 0.005135356914252043
+  - 0.0345432348549366
+  hold_position_world:
+  - 0.0
+  - 0.0
+  - 1.0
+  transition_duration_s: 8.0
+  transition_position_error_m: 0.5
+  no_ascent_check_after_s: 2.0
+  min_ascent_after_check_m: 0.08
+arm_startup_reference:
+  joint_names:
+  - shoulder_pan_joint
+  - shoulder_lift_joint
+  - elbow_joint
+  - wrist_1_joint
+  - wrist_roll_joint
+  - left_knuckle_joint
+  q_initial_rad:
+  - 0.06246253709917937
+  - 0.02198717618798085
+  - 0.03938182905591869
+  - 0.01911315535102176
+  - -0.008920470083952026
+  - 0.0012240519981032705
+  q_neutral_rad:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  q_initial_minus_neutral_rad:
+  - 0.06246253709917937
+  - 0.02198717618798085
+  - 0.03938182905591869
+  - 0.01911315535102176
+  - -0.008920470083952026
+  - 0.0012240519981032705
+mavros_state_freshness:
+  source: StateMonitor
+  state_receive_key: mavros_state
+  state_last_wall_s: 101.925053003
+  state_last_sim_s: 14.012
+  state_age_wall_s: 3.4307171909999994
+  state_age_sim_s: 0.9710000000000001
+  state_receive_count: 10
+  clock_last_wall_s: 105.355770194
+  clock_last_sim_s: 14.983
+  clock_age_wall_s: 0.0
+simulation_time_used: true
+simulation_time_status: SIM_TIME_AVAILABLE
+wall_duration_s: 45.171834527
+sim_duration_s: 10.911999999999999
+clock_enabled: true
+motor_output_available: false
+joint_effort_available: false
+joint_effort_note: 'JOINT_EFFORT_UNAVAILABLE: /joint_states effort is not used as
+  a measured actuator torque in G1.'
+abort_triggered: true
+actual_deploy_duration_s: 4.0

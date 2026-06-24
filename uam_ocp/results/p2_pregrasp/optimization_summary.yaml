@@ -2,7 +2,7 @@ status: PASS
 architecture: StateMultibody -> verified ActuationModelFloatingBaseThrusters -> DifferentialActionModelFreeFwdDynamics
   -> IntegratedActionModelEuler -> ShootingProblem -> SolverBoxFDDP
 scenario:
-  control_reference_mode: fixed_initial_trim
+  control_reference_mode: static_trim
   initial_base_position:
   - 0.0
   - 0.0
@@ -35,6 +35,19 @@ scenario:
   dt_s: 0.05
   max_iterations: 100
   terminal_ee_velocity: true
+  terminal_rest:
+    enabled: true
+    base_linear_velocity_weight: 1200.0
+    base_angular_velocity_weight: 800.0
+    arm_joint_velocity_weight: 300.0
+    base_linear_velocity_tolerance_mps: 0.03
+    base_angular_velocity_tolerance_radps: 0.05
+    arm_joint_velocity_tolerance_radps: 0.05
+    barrier_weight: 10000.0
+    window_steps: 4
+    pass_base_linear_velocity_norm_mps: 0.05
+    pass_base_angular_velocity_norm_radps: 0.08
+    pass_arm_joint_velocity_inf_radps: 0.08
   desired_base_rpy:
   - 0.0
   - 0.0
@@ -71,61 +84,68 @@ dimensions:
 metrics:
   solver_converged: true
   iterations: 3
-  final_cost: 0.05294443116532033
+  final_cost: 0.05295994338318874
   rollout_state_error: 0.0
-  terminal_ee_position_error_m: 5.599131034496697e-07
-  terminal_ee_rotation_error_rad: 7.352257262776347e-07
-  terminal_ee_linear_velocity_mps: 4.051648489288573e-06
-  terminal_ee_angular_velocity_radps: 1.3121175510156326e-06
+  terminal_ee_position_error_m: 2.8264439157376847e-06
+  terminal_ee_rotation_error_rad: 1.0117123775722022e-06
+  terminal_ee_linear_velocity_mps: 1.1929564682921397e-07
+  terminal_ee_angular_velocity_radps: 8.640335941682567e-07
   terminal_base_rpy_rad:
-  - 1.132953459936914e-07
-  - -3.792000502045312e-06
-  - -4.924754914981122e-08
+  - -8.223774417004392e-08
+  - -2.1057298292603832e-05
+  - -4.201592407326871e-09
   control_minimum:
-  - 3.944491715803398
-  - 2.5812541394476387
-  - 3.936090082462998
-  - 2.5768876986982594
-  - -0.0004457920816088682
-  - -0.22331878079789647
-  - -0.13206444168858833
-  - -0.05929651351893632
-  - -0.0007805516382373374
-  - -4.986156094219617e-05
+  - 3.9439940213343445
+  - 2.579490585083069
+  - 3.9355939863264724
+  - 2.5751304579560017
+  - -0.0004458326207012904
+  - -0.2233088673080466
+  - -0.13205527873786463
+  - -0.05929278062986295
+  - -0.0007805001837569278
+  - -4.99161277611175e-05
   control_maximum:
-  - 4.4814740637596175
-  - 4.805781891433781
-  - 4.461900669803942
-  - 4.811380953121554
-  - 0.0012266564399348446
-  - -0.1460868695935532
-  - -0.07656092861444577
-  - -0.03477602133488957
-  - -0.00047988296025912287
-  - -8.023708168927058e-06
+  - 4.481106026071544
+  - 4.805888309387444
+  - 4.461525789839712
+  - 4.8114863850982434
+  - 0.0012263464241173726
+  - -0.14613628854194655
+  - -0.07657976060188061
+  - -0.0347855996857637
+  - -0.00047999447091692636
+  - -8.009868034473951e-06
   minimum_lower_bound_margin:
-  - 3.944491715803398
-  - 2.5812541394476387
-  - 3.936090082462998
-  - 2.5768876986982594
-  - 0.9995542079183911
-  - 0.7766812192021035
-  - 0.8679355583114117
-  - 0.9407034864810637
-  - 0.4992194483617627
-  - 0.19995013843905782
+  - 3.9439940213343445
+  - 2.579490585083069
+  - 3.9355939863264724
+  - 2.5751304579560017
+  - 0.9995541673792987
+  - 0.7766911326919534
+  - 0.8679447212621354
+  - 0.940707219370137
+  - 0.4992194998162431
+  - 0.1999500838722389
   minimum_upper_bound_margin:
-  - 5.862307736240383
-  - 5.53799990856622
-  - 5.881881130196058
-  - 5.5324008468784465
-  - 0.9987733435600652
-  - 1.146086869593553
-  - 1.0765609286144457
-  - 1.0347760213348896
-  - 0.5004798829602591
-  - 0.20000802370816895
+  - 5.862675773928457
+  - 5.537893490612556
+  - 5.8822560101602885
+  - 5.532295414901757
+  - 0.9987736535758827
+  - 1.1461362885419466
+  - 1.0765797606018805
+  - 1.0347855996857638
+  - 0.500479994470917
+  - 0.2000080098680345
   control_bounds_satisfied: true
+  terminal_base_linear_velocity_norm_mps: 3.3838783024448914e-07
+  terminal_base_angular_velocity_norm_radps: 1.1072278288734073e-07
+  terminal_max_arm_joint_velocity_radps: 4.915764766649788e-06
+  terminal_full_body_velocity_norm: 6.568673436894049e-06
+  terminal_rest_pass: true
+  terminal_rest_mode: strong-soft terminal rest condition
+  terminal_rest_window_steps: 4
   checks:
     solver: true
     rollout: true
@@ -134,6 +154,7 @@ metrics:
     ee_rotation: true
     ee_linear_velocity: true
     ee_angular_velocity: true
+    terminal_full_body_rest: true
     base_attitude: true
   pass: true
 delta_u: *id001

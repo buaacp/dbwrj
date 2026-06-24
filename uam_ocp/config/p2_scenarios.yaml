@@ -1,5 +1,5 @@
 pregrasp:
-  control_reference_mode: fixed_initial_trim
+  control_reference_mode: static_trim
   initial_base_position: [0.0, 0.0, 1.0]
   initial_base_quaternion_xyzw: [0.0, 0.0, 0.0, 1.0]
   initial_arm_configuration:
@@ -17,6 +17,19 @@ pregrasp:
   dt_s: 0.05
   max_iterations: 100
   terminal_ee_velocity: true
+  terminal_rest:
+    enabled: true
+    base_linear_velocity_weight: 1200.0
+    base_angular_velocity_weight: 800.0
+    arm_joint_velocity_weight: 300.0
+    base_linear_velocity_tolerance_mps: 0.03
+    base_angular_velocity_tolerance_radps: 0.05
+    arm_joint_velocity_tolerance_radps: 0.05
+    barrier_weight: 10000.0
+    window_steps: 4
+    pass_base_linear_velocity_norm_mps: 0.05
+    pass_base_angular_velocity_norm_radps: 0.08
+    pass_arm_joint_velocity_inf_radps: 0.08
   desired_base_rpy: [0.0, 0.0, 0.0]
   tolerances:
     ee_position_m: 0.06

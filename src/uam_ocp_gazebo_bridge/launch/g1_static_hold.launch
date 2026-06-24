@@ -1,9 +1,0 @@
-<launch>
-  <arg name="scenario" default="neutral"/>
-  <arg name="config" default="$(find uam_ocp_gazebo_bridge)/config/g1_static_hold.yaml"/>
-  <node pkg="uam_ocp_gazebo_bridge" type="g1_static_hold_runner.py"
-        name="g1_static_hold" output="screen" required="true">
-    <param name="config" value="$(arg config)"/>
-    <param name="scenario" value="$(arg scenario)"/>
-  </node>
-</launch>

@@ -13,6 +13,7 @@ from .bulb_pregrasp import (
 from .model_loader import UamModel
 from .prediction_model import UAMPredictionModel
 from .static_trim import StaticTrimSolver
+from .terminal_rest import add_terminal_rest_costs, terminal_rest_config
 
 
 @dataclass
@@ -51,6 +52,7 @@ class BulbPregraspPlanner:
         self.x0 = np.concatenate((self.q0, np.zeros(robot.model.nv)))
         self.x_seed = np.concatenate((self.q_seed, np.zeros(robot.model.nv)))
         self.steps = int(self.scenario["horizon_steps"]); self.dt = float(self.scenario["dt"])
+        self.terminal_rest = terminal_rest_config(self.scenario)
         difference = robot.state.diff(self.x0, self.x_seed)
         self.reference_states = np.asarray([
             robot.state.integrate(self.x0, (index / self.steps) * difference)
@@ -107,16 +109,28 @@ class BulbPregraspPlanner:
         import crocoddyl
         running = []
         for index in range(self.steps):
+            scale = self._terminal_rest_window_scale(index)
             costs = self._costs(strategy, self.reference_states[index],
-                                self.trim_references[index], delta_references[index], False)
+                                self.trim_references[index], delta_references[index], False,
+                                rest_window_scale=scale)
             running.append(self.prediction.build_action_model(self.dt, costs))
         terminal_cost = self._costs(
             strategy, self.x_seed, self.trim_references[-1], delta_references[-1], True)
         terminal = self.prediction.build_action_model(0.0, terminal_cost)
         return crocoddyl.ShootingProblem(self.x0, running, terminal)
 
+    def _terminal_rest_window_scale(self, index: int) -> float:
+        window = max(0, int(self.terminal_rest["window_steps"]))
+        if window <= 0:
+            return 0.0
+        first = max(0, self.steps - window)
+        if int(index) < first:
+            return 0.0
+        return float(index - first + 1) / float(max(1, self.steps - first))
+
     def _costs(self, strategy: Dict[str, Any], xref: np.ndarray, trim: np.ndarray,
-               previous_control: np.ndarray, terminal: bool) -> Any:
+               previous_control: np.ndarray, terminal: bool,
+               rest_window_scale: float = 0.0) -> Any:
         import crocoddyl
         state = self.robot.state; nu = self.actuation.nu
         costs = crocoddyl.CostModelSum(state, nu); common = self.scenario["common_weights"]
@@ -147,5 +161,12 @@ class BulbPregraspPlanner:
         if not terminal:
             add("trim_control", crocoddyl.ResidualModelControl(state, trim), common["running_control"])
             add("delta_u_proximal", crocoddyl.ResidualModelControl(state, previous_control), common["delta_u"])
+            if rest_window_scale > 0.0:
+                add_terminal_rest_costs(
+                    costs, self.robot, nu, xref, self.terminal_rest,
+                    terminal=False, window_scale=rest_window_scale)
+        else:
+            add_terminal_rest_costs(
+                costs, self.robot, nu, xref, self.terminal_rest,
+                terminal=True, window_scale=1.0)
         return costs
-

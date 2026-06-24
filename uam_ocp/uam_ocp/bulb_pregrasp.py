@@ -18,7 +18,39 @@ def load_pregrasp_configuration(scenario_name: str = "scene_bulb_pregrasp") -> T
     """Load scenario and explicit task-joint semantics."""
     scenarios = load_yaml(MODULE_ROOT / "config" / "bulb_pregrasp_scenarios.yaml")
     joints = load_yaml(MODULE_ROOT / "config" / "uam_task_joints.yaml")
-    return scenarios[scenario_name], joints
+    scenario = _resolve_scenario(scenarios, scenario_name)
+    return scenario, joints
+
+
+def _resolve_scenario(scenarios: Dict[str, Any], scenario_name: str) -> Dict[str, Any]:
+    """Resolve optional base_scenario inheritance for offline stress tests."""
+    if scenario_name not in scenarios:
+        raise KeyError(scenario_name)
+    scenario = dict(scenarios[scenario_name])
+    if "base_scenario" not in scenario:
+        scenario["scenario_name"] = scenario_name
+        return scenario
+    base = _resolve_scenario(scenarios, str(scenario["base_scenario"]))
+    merged = _deep_update(base, scenario)
+    merged["scenario_name"] = scenario_name
+    offset = np.asarray(merged.get("target_offset_world_m", [0.0, 0.0, 0.0]), dtype=float)
+    if np.linalg.norm(offset) > 0.0:
+        position = np.asarray(merged["bulb_pose_world"]["position"], dtype=float) + offset
+        merged["bulb_pose_world"] = dict(merged["bulb_pose_world"])
+        merged["bulb_pose_world"]["position"] = position.tolist()
+        merged["scene_file"] = None
+        merged["scene_model_name"] = None
+    return merged
+
+
+def _deep_update(base: Dict[str, Any], update: Dict[str, Any]) -> Dict[str, Any]:
+    result = dict(base)
+    for key, value in update.items():
+        if isinstance(value, dict) and isinstance(result.get(key), dict):
+            result[key] = _deep_update(result[key], value)
+        else:
+            result[key] = value
+    return result
 
 
 def resolve_bulb_pose(scenario: Dict[str, Any]) -> Tuple[pin.SE3, Dict[str, Any]]:
@@ -131,4 +163,3 @@ def solve_terminal_ik(robot: UamModel, scenario: Dict[str, Any], task_joints: Di
     if not success:
         raise IKSeedUnreachable(str(report))
     return q, report
-

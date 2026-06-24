@@ -1,0 +1,34 @@
+strategy: UAV_DOMINANT_SOFT_ARM_HOLD
+metrics:
+  pass: true
+  fddp_converged: true
+  iterations: 16
+  final_cost: 15.362390776716653
+  rollout_error: 0.0
+  terminal_position_error_m: 0.00042399988443670176
+  terminal_orientation_error_rad: 0.004737780364228407
+  terminal_ee_linear_velocity_mps: 0.00044798041427980865
+  terminal_ee_angular_velocity_radps: 0.0004508211156540284
+  maximum_base_tilt_rad: 0.16357660819238826
+  maximum_rotor_occupancy: 0.4683174059376133
+  maximum_joint_torque_occupancy: 0.2381091385636826
+  minimum_rotor_margin_N: 0.24926932916384476
+  minimum_joint_torque_margin_Nm: 0.19981513416322008
+  delta_u_cost: 18.088122910280788
+  input_saturation: false
+  control_bounds_satisfied: true
+  terminal_reference_trim_strict: true
+  minimum_arm_distance_to_fully_extended_rad: 1.0
+  passed_near_fully_extended: false
+  left_knuckle_max_abs_torque_Nm: 0.00018486583677992504
+  left_knuckle_static_margin_Nm: 0.19984637956497772
+  pose_source: MANUAL_UNVALIDATED
+  terminal_base_linear_velocity_norm_mps: 0.000484790941893647
+  terminal_base_angular_velocity_norm_radps: 0.00018575765937735
+  terminal_max_arm_joint_velocity_radps: 0.00018557838720371922
+  terminal_full_body_velocity_norm: 0.000605662279683235
+  terminal_rest_pass: true
+  terminal_rest_mode: strong-soft terminal rest condition
+  terminal_rest_window_steps: 4
+delta_u_implementation: two-pass proximal previous-control reference; exact cross-node
+  delta-u requires control-state augmentation

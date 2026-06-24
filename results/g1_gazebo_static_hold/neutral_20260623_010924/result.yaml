@@ -1,0 +1,48 @@
+status: ABORTED
+metrics: {}
+abort:
+  reason: IMU_STALE
+  state: ARM_AND_OFFBOARD
+  sim_time_s: 9.757
+  actual_position:
+  - -0.007882543839514256
+  - -0.004554916638880968
+  - 0.02234743908047676
+  actual_joint_position_rad:
+  - -0.008495810612458854
+  - 0.024998603623490823
+  - 0.03143642130182478
+  - 0.025028870129788494
+  - 0.009866876823452664
+  - -0.000107179807765867
+  active_reference_position:
+  - 0.001221097307279706
+  - -0.0007531113806180656
+  - 0.013325505889952183
+  active_reference_kind: INITIAL_HOLD
+  active_joint_reference_rad:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  active_joint_reference_kind: NEUTRAL_HOLD
+interface_failure: null
+startup_telemetry:
+  mavros_state_first_seen_wall_s: 0.03867626400096924
+  pose_first_seen_wall_s: -0.004674268999224296
+  velocity_first_seen_wall_s: 0.14091003100111266
+  imu_first_seen_wall_s: 0.1107846619997872
+  joint_state_first_seen_wall_s: 0.10538064499996835
+  clock_first_seen_wall_s: 0.02220162999947206
+  all_required_topics_seen: true
+  seen_mavros_state: true
+  seen_pose: true
+  seen_velocity: true
+  seen_imu: true
+  seen_joint_state: true
+  seen_clock: true
+  initial_telemetry_wait_s: 0.14091003100111266
+  missing_topics: []
+joint_failure: null

@@ -1,0 +1,36 @@
+ros:
+  version: ROS1
+  distro: melodic
+gazebo:
+  implementation: Gazebo Classic
+  version: 9.19.0
+px4_bridge:
+  implementation: MAVROS
+  namespace: /iris_0/mavros
+frames:
+  world: ENU
+  mavros_local_payload: ENU
+  px4_internal: NED
+  conversion_owner: MAVROS local_position and setpoint_raw plugins
+topics:
+  uav_pose: /iris_0/mavros/local_position/pose
+  uav_velocity: /iris_0/mavros/local_position/velocity_local
+  uav_imu: /iris_0/mavros/imu/data
+  uav_state: /iris_0/mavros/state
+  uav_setpoint: /iris_0/mavros/setpoint_raw/local
+  arm_state: /joint_states
+  arm_group_velocity_command: /le_arm_controller/command
+  wrist_position_command: /wrist_roll_controller/command
+  gripper_trajectory_command: /gripper_controller/command
+  simulation_clock: /clock
+  motor_output: MOTOR_OUTPUT_UNAVAILABLE
+  joint_effort: JOINT_EFFORT_UNAVAILABLE
+services:
+  arming: /iris_0/mavros/cmd/arming
+  set_mode: /iris_0/mavros/set_mode
+launch:
+  simulation: roslaunch le_arm iris_arm.launch
+unresolved:
+- MAVROS actuator/ESC topics exist but publish no samples in this SITL launch.
+- /joint_states effort is present but identically zero and is not validated as measured
+  torque.

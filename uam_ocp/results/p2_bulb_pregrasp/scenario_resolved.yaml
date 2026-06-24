@@ -64,6 +64,19 @@ terminal_position_tolerance_m: 0.01
 terminal_orientation_tolerance_rad: 0.05
 terminal_ee_linear_velocity_tolerance_mps: 0.03
 terminal_ee_angular_velocity_tolerance_radps: 0.05
+terminal_rest:
+  enabled: true
+  base_linear_velocity_weight: 1200.0
+  base_angular_velocity_weight: 800.0
+  arm_joint_velocity_weight: 300.0
+  base_linear_velocity_tolerance_mps: 0.03
+  base_angular_velocity_tolerance_radps: 0.05
+  arm_joint_velocity_tolerance_radps: 0.05
+  barrier_weight: 10000.0
+  window_steps: 4
+  pass_base_linear_velocity_norm_mps: 0.05
+  pass_base_angular_velocity_norm_radps: 0.08
+  pass_arm_joint_velocity_inf_radps: 0.08
 control_reference_mode: static_trim
 ik:
   max_iterations: 300
@@ -99,3 +112,4 @@ strategies:
     base_attitude: 20.0
     arm_position: 8.0
     velocity: 3.0
+scenario_name: scene_bulb_pregrasp

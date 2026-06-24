@@ -11,12 +11,13 @@ import yaml
 from .actuation import UamActuation
 from .model_loader import UamModel
 from .p2_planner import P2Solution
+from .terminal_rest import metrics_from_state, terminal_rest_config
 
 
 def trajectory_samples(robot: UamModel, solution: P2Solution) -> List[Dict[str, Any]]:
     """Evaluate base and end-effector kinematics at every state."""
     samples: List[Dict[str, Any]] = []
-    dt = float(solution.scenario["dt_s"])
+    dt = float(solution.scenario.get("dt_s", solution.scenario.get("dt")))
     for index, state in enumerate(solution.states):
         q = state[:robot.model.nq]
         v = state[robot.model.nq:]
@@ -54,6 +55,8 @@ def terminal_metrics(robot: UamModel, actuation: UamActuation,
     minimum_margin = np.min(solution.controls - lower, axis=0)
     maximum_margin = np.min(upper - solution.controls, axis=0)
     tolerance = solution.scenario["tolerances"]
+    rest = terminal_rest_config(solution.scenario)
+    rest_metrics = metrics_from_state(robot, solution.states[-1], rest)
     metrics = {
         "solver_converged": solution.converged,
         "iterations": solution.iterations,
@@ -72,6 +75,7 @@ def terminal_metrics(robot: UamModel, actuation: UamActuation,
             np.all(solution.controls >= lower - 1e-10)
             and np.all(solution.controls <= upper + 1e-10)),
     }
+    metrics.update(rest_metrics)
     checks = {
         "solver": solution.converged,
         "rollout": solution.rollout_error <= float(tolerance["rollout_state"]),
@@ -80,6 +84,7 @@ def terminal_metrics(robot: UamModel, actuation: UamActuation,
         "ee_rotation": final["ee_rotation_error"] <= float(tolerance["ee_rotation_rad"]),
         "ee_linear_velocity": metrics["terminal_ee_linear_velocity_mps"] <= float(tolerance["ee_linear_velocity_mps"]),
         "ee_angular_velocity": metrics["terminal_ee_angular_velocity_radps"] <= float(tolerance["ee_angular_velocity_radps"]),
+        "terminal_full_body_rest": metrics["terminal_rest_pass"],
         "base_attitude": bool(np.max(np.abs(final["base_rpy"][:2])) < np.deg2rad(30.0)),
     }
     metrics["checks"] = checks
@@ -99,17 +104,28 @@ def save_trajectory(robot: UamModel, actuation: UamActuation,
     """Save all required P2 numeric artifacts and terminal report."""
     output.mkdir(parents=True, exist_ok=True)
     samples = trajectory_samples(robot, solution)
-    np.savez_compressed(
-        output / "trajectory.npz", states=solution.states, controls=solution.controls,
-        solver_states=solution.solver_states, costs=np.asarray(solution.costs),
-        target_translation=solution.target_pose.translation,
-        target_rotation=solution.target_pose.rotation)
-
     q_names = ["base_x", "base_y", "base_z", "base_qx", "base_qy", "base_qz", "base_qw"]
     q_names.extend(joint.name for joint in robot.arm_joints)
     v_names = ["base_vx_body", "base_vy_body", "base_vz_body",
                "base_wx_body", "base_wy_body", "base_wz_body"]
     v_names.extend(joint.name + "_velocity" for joint in robot.arm_joints)
+    control_names = [f"rotor_{item['id']}_thrust_N" for item in actuation.rotors]
+    control_names.extend(name + "_torque_Nm" for name in actuation.joint_names)
+    rest = terminal_rest_config(solution.scenario)
+    np.savez_compressed(
+        output / "trajectory.npz",
+        time_s=np.arange(len(solution.states)) * float(solution.scenario["dt_s"]),
+        dt_s=np.asarray([float(solution.scenario["dt_s"])]),
+        states=solution.states, controls=solution.controls,
+        solver_states=solution.solver_states, costs=np.asarray(solution.costs),
+        q_names=np.asarray(q_names), v_names=np.asarray(v_names),
+        control_names=np.asarray(control_names),
+        world_frame=np.asarray(["Gazebo ENU / Pinocchio world"]),
+        body_velocity_frame=np.asarray(["body frame"]),
+        base_angular_velocity_frame=np.asarray(["body frame"]),
+        terminal_rest_config=np.asarray([rest], dtype=object),
+        target_translation=solution.target_pose.translation,
+        target_rotation=solution.target_pose.rotation)
     state_rows = []
     for sample in samples:
         row = {"time_s": sample["time"]}
@@ -118,8 +134,6 @@ def save_trajectory(robot: UamModel, actuation: UamActuation,
         state_rows.append(row)
     _write_csv(output / "states.csv", ["time_s"] + q_names + v_names, state_rows)
 
-    control_names = [f"rotor_{item['id']}_thrust_N" for item in actuation.rotors]
-    control_names.extend(name + "_torque_Nm" for name in actuation.joint_names)
     control_rows = []
     for index, control in enumerate(solution.controls):
         row = {"time_s": index * float(solution.scenario["dt_s"])}
@@ -165,6 +179,10 @@ def save_trajectory(robot: UamModel, actuation: UamActuation,
         f"- EE rotation error: {metrics['terminal_ee_rotation_error_rad']:.6e} rad",
         f"- EE linear speed: {metrics['terminal_ee_linear_velocity_mps']:.6e} m/s",
         f"- EE angular speed: {metrics['terminal_ee_angular_velocity_radps']:.6e} rad/s",
+        f"- Base linear speed: {metrics['terminal_base_linear_velocity_norm_mps']:.6e} m/s",
+        f"- Base angular speed: {metrics['terminal_base_angular_velocity_norm_radps']:.6e} rad/s",
+        f"- Max arm joint speed: {metrics['terminal_max_arm_joint_velocity_radps']:.6e} rad/s",
+        f"- Terminal rest: {metrics['terminal_rest_mode']} pass={metrics['terminal_rest_pass']}",
         f"- Control bounds satisfied: {metrics['control_bounds_satisfied']}",
         "- Joint position, joint velocity, and base tilt constraints: quadratic-barrier soft costs only.",
         "- Delta-u term: P2.1 pending; no claim of implementation.", "",
