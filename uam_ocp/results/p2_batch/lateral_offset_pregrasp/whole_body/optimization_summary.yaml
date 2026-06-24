@@ -2,8 +2,13 @@ strategy: WHOLE_BODY
 metrics:
   pass: true
   fddp_converged: true
-  iterations: 17
+  iterations: 3
   final_cost: 12.593019396810366
+  pass_1_iterations: 14
+  pass_2_iterations: 3
+  total_fddp_iterations: 17
+  pass_1_converged: true
+  pass_2_converged: true
   rollout_error: 0.0
   terminal_position_error_m: 0.0003770433498218584
   terminal_orientation_error_rad: 0.0030494887821654122
@@ -30,5 +35,18 @@ metrics:
   terminal_rest_pass: true
   terminal_rest_mode: strong-soft terminal rest condition
   terminal_rest_window_steps: 4
+fddp_pass_1:
+  iterations: 14
+  converged: true
+  initial_cost: 12.360096776718605
+  final_cost: 12.662869690248
+fddp_pass_2:
+  iterations: 3
+  converged: true
+  initial_cost: 12.593130263839086
+  final_cost: 12.593019396810366
+total_fddp_iterations: 17
+cost_curve_note: costs and optimization_cost_convergence.png contain pass 2 only;
+  pass 1 uses a different proximal objective.
 delta_u_implementation: two-pass proximal previous-control reference; exact cross-node
   delta-u requires control-state augmentation

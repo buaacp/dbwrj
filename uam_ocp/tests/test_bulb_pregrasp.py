@@ -1,6 +1,7 @@
 """P2.7 target, IK, static-trim seed, and strategy regression tests."""
 import unittest
 import numpy as np
+from pathlib import Path
 from uam_ocp.actuation import UamActuation
 from uam_ocp.bulb_pregrasp import *
 from uam_ocp.bulb_pregrasp_planner import BulbPregraspPlanner
@@ -22,4 +23,16 @@ class TestBulbPregrasp(unittest.TestCase):
    solution=self.planner.solve_strategy(name);metrics,_=evaluate_solution(self.robot,self.actuation,self.planner,solution)
    self.assertTrue(metrics["pass"],(name,metrics))
    self.assertTrue(metrics["terminal_reference_trim_strict"])
+   self.assertEqual(solution.costs,solution.costs_pass_2)
+   self.assertEqual(solution.iterations,solution.iterations_pass_2)
+   self.assertEqual(solution.total_iterations,solution.iterations_pass_1+solution.iterations_pass_2)
+   self.assertEqual(metrics["iterations"],solution.iterations_pass_2)
+   self.assertEqual(metrics["pass_1_iterations"],solution.iterations_pass_1)
+   self.assertEqual(metrics["pass_2_iterations"],solution.iterations_pass_2)
+   self.assertEqual(metrics["total_fddp_iterations"],solution.total_iterations)
+   self.assertNotEqual(solution.total_iterations,solution.iterations)
+ def test_pass_two_cost_plot_label(self):
+  text=(Path(__file__).resolve().parents[1]/"uam_ocp"/"visualization.py").read_text()
+  self.assertIn("BoxFDDP pass 2 cost convergence",text)
+  self.assertIn("Pass-2 BoxFDDP iteration",text)
 if __name__=="__main__":unittest.main()

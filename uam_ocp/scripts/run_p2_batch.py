@@ -79,6 +79,11 @@ def _summary_row(scenario, strategy, metrics, status, failure_reason):
         "status": status,
         "solver_converged": metrics.get("fddp_converged"),
         "iterations": metrics.get("iterations"),
+        "pass_1_iterations": metrics.get("pass_1_iterations"),
+        "pass_2_iterations": metrics.get("pass_2_iterations"),
+        "total_fddp_iterations": metrics.get("total_fddp_iterations"),
+        "pass_1_converged": metrics.get("pass_1_converged"),
+        "pass_2_converged": metrics.get("pass_2_converged"),
         "final_cost": metrics.get("final_cost"),
         "rollout_error": metrics.get("rollout_error"),
         "terminal_position_error_m": metrics.get("terminal_position_error_m"),
@@ -99,6 +104,8 @@ def _summary_row(scenario, strategy, metrics, status, failure_reason):
 def _write_summary(output: Path, rows):
     fields = [
         "scenario", "strategy", "status", "solver_converged", "iterations",
+        "pass_1_iterations", "pass_2_iterations", "total_fddp_iterations",
+        "pass_1_converged", "pass_2_converged",
         "final_cost", "rollout_error", "terminal_position_error_m",
         "terminal_orientation_error_rad", "terminal_base_linear_velocity_norm_mps",
         "terminal_base_angular_velocity_norm_radps", "terminal_max_arm_joint_velocity_radps",
@@ -144,7 +151,7 @@ def _write_summary_plots(output: Path, rows):
     fig, ax = plt.subplots(figsize=(max(8, len(valid) * 1.2), 4))
     ax.semilogy(list(x), [max(float(row.get("final_cost") or 1.0), 1e-12) for row in valid], marker="o")
     ax.set_xticks(list(x), labels, rotation=45, ha="right"); ax.set_ylabel("final cost")
-    fig.tight_layout(); fig.savefig(output / "scenario_cost_convergence_comparison.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(output / "scenario_final_cost_comparison.png", dpi=160); plt.close(fig)
 
 
 if __name__ == "__main__":

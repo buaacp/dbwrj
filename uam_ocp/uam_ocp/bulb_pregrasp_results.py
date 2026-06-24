@@ -47,6 +47,11 @@ def evaluate_solution(robot: UamModel, actuation: UamActuation,
         "pass": bool(solution.converged and poserr[-1]<solution.scenario["terminal_position_tolerance_m"] and roterr[-1]<solution.scenario["terminal_orientation_tolerance_rad"] and np.linalg.norm(linear[-1])<solution.scenario["terminal_ee_linear_velocity_tolerance_mps"] and np.linalg.norm(angular[-1])<solution.scenario["terminal_ee_angular_velocity_tolerance_radps"] and rest_metrics["terminal_rest_pass"]),
         "fddp_converged":solution.converged,"iterations":solution.iterations,
         "final_cost":float(solution.costs[-1]) if solution.costs else None,
+        "pass_1_iterations":solution.iterations_pass_1,
+        "pass_2_iterations":solution.iterations_pass_2,
+        "total_fddp_iterations":solution.total_iterations,
+        "pass_1_converged":solution.converged_pass_1,
+        "pass_2_converged":solution.converged_pass_2,
         "rollout_error":solution.rollout_error,
         "terminal_position_error_m":float(poserr[-1]),"terminal_orientation_error_rad":float(roterr[-1]),
         "terminal_ee_linear_velocity_mps":float(np.linalg.norm(linear[-1])),"terminal_ee_angular_velocity_radps":float(np.linalg.norm(angular[-1])),
@@ -82,7 +87,14 @@ def save_strategy(robot: UamModel, actuation: UamActuation, solution: BulbStrate
         time_s=np.arange(len(solution.states))*dt,dt_s=np.asarray([dt]),
         states=solution.states,controls=solution.controls,solver_states=solution.states,
         trim_references=solution.trim_references,reference_states=solution.reference_states,
-        costs=np.asarray(solution.costs),q_names=np.asarray(qnames),v_names=np.asarray(vnames),
+        costs=np.asarray(solution.costs),costs_pass_1=np.asarray(solution.costs_pass_1),
+        costs_pass_2=np.asarray(solution.costs_pass_2),
+        iterations_pass_1=np.asarray([solution.iterations_pass_1]),
+        iterations_pass_2=np.asarray([solution.iterations_pass_2]),
+        total_iterations=np.asarray([solution.total_iterations]),
+        converged_pass_1=np.asarray([solution.converged_pass_1]),
+        converged_pass_2=np.asarray([solution.converged_pass_2]),
+        q_names=np.asarray(qnames),v_names=np.asarray(vnames),
         control_names=np.asarray(unames),world_frame=np.asarray(["Gazebo ENU / Pinocchio world"]),
         body_velocity_frame=np.asarray(["body frame"]),base_angular_velocity_frame=np.asarray(["body frame"]),
         terminal_rest_config=np.asarray([terminal_rest_config(solution.scenario)],dtype=object),**arrays)
@@ -95,8 +107,26 @@ def save_strategy(robot: UamModel, actuation: UamActuation, solution: BulbStrate
         keys=["x","y","z","qx","qy","qz","qw","vx","vy","vz","wx","wy","wz","position_error","orientation_error"]
         rows.append(dict([("time_s",i*dt)]+list(zip(keys,vals))))
     _csv(output/"ee_pose.csv",["time_s"]+keys,rows)
-    (output/"optimization_summary.yaml").write_text(yaml.safe_dump({"strategy":solution.report_name,"metrics":metrics,"delta_u_implementation":"two-pass proximal previous-control reference; exact cross-node delta-u requires control-state augmentation"},sort_keys=False))
-    fig,ax=plt.subplots();ax.semilogy(solution.costs);ax.set(xlabel="iteration",ylabel="cost");fig.tight_layout();fig.savefig(output/"cost_convergence.png",dpi=160);plt.close(fig)
+    summary={
+        "strategy":solution.report_name,
+        "metrics":metrics,
+        "fddp_pass_1":{
+            "iterations":solution.iterations_pass_1,
+            "converged":solution.converged_pass_1,
+            "initial_cost":solution.costs_pass_1[0] if solution.costs_pass_1 else None,
+            "final_cost":solution.costs_pass_1[-1] if solution.costs_pass_1 else None,
+        },
+        "fddp_pass_2":{
+            "iterations":solution.iterations_pass_2,
+            "converged":solution.converged_pass_2,
+            "initial_cost":solution.costs_pass_2[0] if solution.costs_pass_2 else None,
+            "final_cost":solution.costs_pass_2[-1] if solution.costs_pass_2 else None,
+        },
+        "total_fddp_iterations":solution.total_iterations,
+        "cost_curve_note":"costs and optimization_cost_convergence.png contain pass 2 only; pass 1 uses a different proximal objective.",
+        "delta_u_implementation":"two-pass proximal previous-control reference; exact cross-node delta-u requires control-state augmentation",
+    }
+    (output/"optimization_summary.yaml").write_text(yaml.safe_dump(summary,sort_keys=False))
     fig,axes=plt.subplots(2,2,figsize=(11,8));t=np.arange(len(solution.states))*dt
     axes[0,0].plot(t,arrays["ee_position"]);axes[0,0].set_ylabel("EE position [m]")
     axes[0,1].plot(t,arrays["base_rpy"]);axes[0,1].set_ylabel("base RPY [rad]")

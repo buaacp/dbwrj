@@ -2,8 +2,13 @@ strategies:
 - strategy: ARM_DOMINANT_SOFT_BASE_HOLD
   pass: true
   fddp_converged: true
-  iterations: 20
+  iterations: 3
   final_cost: 11.541896715310122
+  pass_1_iterations: 17
+  pass_2_iterations: 3
+  total_fddp_iterations: 20
+  pass_1_converged: true
+  pass_2_converged: true
   rollout_error: 0.0
   terminal_position_error_m: 0.0005426695955715825
   terminal_orientation_error_rad: 0.002605652090768129
@@ -33,8 +38,13 @@ strategies:
 - strategy: UAV_DOMINANT_SOFT_ARM_HOLD
   pass: true
   fddp_converged: true
-  iterations: 17
+  iterations: 3
   final_cost: 15.417508533186615
+  pass_1_iterations: 14
+  pass_2_iterations: 3
+  total_fddp_iterations: 17
+  pass_1_converged: true
+  pass_2_converged: true
   rollout_error: 0.0
   terminal_position_error_m: 0.00041977712583476234
   terminal_orientation_error_rad: 0.004340638006278933
@@ -64,8 +74,13 @@ strategies:
 - strategy: WHOLE_BODY
   pass: true
   fddp_converged: true
-  iterations: 17
+  iterations: 3
   final_cost: 12.649844661047506
+  pass_1_iterations: 14
+  pass_2_iterations: 3
+  total_fddp_iterations: 17
+  pass_1_converged: true
+  pass_2_converged: true
   rollout_error: 0.0
   terminal_position_error_m: 0.0003672875217501023
   terminal_orientation_error_rad: 0.002416610757866422

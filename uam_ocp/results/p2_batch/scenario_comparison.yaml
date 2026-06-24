@@ -3,7 +3,12 @@ scenarios:
   strategy: ARM_DOMINANT_SOFT_BASE_HOLD
   status: PASS
   solver_converged: true
-  iterations: 20
+  iterations: 3
+  pass_1_iterations: 17
+  pass_2_iterations: 3
+  total_fddp_iterations: 20
+  pass_1_converged: true
+  pass_2_converged: true
   final_cost: 11.541896715310122
   rollout_error: 0.0
   terminal_position_error_m: 0.0005426695955715825
@@ -22,7 +27,12 @@ scenarios:
   strategy: UAV_DOMINANT_SOFT_ARM_HOLD
   status: PASS
   solver_converged: true
-  iterations: 17
+  iterations: 3
+  pass_1_iterations: 14
+  pass_2_iterations: 3
+  total_fddp_iterations: 17
+  pass_1_converged: true
+  pass_2_converged: true
   final_cost: 15.417508533186615
   rollout_error: 0.0
   terminal_position_error_m: 0.00041977712583476234
@@ -41,7 +51,12 @@ scenarios:
   strategy: WHOLE_BODY
   status: PASS
   solver_converged: true
-  iterations: 17
+  iterations: 3
+  pass_1_iterations: 14
+  pass_2_iterations: 3
+  total_fddp_iterations: 17
+  pass_1_converged: true
+  pass_2_converged: true
   final_cost: 12.649844661047506
   rollout_error: 0.0
   terminal_position_error_m: 0.0003672875217501023
@@ -60,7 +75,12 @@ scenarios:
   strategy: ARM_DOMINANT_SOFT_BASE_HOLD
   status: PASS
   solver_converged: true
-  iterations: 21
+  iterations: 3
+  pass_1_iterations: 18
+  pass_2_iterations: 3
+  total_fddp_iterations: 21
+  pass_1_converged: true
+  pass_2_converged: true
   final_cost: 11.441081718159419
   rollout_error: 0.0
   terminal_position_error_m: 0.0005157332550013246
@@ -79,7 +99,12 @@ scenarios:
   strategy: UAV_DOMINANT_SOFT_ARM_HOLD
   status: PASS
   solver_converged: true
-  iterations: 16
+  iterations: 3
+  pass_1_iterations: 13
+  pass_2_iterations: 3
+  total_fddp_iterations: 16
+  pass_1_converged: true
+  pass_2_converged: true
   final_cost: 15.362390776716653
   rollout_error: 0.0
   terminal_position_error_m: 0.00042399988443670176
@@ -98,7 +123,12 @@ scenarios:
   strategy: WHOLE_BODY
   status: PASS
   solver_converged: true
-  iterations: 17
+  iterations: 3
+  pass_1_iterations: 14
+  pass_2_iterations: 3
+  total_fddp_iterations: 17
+  pass_1_converged: true
+  pass_2_converged: true
   final_cost: 12.593019396810366
   rollout_error: 0.0
   terminal_position_error_m: 0.0003770433498218584
@@ -117,7 +147,12 @@ scenarios:
   strategy: ARM_DOMINANT_SOFT_BASE_HOLD
   status: PASS
   solver_converged: true
-  iterations: 19
+  iterations: 3
+  pass_1_iterations: 16
+  pass_2_iterations: 3
+  total_fddp_iterations: 19
+  pass_1_converged: true
+  pass_2_converged: true
   final_cost: 11.634592966909361
   rollout_error: 0.0
   terminal_position_error_m: 0.0004970310041675346
@@ -136,7 +171,12 @@ scenarios:
   strategy: UAV_DOMINANT_SOFT_ARM_HOLD
   status: PASS
   solver_converged: true
-  iterations: 17
+  iterations: 3
+  pass_1_iterations: 14
+  pass_2_iterations: 3
+  total_fddp_iterations: 17
+  pass_1_converged: true
+  pass_2_converged: true
   final_cost: 16.273989991929213
   rollout_error: 0.0
   terminal_position_error_m: 0.00041182082023912323
@@ -155,7 +195,12 @@ scenarios:
   strategy: WHOLE_BODY
   status: PASS
   solver_converged: true
-  iterations: 18
+  iterations: 3
+  pass_1_iterations: 15
+  pass_2_iterations: 3
+  total_fddp_iterations: 18
+  pass_1_converged: true
+  pass_2_converged: true
   final_cost: 13.103310212232977
   rollout_error: 0.0
   terminal_position_error_m: 0.0003613212959162055

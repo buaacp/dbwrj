@@ -110,10 +110,25 @@ def save_plots(robot: UamModel, actuation: UamActuation,
     fig.suptitle(title); fig.tight_layout(); fig.savefig(output / "control_trajectory.png", dpi=160); plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(7, 4))
-    ax.semilogy(np.arange(len(solution.costs)), solution.costs, marker="o")
+    iterations = np.arange(len(solution.costs))
+    ax.semilogy(iterations, solution.costs, marker="o")
     if solution.costs:
         ax.scatter([0, len(solution.costs) - 1], [solution.costs[0], solution.costs[-1]], color="r", zorder=3)
-    ax.set(xlabel="BoxFDDP iteration", ylabel="cost", title=title)
+    if hasattr(solution, "costs_pass_2"):
+        cost_title = "BoxFDDP pass 2 cost convergence"
+        ax.set_xlabel("Pass-2 BoxFDDP iteration")
+        ax.set_ylabel("Pass-2 cost")
+        ax.text(
+            0.02, 0.03,
+            "pass-2 iterations=%s\npass-2 converged=%s" % (
+                getattr(solution, "iterations_pass_2", len(solution.costs)),
+                getattr(solution, "converged_pass_2", solution.converged)),
+            transform=ax.transAxes, fontsize=8, va="bottom")
+    else:
+        cost_title = "Cost convergence"
+        ax.set_xlabel("BoxFDDP iteration")
+        ax.set_ylabel("cost")
+    ax.set_title(f"{cost_title}\n{title}")
     ax.grid(True)
     fig.tight_layout(); fig.savefig(output / "optimization_cost_convergence.png", dpi=160); fig.savefig(output / "cost_convergence.png", dpi=160); plt.close(fig)
 

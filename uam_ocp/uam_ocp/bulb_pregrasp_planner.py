@@ -27,6 +27,13 @@ class BulbStrategySolution:
     costs: List[float]
     converged: bool
     iterations: int
+    costs_pass_1: List[float]
+    costs_pass_2: List[float]
+    iterations_pass_1: int
+    iterations_pass_2: int
+    converged_pass_1: bool
+    converged_pass_2: bool
+    total_iterations: int
     rollout_error: float
     target_pose: pin.SE3
     scenario: Dict[str, Any]
@@ -74,23 +81,34 @@ class BulbPregraspPlanner:
         strategy_config = self.scenario["strategies"][strategy]
         xs = [state.copy() for state in self.reference_states]
         us = [value.copy() for value in self.trim_references]
-        all_costs: List[float] = []
-        converged = False; total_iterations = 0
+        costs_pass_1: List[float] = []
+        costs_pass_2: List[float] = []
+        converged_pass_1 = False
+        converged_pass_2 = False
         # Standard shooting nodes cannot couple u[k-1] directly. These passes
         # update a proximal previous-control reference, preserving the original state.
         delta_references = self.trim_references.copy()
         solver = None; problem = None
-        for _ in range(2):
+        for pass_index in range(2):
             problem = self._build_problem(strategy_config, delta_references)
             solver = crocoddyl.SolverBoxFDDP(problem)
             logger = crocoddyl.CallbackLogger(); solver.setCallbacks([logger])
             converged = bool(solver.solve(
                 xs, us, int(self.scenario["max_iterations"]), False, 1e-7))
-            total_iterations += len(logger.costs); all_costs.extend(float(v) for v in logger.costs)
+            costs = [float(v) for v in logger.costs]
+            if pass_index == 0:
+                costs_pass_1 = costs
+                converged_pass_1 = converged
+            else:
+                costs_pass_2 = costs
+                converged_pass_2 = converged
             xs = [np.asarray(value).copy() for value in solver.xs]
             us = [np.asarray(value).copy() for value in solver.us]
             controls = np.asarray(us)
             delta_references = np.vstack((controls[0], controls[:-1]))
+        iterations_pass_1 = len(costs_pass_1)
+        iterations_pass_2 = len(costs_pass_2)
+        total_iterations = iterations_pass_1 + iterations_pass_2
         controls = np.asarray(solver.us)
         states = np.asarray(problem.rollout(list(solver.us)))
         solver_states = np.asarray(solver.xs)
@@ -99,8 +117,12 @@ class BulbPregraspPlanner:
         return BulbStrategySolution(
             strategy=strategy, report_name=strategy_config["report_name"],
             states=states, controls=controls, trim_references=self.trim_references.copy(),
-            reference_states=self.reference_states.copy(), costs=all_costs,
-            converged=converged, iterations=total_iterations, rollout_error=rollout_error,
+            reference_states=self.reference_states.copy(), costs=costs_pass_2,
+            converged=converged_pass_2, iterations=iterations_pass_2,
+            costs_pass_1=costs_pass_1, costs_pass_2=costs_pass_2,
+            iterations_pass_1=iterations_pass_1, iterations_pass_2=iterations_pass_2,
+            converged_pass_1=converged_pass_1, converged_pass_2=converged_pass_2,
+            total_iterations=total_iterations, rollout_error=rollout_error,
             target_pose=self.target_pose, scenario=self.scenario, ik_report=self.ik_report,
             bulb_diagnostics=self.bulb_diagnostics,
             target_diagnostics=self.target_diagnostics)
