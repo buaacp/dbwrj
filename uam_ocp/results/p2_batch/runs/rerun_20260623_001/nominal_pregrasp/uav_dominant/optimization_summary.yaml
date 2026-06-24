@@ -1,0 +1,64 @@
+strategy: UAV_DOMINANT_SOFT_ARM_HOLD
+metrics:
+  pass: true
+  fddp_converged: true
+  iterations: 3
+  final_cost: 15.417508533186615
+  pass_1_iterations: 14
+  pass_2_iterations: 3
+  total_fddp_iterations: 17
+  pass_1_converged: true
+  pass_2_converged: true
+  rollout_error: 0.0
+  terminal_position_error_m: 0.00041977712583476234
+  terminal_orientation_error_rad: 0.004340638006278933
+  terminal_ee_linear_velocity_mps: 0.00043759033787087745
+  terminal_ee_angular_velocity_radps: 0.0004398003787443018
+  maximum_base_tilt_rad: 0.16349240091008316
+  maximum_rotor_occupancy: 0.4688684798228081
+  maximum_joint_torque_occupancy: 0.23784800135762113
+  minimum_rotor_margin_N: 0.2479893659705705
+  minimum_joint_torque_margin_Nm: 0.19982118199211787
+  delta_u_cost: 18.005250038618563
+  input_saturation: false
+  control_bounds_satisfied: true
+  terminal_reference_trim_strict: true
+  minimum_arm_distance_to_fully_extended_rad: 1.0
+  passed_near_fully_extended: false
+  left_knuckle_max_abs_torque_Nm: 0.00017881800788212529
+  left_knuckle_static_margin_Nm: 0.19984637956497772
+  pose_source: SCENE_FILE
+  terminal_base_linear_velocity_norm_mps: 0.00042787290771042124
+  terminal_base_angular_velocity_norm_radps: 0.000140195845203214
+  terminal_max_arm_joint_velocity_radps: 0.00021823450007429565
+  terminal_full_body_velocity_norm: 0.0005239665889296856
+  terminal_rest_pass: true
+  terminal_rest_mode: strong-soft terminal rest condition
+  terminal_rest_window_steps: 4
+fddp_pass_1:
+  iterations: 14
+  converged: true
+  initial_cost: 4368.275982728164
+  final_cost: 15.491992751738234
+  initial_objective_cost: 14.196697017086318
+  final_objective_cost: 15.491992751738234
+  initial_dynamics_gap_max: 0.03299272376491189
+  final_dynamics_gap_max: 0.0
+fddp_pass_2:
+  iterations: 3
+  converged: true
+  initial_cost: 15.433130171086107
+  final_cost: 15.417508533186615
+  initial_objective_cost: 15.433130171086107
+  final_objective_cost: 15.417508533186615
+  initial_dynamics_gap_max: 0.0
+  final_dynamics_gap_max: 0.0
+total_fddp_iterations: 17
+dynamics_gap_penalty_weight: 100000.0
+cost_curve_note: costs and optimization_cost_convergence.png contain pass 2 diagnostic
+  merit cost only; pass 1 uses a different proximal objective. objective_costs_pass_*
+  store raw Crocoddyl objective costs.
+diagnostic_total_cost: objective_cost + dynamics_gap_penalty_weight * sum_k ||x[k+1]
+  - f(x[k], u[k])||^2; diagnostic only, not a replacement for BoxFDDP shooting dynamics.
+delta_u_implementation: two-pass proximal previous-control reference; exact cross-node
+  delta-u requires control-state augmentation

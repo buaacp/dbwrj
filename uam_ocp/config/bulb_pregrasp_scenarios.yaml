@@ -49,6 +49,11 @@ scene_bulb_pregrasp:
     pass_base_angular_velocity_norm_radps: 0.08
     pass_arm_joint_velocity_inf_radps: 0.08
   control_reference_mode: static_trim
+  diagnostics:
+    # Diagnostic merit only: objective + w * sum_k ||x[k+1] - f(x[k], u[k])||^2.
+    # BoxFDDP still enforces the shooting dynamics through rollout; this term is
+    # recorded and plotted to make infeasible warm starts visible.
+    dynamics_gap_penalty_weight: 100000.0
   ik:
     max_iterations: 300
     damping: 0.01

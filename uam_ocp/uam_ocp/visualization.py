@@ -115,9 +115,9 @@ def save_plots(robot: UamModel, actuation: UamActuation,
     if solution.costs:
         ax.scatter([0, len(solution.costs) - 1], [solution.costs[0], solution.costs[-1]], color="r", zorder=3)
     if hasattr(solution, "costs_pass_2"):
-        cost_title = "BoxFDDP pass 2 cost convergence"
+        cost_title = "BoxFDDP pass 2 diagnostic total cost convergence"
         ax.set_xlabel("Pass-2 BoxFDDP iteration")
-        ax.set_ylabel("Pass-2 cost")
+        ax.set_ylabel("Pass-2 diagnostic total cost")
         ax.text(
             0.02, 0.03,
             "pass-2 iterations=%s\npass-2 converged=%s" % (

@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import pinocchio as pin
+import crocoddyl
 
 from .actuation import UamActuation
 from .bulb_pregrasp import (
@@ -34,6 +35,9 @@ class BulbStrategySolution:
     converged_pass_1: bool
     converged_pass_2: bool
     total_iterations: int
+    diagnostics_pass_1: Dict[str, List[float]]
+    diagnostics_pass_2: Dict[str, List[float]]
+    dynamics_gap_penalty_weight: float
     rollout_error: float
     target_pose: pin.SE3
     scenario: Dict[str, Any]
@@ -60,6 +64,8 @@ class BulbPregraspPlanner:
         self.x_seed = np.concatenate((self.q_seed, np.zeros(robot.model.nv)))
         self.steps = int(self.scenario["horizon_steps"]); self.dt = float(self.scenario["dt"])
         self.terminal_rest = terminal_rest_config(self.scenario)
+        self.dynamics_gap_penalty_weight = float(
+            self.scenario.get("diagnostics", {}).get("dynamics_gap_penalty_weight", 1.0e5))
         difference = robot.state.diff(self.x0, self.x_seed)
         self.reference_states = np.asarray([
             robot.state.integrate(self.x0, (index / self.steps) * difference)
@@ -81,8 +87,8 @@ class BulbPregraspPlanner:
         strategy_config = self.scenario["strategies"][strategy]
         xs = [state.copy() for state in self.reference_states]
         us = [value.copy() for value in self.trim_references]
-        costs_pass_1: List[float] = []
-        costs_pass_2: List[float] = []
+        diagnostics_pass_1: Dict[str, List[float]] = {}
+        diagnostics_pass_2: Dict[str, List[float]] = {}
         converged_pass_1 = False
         converged_pass_2 = False
         # Standard shooting nodes cannot couple u[k-1] directly. These passes
@@ -92,22 +98,26 @@ class BulbPregraspPlanner:
         for pass_index in range(2):
             problem = self._build_problem(strategy_config, delta_references)
             solver = crocoddyl.SolverBoxFDDP(problem)
-            logger = crocoddyl.CallbackLogger(); solver.setCallbacks([logger])
+            diagnostics = self._new_diagnostic_history()
+            self._append_diagnostics(diagnostics, problem, xs, us)
+            callback = _BulbDiagnosticCallback(self, problem, diagnostics)
+            logger = crocoddyl.CallbackLogger(); solver.setCallbacks([logger, callback])
             converged = bool(solver.solve(
                 xs, us, int(self.scenario["max_iterations"]), False, 1e-7))
-            costs = [float(v) for v in logger.costs]
             if pass_index == 0:
-                costs_pass_1 = costs
+                diagnostics_pass_1 = diagnostics
                 converged_pass_1 = converged
             else:
-                costs_pass_2 = costs
+                diagnostics_pass_2 = diagnostics
                 converged_pass_2 = converged
             xs = [np.asarray(value).copy() for value in solver.xs]
             us = [np.asarray(value).copy() for value in solver.us]
             controls = np.asarray(us)
             delta_references = np.vstack((controls[0], controls[:-1]))
-        iterations_pass_1 = len(costs_pass_1)
-        iterations_pass_2 = len(costs_pass_2)
+        costs_pass_1 = diagnostics_pass_1["diagnostic_total_cost"]
+        costs_pass_2 = diagnostics_pass_2["diagnostic_total_cost"]
+        iterations_pass_1 = max(0, len(costs_pass_1) - 1)
+        iterations_pass_2 = max(0, len(costs_pass_2) - 1)
         total_iterations = iterations_pass_1 + iterations_pass_2
         controls = np.asarray(solver.us)
         states = np.asarray(problem.rollout(list(solver.us)))
@@ -122,10 +132,88 @@ class BulbPregraspPlanner:
             costs_pass_1=costs_pass_1, costs_pass_2=costs_pass_2,
             iterations_pass_1=iterations_pass_1, iterations_pass_2=iterations_pass_2,
             converged_pass_1=converged_pass_1, converged_pass_2=converged_pass_2,
-            total_iterations=total_iterations, rollout_error=rollout_error,
+            total_iterations=total_iterations,
+            diagnostics_pass_1=diagnostics_pass_1,
+            diagnostics_pass_2=diagnostics_pass_2,
+            dynamics_gap_penalty_weight=self.dynamics_gap_penalty_weight,
+            rollout_error=rollout_error,
             target_pose=self.target_pose, scenario=self.scenario, ik_report=self.ik_report,
             bulb_diagnostics=self.bulb_diagnostics,
             target_diagnostics=self.target_diagnostics)
+
+    def _new_diagnostic_history(self) -> Dict[str, List[float]]:
+        return {
+            "objective_cost": [],
+            "dynamics_gap_sum_squares": [],
+            "dynamics_gap_max": [],
+            "dynamics_gap_penalty": [],
+            "diagnostic_total_cost": [],
+            "terminal_ee_position_error_m": [],
+            "terminal_ee_orientation_error_rad": [],
+            "terminal_base_linear_velocity_norm_mps": [],
+            "terminal_base_angular_velocity_norm_radps": [],
+            "terminal_max_arm_joint_velocity_radps": [],
+            "terminal_full_body_velocity_norm": [],
+        }
+
+    def _append_diagnostics(self, history: Dict[str, List[float]], problem: Any,
+                            xs: List[np.ndarray], us: List[np.ndarray]) -> None:
+        values = self._evaluate_diagnostics(problem, xs, us)
+        for key, value in values.items():
+            history[key].append(float(value))
+
+    def _evaluate_diagnostics(self, problem: Any, xs: List[np.ndarray],
+                              us: List[np.ndarray]) -> Dict[str, float]:
+        """Evaluate objective, discrete dynamics defects, and terminal errors."""
+        objective = 0.0
+        max_gap = 0.0
+        gap_squares = 0.0
+        for index, (model, data, control) in enumerate(
+                zip(problem.runningModels, problem.runningDatas, us)):
+            model.calc(data, xs[index], control)
+            objective += float(data.cost)
+            gap = float(np.linalg.norm(self.robot.state.diff(data.xnext, xs[index + 1])))
+            max_gap = max(max_gap, gap)
+            gap_squares += gap * gap
+        problem.terminalModel.calc(problem.terminalData, xs[-1])
+        objective += float(problem.terminalData.cost)
+
+        q = np.asarray(xs[-1])[:self.robot.model.nq]
+        data = self.robot.model.createData()
+        pin.forwardKinematics(self.robot.model, data, q)
+        pin.updateFramePlacements(self.robot.model, data)
+        ee = data.oMf[self.robot.end_effector_frame_id]
+        rest_metrics = self._terminal_rest_metrics(xs[-1])
+        gap_penalty = self.dynamics_gap_penalty_weight * gap_squares
+        return {
+            "objective_cost": objective,
+            "dynamics_gap_sum_squares": gap_squares,
+            "dynamics_gap_max": max_gap,
+            "dynamics_gap_penalty": gap_penalty,
+            "diagnostic_total_cost": objective + gap_penalty,
+            "terminal_ee_position_error_m": float(
+                np.linalg.norm(ee.translation - self.target_pose.translation)),
+            "terminal_ee_orientation_error_rad": float(
+                np.linalg.norm(pin.log3(self.target_pose.rotation.T @ ee.rotation))),
+            "terminal_base_linear_velocity_norm_mps": rest_metrics[
+                "terminal_base_linear_velocity_norm_mps"],
+            "terminal_base_angular_velocity_norm_radps": rest_metrics[
+                "terminal_base_angular_velocity_norm_radps"],
+            "terminal_max_arm_joint_velocity_radps": rest_metrics[
+                "terminal_max_arm_joint_velocity_radps"],
+            "terminal_full_body_velocity_norm": rest_metrics[
+                "terminal_full_body_velocity_norm"],
+        }
+
+    def _terminal_rest_metrics(self, state: np.ndarray) -> Dict[str, float]:
+        v = np.asarray(state, dtype=float)[self.robot.model.nq:]
+        return {
+            "terminal_base_linear_velocity_norm_mps": float(np.linalg.norm(v[:3])),
+            "terminal_base_angular_velocity_norm_radps": float(np.linalg.norm(v[3:6])),
+            "terminal_max_arm_joint_velocity_radps": (
+                float(np.max(np.abs(v[6:]))) if v.size > 6 else 0.0),
+            "terminal_full_body_velocity_norm": float(np.linalg.norm(v)),
+        }
 
     def _build_problem(self, strategy: Dict[str, Any], delta_references: np.ndarray) -> Any:
         import crocoddyl
@@ -192,3 +280,20 @@ class BulbPregraspPlanner:
                 costs, self.robot, nu, xref, self.terminal_rest,
                 terminal=True, window_scale=1.0)
         return costs
+
+
+class _BulbDiagnosticCallback(crocoddyl.CallbackAbstract):
+    """Collect per-iteration diagnostics from the current solver trajectory."""
+
+    def __init__(self, planner: BulbPregraspPlanner, problem: Any,
+                 history: Dict[str, List[float]]) -> None:
+        crocoddyl.CallbackAbstract.__init__(self)
+        self.planner = planner
+        self.problem = problem
+        self.history = history
+
+    def __call__(self, solver: Any) -> None:
+        self.planner._append_diagnostics(
+            self.history, self.problem,
+            [np.asarray(value) for value in solver.xs],
+            [np.asarray(value) for value in solver.us])

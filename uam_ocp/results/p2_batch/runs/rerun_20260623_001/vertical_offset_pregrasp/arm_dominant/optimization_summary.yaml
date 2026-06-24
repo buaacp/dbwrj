@@ -1,0 +1,64 @@
+strategy: ARM_DOMINANT_SOFT_BASE_HOLD
+metrics:
+  pass: true
+  fddp_converged: true
+  iterations: 3
+  final_cost: 11.634592966909361
+  pass_1_iterations: 16
+  pass_2_iterations: 3
+  total_fddp_iterations: 19
+  pass_1_converged: true
+  pass_2_converged: true
+  rollout_error: 0.0
+  terminal_position_error_m: 0.0004970310041675346
+  terminal_orientation_error_rad: 0.0025832244464206494
+  terminal_ee_linear_velocity_mps: 0.0009821169414879316
+  terminal_ee_angular_velocity_radps: 0.00015478994378988819
+  maximum_base_tilt_rad: 0.17529287667637722
+  maximum_rotor_occupancy: 0.4955881566351043
+  maximum_joint_torque_occupancy: 0.25259688850566603
+  minimum_rotor_margin_N: 0.26655239272708814
+  minimum_joint_torque_margin_Nm: 0.19980849017762642
+  delta_u_cost: 18.54125678079745
+  input_saturation: false
+  control_bounds_satisfied: true
+  terminal_reference_trim_strict: true
+  minimum_arm_distance_to_fully_extended_rad: 1.0
+  passed_near_fully_extended: false
+  left_knuckle_max_abs_torque_Nm: 0.00019150982237359836
+  left_knuckle_static_margin_Nm: 0.19984637956497772
+  pose_source: MANUAL_UNVALIDATED
+  terminal_base_linear_velocity_norm_mps: 0.0010264214815071037
+  terminal_base_angular_velocity_norm_radps: 0.00015001695408756703
+  terminal_max_arm_joint_velocity_radps: 7.881971059825466e-05
+  terminal_full_body_velocity_norm: 0.001042735299870153
+  terminal_rest_pass: true
+  terminal_rest_mode: strong-soft terminal rest condition
+  terminal_rest_window_steps: 4
+fddp_pass_1:
+  iterations: 16
+  converged: true
+  initial_cost: 6345.50293019553
+  final_cost: 11.691897491788902
+  initial_objective_cost: 14.137534326102038
+  final_objective_cost: 11.691897491788902
+  initial_dynamics_gap_max: 0.0397849387201663
+  final_dynamics_gap_max: 0.0
+fddp_pass_2:
+  iterations: 3
+  converged: true
+  initial_cost: 11.647392973807603
+  final_cost: 11.634592966909361
+  initial_objective_cost: 11.647392973807603
+  final_objective_cost: 11.634592966909361
+  initial_dynamics_gap_max: 0.0
+  final_dynamics_gap_max: 0.0
+total_fddp_iterations: 19
+dynamics_gap_penalty_weight: 100000.0
+cost_curve_note: costs and optimization_cost_convergence.png contain pass 2 diagnostic
+  merit cost only; pass 1 uses a different proximal objective. objective_costs_pass_*
+  store raw Crocoddyl objective costs.
+diagnostic_total_cost: objective_cost + dynamics_gap_penalty_weight * sum_k ||x[k+1]
+  - f(x[k], u[k])||^2; diagnostic only, not a replacement for BoxFDDP shooting dynamics.
+delta_u_implementation: two-pass proximal previous-control reference; exact cross-node
+  delta-u requires control-state augmentation

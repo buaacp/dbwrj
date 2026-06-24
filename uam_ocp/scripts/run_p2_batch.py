@@ -4,6 +4,7 @@
 import argparse
 import csv
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import yaml
@@ -23,15 +24,29 @@ DEFAULT_SCENARIOS = ["nominal_pregrasp", "lateral_offset_pregrasp", "vertical_of
 STRATEGIES = ["arm_dominant", "uav_dominant", "whole_body"]
 
 
+def _unique_output(base: Path, run_id: str) -> Path:
+    candidate = base / "runs" / run_id
+    if not candidate.exists():
+        candidate.mkdir(parents=True)
+        return candidate
+    for index in range(1, 1000):
+        suffixed = base / "runs" / f"{run_id}_{index:03d}"
+        if not suffixed.exists():
+            suffixed.mkdir(parents=True)
+            return suffixed
+    raise RuntimeError(f"Could not allocate unique output directory under {base / 'runs'}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--scenarios", default="all",
                         help="'all' or comma-separated scenario names")
+    parser.add_argument("--run-id", default=datetime.now().strftime("%Y%m%d_%H%M%S"),
+                        help="Unique result directory name under results/p2_batch/runs")
     args = parser.parse_args()
     scenarios = DEFAULT_SCENARIOS if args.scenarios == "all" else [
         item.strip() for item in args.scenarios.split(",") if item.strip()]
-    output = ROOT / "results" / "p2_batch"
-    output.mkdir(parents=True, exist_ok=True)
+    output = _unique_output(ROOT / "results" / "p2_batch", args.run_id)
     robot = load_uam_model()
     actuation = UamActuation(robot)
     prediction = UAMPredictionModel(robot, actuation)

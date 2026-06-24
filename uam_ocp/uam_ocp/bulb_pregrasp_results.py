@@ -10,7 +10,7 @@ import yaml
 
 from .actuation import UamActuation
 from .bulb_pregrasp_planner import BulbPregraspPlanner, BulbStrategySolution
-from .model_loader import UamModel
+from .model_loader import MODULE_ROOT, UamModel, load_yaml
 from .static_trim import StaticTrimSolver
 from .terminal_rest import metrics_from_state, terminal_rest_config
 from .visualization import save_plots
@@ -38,9 +38,11 @@ def evaluate_solution(robot: UamModel, actuation: UamActuation,
     terminal_trim=StaticTrimSolver(robot,actuation).solve_trim(planner.q_seed)
     rest=terminal_rest_config(solution.scenario)
     rest_metrics=metrics_from_state(robot,solution.states[-1],rest)
-    trim_results=yaml.safe_load((Path(__file__).resolve().parents[1]/"results/static_trim/trim_results.yaml").read_text())
-    fully_entry=next(entry for entry in trim_results["entries"] if entry["name"]=="fully_extended")
-    fully=np.asarray(fully_entry["result"]["q"])
+    static_scenarios = load_yaml(MODULE_ROOT / "config" / "static_trim_scenarios.yaml")
+    fully = robot.neutral_configuration(static_scenarios["scenarios"]["fully_extended"]["joints"])
+    fully[:3] = np.asarray(static_scenarios["base"]["position"], dtype=float)
+    fully[3:7] = np.asarray(static_scenarios["base"]["quaternion_xyzw"], dtype=float)
+    fully = pin.normalize(robot.model, fully)
     arm_indices=[item.idx_q for item in robot.arm_joints]
     min_distance_fully=float(np.min([np.linalg.norm(state[:robot.model.nq][arm_indices]-fully[arm_indices]) for state in solution.states]))
     metrics={
@@ -89,6 +91,25 @@ def save_strategy(robot: UamModel, actuation: UamActuation, solution: BulbStrate
         trim_references=solution.trim_references,reference_states=solution.reference_states,
         costs=np.asarray(solution.costs),costs_pass_1=np.asarray(solution.costs_pass_1),
         costs_pass_2=np.asarray(solution.costs_pass_2),
+        objective_costs_pass_1=np.asarray(solution.diagnostics_pass_1["objective_cost"]),
+        objective_costs_pass_2=np.asarray(solution.diagnostics_pass_2["objective_cost"]),
+        dynamics_gap_max_pass_1=np.asarray(solution.diagnostics_pass_1["dynamics_gap_max"]),
+        dynamics_gap_max_pass_2=np.asarray(solution.diagnostics_pass_2["dynamics_gap_max"]),
+        dynamics_gap_sum_squares_pass_1=np.asarray(solution.diagnostics_pass_1["dynamics_gap_sum_squares"]),
+        dynamics_gap_sum_squares_pass_2=np.asarray(solution.diagnostics_pass_2["dynamics_gap_sum_squares"]),
+        dynamics_gap_penalty_pass_1=np.asarray(solution.diagnostics_pass_1["dynamics_gap_penalty"]),
+        dynamics_gap_penalty_pass_2=np.asarray(solution.diagnostics_pass_2["dynamics_gap_penalty"]),
+        terminal_ee_position_error_pass_1=np.asarray(solution.diagnostics_pass_1["terminal_ee_position_error_m"]),
+        terminal_ee_position_error_pass_2=np.asarray(solution.diagnostics_pass_2["terminal_ee_position_error_m"]),
+        terminal_ee_orientation_error_pass_1=np.asarray(solution.diagnostics_pass_1["terminal_ee_orientation_error_rad"]),
+        terminal_ee_orientation_error_pass_2=np.asarray(solution.diagnostics_pass_2["terminal_ee_orientation_error_rad"]),
+        terminal_base_linear_velocity_norm_pass_1=np.asarray(solution.diagnostics_pass_1["terminal_base_linear_velocity_norm_mps"]),
+        terminal_base_linear_velocity_norm_pass_2=np.asarray(solution.diagnostics_pass_2["terminal_base_linear_velocity_norm_mps"]),
+        terminal_base_angular_velocity_norm_pass_1=np.asarray(solution.diagnostics_pass_1["terminal_base_angular_velocity_norm_radps"]),
+        terminal_base_angular_velocity_norm_pass_2=np.asarray(solution.diagnostics_pass_2["terminal_base_angular_velocity_norm_radps"]),
+        terminal_max_arm_joint_velocity_pass_1=np.asarray(solution.diagnostics_pass_1["terminal_max_arm_joint_velocity_radps"]),
+        terminal_max_arm_joint_velocity_pass_2=np.asarray(solution.diagnostics_pass_2["terminal_max_arm_joint_velocity_radps"]),
+        dynamics_gap_penalty_weight=np.asarray([solution.dynamics_gap_penalty_weight]),
         iterations_pass_1=np.asarray([solution.iterations_pass_1]),
         iterations_pass_2=np.asarray([solution.iterations_pass_2]),
         total_iterations=np.asarray([solution.total_iterations]),
@@ -115,18 +136,29 @@ def save_strategy(robot: UamModel, actuation: UamActuation, solution: BulbStrate
             "converged":solution.converged_pass_1,
             "initial_cost":solution.costs_pass_1[0] if solution.costs_pass_1 else None,
             "final_cost":solution.costs_pass_1[-1] if solution.costs_pass_1 else None,
+            "initial_objective_cost":solution.diagnostics_pass_1["objective_cost"][0] if solution.diagnostics_pass_1["objective_cost"] else None,
+            "final_objective_cost":solution.diagnostics_pass_1["objective_cost"][-1] if solution.diagnostics_pass_1["objective_cost"] else None,
+            "initial_dynamics_gap_max":solution.diagnostics_pass_1["dynamics_gap_max"][0] if solution.diagnostics_pass_1["dynamics_gap_max"] else None,
+            "final_dynamics_gap_max":solution.diagnostics_pass_1["dynamics_gap_max"][-1] if solution.diagnostics_pass_1["dynamics_gap_max"] else None,
         },
         "fddp_pass_2":{
             "iterations":solution.iterations_pass_2,
             "converged":solution.converged_pass_2,
             "initial_cost":solution.costs_pass_2[0] if solution.costs_pass_2 else None,
             "final_cost":solution.costs_pass_2[-1] if solution.costs_pass_2 else None,
+            "initial_objective_cost":solution.diagnostics_pass_2["objective_cost"][0] if solution.diagnostics_pass_2["objective_cost"] else None,
+            "final_objective_cost":solution.diagnostics_pass_2["objective_cost"][-1] if solution.diagnostics_pass_2["objective_cost"] else None,
+            "initial_dynamics_gap_max":solution.diagnostics_pass_2["dynamics_gap_max"][0] if solution.diagnostics_pass_2["dynamics_gap_max"] else None,
+            "final_dynamics_gap_max":solution.diagnostics_pass_2["dynamics_gap_max"][-1] if solution.diagnostics_pass_2["dynamics_gap_max"] else None,
         },
         "total_fddp_iterations":solution.total_iterations,
-        "cost_curve_note":"costs and optimization_cost_convergence.png contain pass 2 only; pass 1 uses a different proximal objective.",
+        "dynamics_gap_penalty_weight":solution.dynamics_gap_penalty_weight,
+        "cost_curve_note":"costs and optimization_cost_convergence.png contain pass 2 diagnostic merit cost only; pass 1 uses a different proximal objective. objective_costs_pass_* store raw Crocoddyl objective costs.",
+        "diagnostic_total_cost":"objective_cost + dynamics_gap_penalty_weight * sum_k ||x[k+1] - f(x[k], u[k])||^2; diagnostic only, not a replacement for BoxFDDP shooting dynamics.",
         "delta_u_implementation":"two-pass proximal previous-control reference; exact cross-node delta-u requires control-state augmentation",
     }
     (output/"optimization_summary.yaml").write_text(yaml.safe_dump(summary,sort_keys=False))
+    _save_two_pass_cost_plots(solution, output)
     fig,axes=plt.subplots(2,2,figsize=(11,8));t=np.arange(len(solution.states))*dt
     axes[0,0].plot(t,arrays["ee_position"]);axes[0,0].set_ylabel("EE position [m]")
     axes[0,1].plot(t,arrays["base_rpy"]);axes[0,1].set_ylabel("base RPY [rad]")
@@ -134,6 +166,95 @@ def save_strategy(robot: UamModel, actuation: UamActuation, solution: BulbStrate
     axes[1,1].plot(t[:-1],solution.controls[:,:4]);axes[1,1].set_ylabel("rotor thrust [N]")
     fig.tight_layout();fig.savefig(output/"state_control_timeseries.png",dpi=160);plt.close(fig)
     save_plots(robot,actuation,solution,output,solution.report_name)
+
+
+def _save_two_pass_cost_plots(solution: BulbStrategySolution, output: Path) -> None:
+    """Save separate cost plots for the two different proximal objectives."""
+    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+    title = f"{solution.scenario.get('scenario_name','scene_bulb_pregrasp')} | {solution.report_name}"
+    for label, costs, objective, iterations, converged, filename in [
+        ("Pass 1", solution.costs_pass_1, solution.diagnostics_pass_1["objective_cost"], solution.iterations_pass_1,
+         solution.converged_pass_1, "optimization_cost_convergence_pass1.png"),
+        ("Pass 2", solution.costs_pass_2, solution.diagnostics_pass_2["objective_cost"], solution.iterations_pass_2,
+         solution.converged_pass_2, "optimization_cost_convergence_pass2.png"),
+    ]:
+        fig, ax = plt.subplots(figsize=(7,4))
+        x = np.arange(len(costs))
+        ax.semilogy(x, costs, marker="o", label="diagnostic total")
+        ax.semilogy(np.arange(len(objective)), objective, marker=".", ls="--", label="objective")
+        if costs:
+            ax.scatter([0, len(costs)-1], [costs[0], costs[-1]], color="r", zorder=3)
+        ax.set(
+            xlabel=f"{label} BoxFDDP iteration",
+            ylabel=f"{label} cost",
+            title=f"BoxFDDP {label.lower()} diagnostic cost convergence\n{title}",
+        )
+        ax.text(0.02,0.03,f"{label.lower()} iterations={iterations}\n{label.lower()} converged={converged}",
+                transform=ax.transAxes,fontsize=8,va="bottom")
+        ax.legend(fontsize=8)
+        ax.grid(True)
+        fig.tight_layout(); fig.savefig(output/filename,dpi=160); plt.close(fig)
+
+    fig, axes = plt.subplots(1,2,figsize=(12,4))
+    for ax, label, costs, iterations, converged in [
+        (axes[0], "Pass 1", solution.costs_pass_1, solution.iterations_pass_1, solution.converged_pass_1),
+        (axes[1], "Pass 2", solution.costs_pass_2, solution.iterations_pass_2, solution.converged_pass_2),
+    ]:
+        x = np.arange(len(costs))
+        ax.semilogy(x, costs, marker="o")
+        if costs:
+            ax.scatter([0, len(costs)-1], [costs[0], costs[-1]], color="r", zorder=3)
+        ax.set(xlabel=f"{label} iteration", ylabel=f"{label} cost",
+               title=f"{label}: iterations={iterations}, converged={converged}")
+        ax.grid(True)
+    fig.suptitle(f"BoxFDDP two-pass cost convergence\n{title}")
+    fig.tight_layout(); fig.savefig(output/"optimization_cost_convergence_two_passes.png",dpi=160); plt.close(fig)
+    _save_pass_diagnostics(solution, output)
+
+
+def _save_pass_diagnostics(solution: BulbStrategySolution, output: Path) -> None:
+    """Plot objective, dynamics gap, terminal task error, and rest metrics."""
+    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+    def positive(values: List[float]) -> np.ndarray:
+        return np.maximum(np.asarray(values, dtype=float), 1.0e-16)
+    title = f"{solution.scenario.get('scenario_name','scene_bulb_pregrasp')} | {solution.report_name}"
+    rest = terminal_rest_config(solution.scenario)
+    for label, diagnostics, filename in [
+        ("Pass 1", solution.diagnostics_pass_1, "optimization_pass1_diagnostics.png"),
+        ("Pass 2", solution.diagnostics_pass_2, "optimization_pass2_diagnostics.png"),
+    ]:
+        x = np.arange(len(diagnostics["diagnostic_total_cost"]))
+        fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+        axes[0, 0].semilogy(x, positive(diagnostics["diagnostic_total_cost"]), marker="o", label="diagnostic total")
+        axes[0, 0].semilogy(x, positive(diagnostics["objective_cost"]), marker=".", ls="--", label="objective")
+        axes[0, 0].set_ylabel("cost")
+        axes[0, 0].legend(fontsize=8)
+        axes[0, 1].semilogy(x, positive(diagnostics["dynamics_gap_max"]), marker="o", label="max gap")
+        axes[0, 1].semilogy(x, positive(diagnostics["dynamics_gap_sum_squares"]), marker=".", ls="--", label="sum gap^2")
+        axes[0, 1].set_ylabel("dynamics defect")
+        axes[0, 1].legend(fontsize=8)
+        axes[1, 0].semilogy(x, positive(diagnostics["terminal_ee_position_error_m"]), marker="o", label="EE position [m]")
+        axes[1, 0].semilogy(x, positive(diagnostics["terminal_ee_orientation_error_rad"]), marker=".", label="EE orientation [rad]")
+        axes[1, 0].set_xlabel(f"{label} BoxFDDP iteration")
+        axes[1, 0].set_ylabel("terminal task error")
+        axes[1, 0].legend(fontsize=8)
+        axes[1, 1].semilogy(x, positive(diagnostics["terminal_base_linear_velocity_norm_mps"]), marker="o", label="|v_B^B|")
+        axes[1, 1].semilogy(x, positive(diagnostics["terminal_base_angular_velocity_norm_radps"]), marker=".", label="|omega_B^B|")
+        axes[1, 1].semilogy(x, positive(diagnostics["terminal_max_arm_joint_velocity_radps"]), marker="s", label="|dq_a|_inf")
+        axes[1, 1].axhline(rest["pass_base_linear_velocity_norm_mps"], color="r", ls=":", linewidth=0.8)
+        axes[1, 1].axhline(rest["pass_base_angular_velocity_norm_radps"], color="r", ls=":", linewidth=0.8)
+        axes[1, 1].axhline(rest["pass_arm_joint_velocity_inf_radps"], color="r", ls=":", linewidth=0.8)
+        axes[1, 1].set_xlabel(f"{label} BoxFDDP iteration")
+        axes[1, 1].set_ylabel("terminal rest metric")
+        axes[1, 1].legend(fontsize=8)
+        for ax in axes.flat:
+            ax.grid(True)
+        fig.suptitle(
+            f"{label} diagnostics: objective, dynamics gap, task error, terminal rest\n"
+            f"{title} | gap weight={solution.dynamics_gap_penalty_weight:g}")
+        fig.tight_layout()
+        fig.savefig(output/filename, dpi=160)
+        plt.close(fig)
 
 
 def save_comparison(solutions: List[BulbStrategySolution], evaluations: Dict[str,Tuple[Dict[str,Any],Dict[str,np.ndarray]]], output: Path) -> None:

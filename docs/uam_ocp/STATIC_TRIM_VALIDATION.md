@@ -6,7 +6,7 @@ Overall: **PASS**
 - Skipped invalid configurations: `0`
 - Maximum generalized-force infinity residual: `3.552714e-15`
 - Maximum ABA base linear acceleration: `3.553643e-15 m/s^2`
-- Maximum ABA base angular acceleration: `2.040955e-14 rad/s^2`
+- Maximum ABA base angular acceleration: `1.165010e-14 rad/s^2`
 - Maximum ABA joint acceleration norm: `7.383580e-13 rad/s^2`
 - Maximum two-second rollout position drift: `6.072912e-02 m`
 - Minimum rotor thrust margin: `3.990211e+00 N`
