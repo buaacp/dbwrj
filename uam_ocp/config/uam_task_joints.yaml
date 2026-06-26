@@ -1,16 +1,16 @@
 trajectory_active_joints:
-  - shoulder_pan_joint
   - shoulder_lift_joint
   - elbow_joint
   - wrist_1_joint
   - wrist_roll_joint
+locked_joint_names:
+  - shoulder_pan_joint
 gripper_or_knuckle_joints:
   - left_knuckle_joint
+  - right_knuckle_joint
 fixed_pregrasp_joint_positions:
-  left_knuckle_joint: 0.0
 semantics_source:
   arm_controller: /home/zlhq/catkin_ws/src/le_arm/controller/le_arm_controller.yaml
   wrist_controller: /home/zlhq/catkin_ws/src/le_arm/controller/wrist_roll_controller.yaml
   gripper_controller: /home/zlhq/catkin_ws/src/le_arm/controller/gripper_controller.yaml
-note: "Knuckle remains in the full dynamics but is fixed open in the P2.7 seed and penalized during optimization."
-
+note: "Planar arm MPC uses only shoulder_lift, elbow, wrist_1, and wrist_roll. Shoulder pan is fixed in canonical xacro; gripper joints remain outside continuous MPC."

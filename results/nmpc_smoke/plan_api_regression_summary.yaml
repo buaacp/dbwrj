@@ -1,0 +1,43 @@
+original_states_shape:
+- 41
+- 21
+snapshot_states_shape:
+- 41
+- 21
+original_controls_shape:
+- 40
+- 8
+snapshot_controls_shape:
+- 40
+- 8
+control_lower:
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- -1.0
+- -1.0
+- -1.0
+- -0.5
+control_upper:
+- 10.3437818
+- 10.3437818
+- 10.3437818
+- 10.3437818
+- 1.0
+- 1.0
+- 1.0
+- 0.5
+strategy_present: true
+snapshot_terminal_metrics:
+  objective_cost: 12.752581727471258
+  dynamics_gap_sum_squares: 0.0
+  dynamics_gap_max: 0.0
+  dynamics_gap_penalty: 0.0
+  diagnostic_total_cost: 12.752581727471258
+  terminal_ee_position_error_m: 0.0003687286503185141
+  terminal_ee_orientation_error_rad: 0.0024387258263824556
+  terminal_base_linear_velocity_norm_mps: 0.0009368894462807412
+  terminal_base_angular_velocity_norm_radps: 0.00013042190251048033
+  terminal_max_arm_joint_velocity_radps: 9.451497255143953e-05
+  terminal_full_body_velocity_norm: 0.0009510738808354557

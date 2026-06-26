@@ -212,12 +212,10 @@
       </geometry>
     </collision>
   </link>
-  <joint name="shoulder_pan_joint" type="revolute">
+  <joint name="shoulder_pan_joint" type="fixed">
     <origin rpy="1.2297E-10 2.2825E-27 -3.4694E-17" xyz="0.0005 0 0.0535" />
     <parent link="arm_base_link" />
     <child link="shoulder_link" />
-    <axis xyz="0 0 1" />
-    <limit effort="1000" lower="-1.57" upper="1.57" velocity="2" />
   </joint>
   <link name="upper_arm_link">
     <inertial>
@@ -318,7 +316,7 @@
     <parent link="wrist_1_link" />
     <child link="wrist_roll_link" />
     <axis xyz="0 0 1" />
-    <limit effort="1000" lower="-3.141592653589793" upper="3.141592653589793" velocity="2" />
+    <limit effort="1000" velocity="2" lower="-3.141592653589793" upper="3.141592653589793" />
   </joint>
   <joint name="wrist_2_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0 0 0" />

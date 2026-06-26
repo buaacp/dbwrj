@@ -43,10 +43,7 @@ rotors:
     source: "/home/zlhq/catkin_ws/src/le_arm/urdf/iris.xacro and gazebo_motor_model.cpp"
     calibration_status: "Gazebo parameter; TODO_NEEDS_CALIBRATION for hardware"
 joint_torque_limits:
-  shoulder_pan_joint: {lower: -1.0, upper: 1.0, status: TODO_NEEDS_CALIBRATION, source: "Conservative optimization placeholder; URDF effort=1000 is not credible"}
   shoulder_lift_joint: {lower: -1.0, upper: 1.0, status: TODO_NEEDS_CALIBRATION, source: "Conservative optimization placeholder; URDF effort=1000 is not credible"}
   elbow_joint: {lower: -1.0, upper: 1.0, status: TODO_NEEDS_CALIBRATION, source: "Conservative optimization placeholder; URDF effort=1000 is not credible"}
   wrist_1_joint: {lower: -1.0, upper: 1.0, status: TODO_NEEDS_CALIBRATION, source: "Conservative optimization placeholder; URDF effort=1000 is not credible"}
   wrist_roll_joint: {lower: -0.5, upper: 0.5, status: TODO_NEEDS_CALIBRATION, source: "Conservative optimization placeholder; URDF effort=1000 is not credible"}
-  left_knuckle_joint: {lower: -0.2, upper: 0.2, status: TODO_NEEDS_CALIBRATION, source: "Pre-grasp placeholder; contact/gripping excluded from P2"}
-

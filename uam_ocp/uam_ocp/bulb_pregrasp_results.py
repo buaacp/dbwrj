@@ -68,8 +68,6 @@ def evaluate_solution(robot: UamModel, actuation: UamActuation,
         "terminal_reference_trim_strict":terminal_trim.strict_feasible,
         "minimum_arm_distance_to_fully_extended_rad":min_distance_fully,
         "passed_near_fully_extended":bool(min_distance_fully<0.15),
-        "left_knuckle_max_abs_torque_Nm":float(np.max(np.abs(joint[:,actuation.joint_names.index("left_knuckle_joint")]))),
-        "left_knuckle_static_margin_Nm":0.19984637956497772,
         "pose_source":solution.bulb_diagnostics["pose_source"],
     }
     metrics.update(rest_metrics)
@@ -85,6 +83,14 @@ def save_strategy(robot: UamModel, actuation: UamActuation, solution: BulbStrate
     qnames=["base_x","base_y","base_z","base_qx","base_qy","base_qz","base_qw"]+[j.name for j in robot.arm_joints]
     vnames=["base_vx_body","base_vy_body","base_vz_body","base_wx_body","base_wy_body","base_wz_body"]+[j.name+"_velocity" for j in robot.arm_joints]
     unames=[f"rotor_{r['id']}_thrust_N" for r in actuation.rotors]+[n+"_torque_Nm" for n in actuation.joint_names]
+    metadata = {
+        "model_variant": robot.config.get("model_variant", "unknown"),
+        "arm_dof": robot.n_arm,
+        "active_arm_joint_names": [j.name for j in robot.arm_joints],
+        "locked_joint_names": list(robot.config.get("locked_joint_names", [])),
+        "canonical_launch": robot.config.get("canonical_launch"),
+        "lock_shoulder_pan": bool(robot.config.get("lock_shoulder_pan", False)),
+    }
     np.savez_compressed(output/"trajectory.npz",
         time_s=np.arange(len(solution.states))*dt,dt_s=np.asarray([dt]),
         states=solution.states,controls=solution.controls,solver_states=solution.states,
@@ -118,7 +124,14 @@ def save_strategy(robot: UamModel, actuation: UamActuation, solution: BulbStrate
         q_names=np.asarray(qnames),v_names=np.asarray(vnames),
         control_names=np.asarray(unames),world_frame=np.asarray(["Gazebo ENU / Pinocchio world"]),
         body_velocity_frame=np.asarray(["body frame"]),base_angular_velocity_frame=np.asarray(["body frame"]),
-        terminal_rest_config=np.asarray([terminal_rest_config(solution.scenario)],dtype=object),**arrays)
+        terminal_rest_config=np.asarray([terminal_rest_config(solution.scenario)],dtype=object),
+        model_variant=np.asarray([metadata["model_variant"]]),
+        arm_dof=np.asarray([metadata["arm_dof"]]),
+        active_arm_joint_names=np.asarray(metadata["active_arm_joint_names"]),
+        locked_joint_names=np.asarray(metadata["locked_joint_names"]),
+        canonical_launch=np.asarray([metadata["canonical_launch"] or ""]),
+        lock_shoulder_pan=np.asarray([metadata["lock_shoulder_pan"]]),
+        **arrays)
     _csv(output/"states.csv",["time_s"]+qnames+vnames,[dict([("time_s",i*dt)]+list(zip(qnames+vnames,x))) for i,x in enumerate(solution.states)])
     _csv(output/"controls.csv",["time_s"]+unames,[dict([("time_s",i*dt)]+list(zip(unames,u))) for i,u in enumerate(solution.controls)])
     _csv(output/"trim_reference.csv",["time_s"]+unames,[dict([("time_s",i*dt)]+list(zip(unames,u))) for i,u in enumerate(solution.trim_references)])
@@ -130,6 +143,7 @@ def save_strategy(robot: UamModel, actuation: UamActuation, solution: BulbStrate
     _csv(output/"ee_pose.csv",["time_s"]+keys,rows)
     summary={
         "strategy":solution.report_name,
+        "metadata":metadata,
         "metrics":metrics,
         "fddp_pass_1":{
             "iterations":solution.iterations_pass_1,

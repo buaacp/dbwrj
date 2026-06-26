@@ -1,0 +1,5 @@
+<launch>
+  <arg name="config" default="$(find nmpc_tracking)/config/dual_mpc_pregrasp.yaml"/>
+  <rosparam command="load" file="$(arg config)"/>
+  <node pkg="nmpc_tracking" type="run_dual_mpc_pregrasp.py" name="dual_mpc_pregrasp" output="screen"/>
+</launch>

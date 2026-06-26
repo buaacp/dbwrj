@@ -28,11 +28,11 @@ def _unique_output(base: Path, run_id: str) -> Path:
 def main()->int:
     parser=argparse.ArgumentParser()
     parser.add_argument("--run-id",default=datetime.now().strftime("%Y%m%d_%H%M%S"),
-                        help="Unique result directory name under results/p2_bulb_pregrasp/runs")
+                        help="Unique result directory name under results/p2_bulb_pregrasp_planar4/runs")
     args=parser.parse_args()
     robot=load_uam_model();actuation=UamActuation(robot);prediction=UAMPredictionModel(robot,actuation)
     planner=BulbPregraspPlanner(robot,actuation,prediction)
-    output=_unique_output(ROOT/"results"/"p2_bulb_pregrasp",args.run_id)
+    output=_unique_output(ROOT.parent/"results"/"p2_bulb_pregrasp_planar4",args.run_id)
     solutions=[];evaluations={}
     for name in ("arm_dominant","uav_dominant","whole_body"):
         solution=planner.solve_strategy(name);metrics,arrays=evaluate_solution(robot,actuation,planner,solution)

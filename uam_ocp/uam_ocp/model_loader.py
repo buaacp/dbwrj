@@ -1,8 +1,10 @@
-"""Load and inspect the generated floating-base Pinocchio model."""
+"""Load and inspect the canonical floating-base Pinocchio model."""
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional
+import subprocess
+import xml.etree.ElementTree as ET
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 import pinocchio as pin
@@ -51,6 +53,7 @@ class UamModel:
     end_effector_frame: str
     end_effector_frame_id: int
     arm_joints: List[JointInfo]
+    inactive_joint_names: List[str]
 
     @property
     def n_arm(self) -> int:
@@ -64,9 +67,11 @@ class UamModel:
         """Return normalized free-flyer neutral q with optional named joints."""
         q = pin.neutral(self.model)
         for name, value in (joint_values or {}).items():
-            joint_id = self.model.getJointId(name)
-            if joint_id == 0:
+            if not self.model.existJointName(name):
+                if name in self.inactive_joint_names:
+                    continue
                 raise KeyError(f"Unknown joint {name}")
+            joint_id = self.model.getJointId(name)
             joint = self.model.joints[joint_id]
             if joint.nq != 1:
                 raise ValueError(f"Joint {name} has nq={joint.nq}; generated model requires scalar joints")
@@ -90,14 +95,123 @@ def _joint_info(model: pin.Model) -> List[JointInfo]:
     return result
 
 
+def _expand_canonical_xacro(config: Dict[str, Any], output: Path) -> None:
+    source = Path(config["source"]["xacro"])
+    if not source.exists():
+        raise FileNotFoundError(f"Canonical xacro does not exist: {source}")
+    args = dict(config["source"].get("xacro_args", {}))
+    if config.get("lock_shoulder_pan", True):
+        args["lock_shoulder_pan"] = "true"
+    command = "source /opt/ros/melodic/setup.bash"
+    catkin_setup = Path("/home/zlhq/catkin_ws/devel/setup.bash")
+    if catkin_setup.exists():
+        command += f" && source {catkin_setup}"
+    xacro_args = " ".join(f"{key}:={value}" for key, value in args.items())
+    command += f" && xacro --inorder {source} {xacro_args}"
+    expanded = subprocess.run(
+        ["bash", "-lc", command],
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+    ).stdout
+    root = ET.fromstring(expanded)
+    _apply_generation_policy(root, config)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    _indent_xml(root)
+    ET.ElementTree(root).write(output, encoding="utf-8", xml_declaration=True)
+
+
+def _apply_generation_policy(root: ET.Element, config: Dict[str, Any]) -> None:
+    policy = config.get("generation_policy", {})
+    continuous_bounds = policy.get("continuous_joint_bounds", {})
+    for joint in root.findall("joint"):
+        name = joint.get("name", "")
+        joint_type = joint.get("type", "")
+        limit = joint.find("limit")
+        mimic = joint.find("mimic")
+        zero_range = False
+        if limit is not None and "lower" in limit.attrib and "upper" in limit.attrib:
+            zero_range = abs(float(limit.get("upper")) - float(limit.get("lower"))) < 1e-12
+        should_fix = (
+            (policy.get("fix_rotor_joints", True) and name.startswith("rotor_"))
+            or (policy.get("fix_zero_range_joints", True) and zero_range)
+            or (policy.get("fix_mimic_joints", True) and mimic is not None)
+        )
+        if should_fix and joint_type != "fixed":
+            joint.set("type", "fixed")
+            if limit is not None:
+                joint.remove(limit)
+            if mimic is not None:
+                joint.remove(mimic)
+        elif joint_type == "continuous" and name in continuous_bounds:
+            bounds = continuous_bounds[name]
+            joint.set("type", "revolute")
+            if limit is None:
+                limit = ET.SubElement(joint, "limit")
+            limit.set("lower", str(bounds["lower"]))
+            limit.set("upper", str(bounds["upper"]))
+            limit.attrib.setdefault("effort", "0")
+            limit.attrib.setdefault("velocity", "0")
+    for tag in ("gazebo", "transmission"):
+        for element in list(root.findall(tag)):
+            root.remove(element)
+
+
+def _indent_xml(element: ET.Element, level: int = 0) -> None:
+    spacing = "\n" + level * "  "
+    child_spacing = "\n" + (level + 1) * "  "
+    if len(element):
+        if not element.text or not element.text.strip():
+            element.text = child_spacing
+        for child in element:
+            _indent_xml(child, level + 1)
+            if not child.tail or not child.tail.strip():
+                child.tail = child_spacing
+        element[-1].tail = spacing
+
+
+def _reference_configuration(model: pin.Model, values: Mapping[str, float]) -> np.ndarray:
+    q = pin.neutral(model)
+    for name, value in values.items():
+        if not model.existJointName(name):
+            continue
+        joint_id = model.getJointId(name)
+        joint = model.joints[joint_id]
+        if joint.nq == 1:
+            q[joint.idx_q] = float(value)
+    return pin.normalize(model, q)
+
+
+def _reduce_to_active_arm(model: pin.Model, config: Dict[str, Any]) -> Tuple[pin.Model, List[str]]:
+    active = list(config.get("active_arm_joint_names", []))
+    if not active:
+        return model, []
+    missing_active = [name for name in active if not model.existJointName(name)]
+    if missing_active:
+        raise ValueError(f"Active arm joints missing from canonical model: {missing_active}")
+    inactive = set(config.get("locked_joint_names", [])) | set(config.get("excluded_joint_names", []))
+    inactive.update(name for name in model.names[2:] if str(name) not in active)
+    inactive_ids = [
+        int(model.getJointId(name)) for name in sorted(inactive)
+        if model.existJointName(name) and model.joints[model.getJointId(name)].nq > 0
+    ]
+    q_ref = _reference_configuration(model, config.get("initial_arm_configuration", {}))
+    reduced = pin.buildReducedModel(model, inactive_ids, q_ref)
+    reduced_names = [str(reduced.names[joint_id]) for joint_id in range(2, reduced.njoints)]
+    if reduced_names != active:
+        raise ValueError(f"Reduced model arm joint order {reduced_names} != configured active joints {active}")
+    return reduced, sorted(inactive)
+
+
 def load_uam_model(config_path: Optional[Path] = None) -> UamModel:
-    """Build the free-flyer model from the reproducibly generated URDF."""
+    """Build the free-flyer model from the canonical locked iris_arm xacro."""
     config_path = config_path or MODULE_ROOT / "config" / "uam_model.yaml"
     config = load_yaml(Path(config_path))
     urdf_path = PROJECT_ROOT / config["generated_urdf"]
-    if not urdf_path.exists():
-        raise FileNotFoundError(f"Generate the optimization URDF first: {urdf_path}")
+    _expand_canonical_xacro(config, urdf_path)
     model = pin.buildModelFromUrdf(str(urdf_path), pin.JointModelFreeFlyer())
+    model, inactive_joint_names = _reduce_to_active_arm(model, config)
     model.gravity.linear = np.asarray(config.get("gravity", [0.0, 0.0, -9.81]), dtype=float)
     import crocoddyl
     state = crocoddyl.StateMultibody(model)
@@ -109,5 +223,5 @@ def load_uam_model(config_path: Optional[Path] = None) -> UamModel:
         config=config, base_frame=str(config["base_frame"]),
         end_effector_frame=ee_name, end_effector_frame_id=int(model.getFrameId(ee_name)),
         arm_joints=_joint_info(model),
+        inactive_joint_names=inactive_joint_names,
     )
-

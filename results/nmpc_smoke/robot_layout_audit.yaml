@@ -1,0 +1,88 @@
+base_nq: 7
+base_nv: 6
+nq: 11
+nv: 10
+arm_joint_names:
+- shoulder_lift_joint
+- elbow_joint
+- wrist_1_joint
+- wrist_roll_joint
+arm_dof: 4
+q_indices:
+- 7
+- 8
+- 9
+- 10
+v_indices:
+- 6
+- 7
+- 8
+- 9
+command_indices:
+- 0
+- 1
+- 2
+- 3
+- 4
+- 5
+- 6
+- 7
+lower_position_limits:
+- -1.57
+- -1.57
+- -1.57
+- -3.141592653589793
+upper_position_limits:
+- 1.57
+- 1.57
+- 1.57
+- 3.141592653589793
+velocity_limits:
+- 2.0
+- 2.0
+- 2.0
+- 2.0
+total_mass_kg: 1.7169999999999996
+effective_mass_kg: 1.7169999999999996
+mass_override_kg: null
+trajectory_arm_dof: 4
+trajectory_q_names:
+- base_x
+- base_y
+- base_z
+- base_qx
+- base_qy
+- base_qz
+- base_qw
+- shoulder_lift_joint
+- elbow_joint
+- wrist_1_joint
+- wrist_roll_joint
+trajectory_v_names:
+- base_vx_body
+- base_vy_body
+- base_vz_body
+- base_wx_body
+- base_wy_body
+- base_wz_body
+- shoulder_lift_joint_velocity
+- elbow_joint_velocity
+- wrist_1_joint_velocity
+- wrist_roll_joint_velocity
+trajectory_control_names:
+- rotor_0_thrust_N
+- rotor_1_thrust_N
+- rotor_2_thrust_N
+- rotor_3_thrust_N
+- shoulder_lift_joint_torque_Nm
+- elbow_joint_torque_Nm
+- wrist_1_joint_torque_Nm
+- wrist_roll_joint_torque_Nm
+controller_dimensions:
+  state_dim: 28
+  command_dim: 8
+  control_rate_dim: 8
+  state_dim_from_definition: 28
+  user_formula_13_plus_3na: 25
+  formula_note: Given z=[p,v,rpy,omega,q,dq,u_c], the dimension is 16+3*na.
+hover_thrust_n: 16.843769999999996

@@ -5,7 +5,22 @@ source:
   xacro_args:
     enable_arm: "true"
     enable_cameras: "false"
+    lock_shoulder_pan: "true"
 generated_urdf: uam_ocp/models/generated/uam_pinocchio.urdf
+model_variant: iris_arm_planar_4dof
+canonical_launch: /home/zlhq/catkin_ws/src/le_arm/launch/iris_arm.launch
+lock_shoulder_pan: true
+active_arm_joint_names:
+  - shoulder_lift_joint
+  - elbow_joint
+  - wrist_1_joint
+  - wrist_roll_joint
+locked_joint_names:
+  - shoulder_pan_joint
+excluded_joint_names:
+  - left_knuckle_joint
+  - right_knuckle_joint
+  - wrist_2_joint
 base_frame: base_link
 end_effector_frame: gripper_base_link
 gravity: [0.0, 0.0, -9.81]
@@ -30,10 +45,7 @@ initial_arm_configuration:
   wrist_roll_joint: 0.0
   left_knuckle_joint: 0.0
 nonzero_validation_configuration:
-  shoulder_pan_joint: 0.2
   shoulder_lift_joint: -0.5
   elbow_joint: 0.35
   wrist_1_joint: -0.2
   wrist_roll_joint: 0.25
-  left_knuckle_joint: 0.1
-

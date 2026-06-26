@@ -1,7 +1,8 @@
 """P2.7 whole-body offline bulb pregrasp trajectory optimization."""
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+import time
 
 import numpy as np
 import pinocchio as pin
@@ -79,14 +80,23 @@ class BulbPregraspPlanner:
             trims.append(result.u_eq)
         self.trim_references = np.asarray(trims)
 
-    def solve_strategy(self, strategy: str) -> BulbStrategySolution:
+    def solve_strategy(self, strategy: str, initial_xs: Optional[Any] = None,
+                       initial_us: Optional[Any] = None) -> BulbStrategySolution:
         """Solve one soft coordination strategy with two delta-u proximal passes."""
         import crocoddyl
         if strategy not in self.scenario["strategies"]:
             raise KeyError(strategy)
         strategy_config = self.scenario["strategies"][strategy]
-        xs = [state.copy() for state in self.reference_states]
-        us = [value.copy() for value in self.trim_references]
+        xs = ([np.asarray(state, dtype=float).copy() for state in initial_xs]
+              if initial_xs is not None else
+              [state.copy() for state in self.reference_states])
+        us = ([np.asarray(value, dtype=float).copy() for value in initial_us]
+              if initial_us is not None else
+              [value.copy() for value in self.trim_references])
+        if len(xs) != self.steps + 1:
+            raise ValueError("initial_xs length must be horizon_steps + 1")
+        if len(us) != self.steps:
+            raise ValueError("initial_us length must be horizon_steps")
         diagnostics_pass_1: Dict[str, List[float]] = {}
         diagnostics_pass_2: Dict[str, List[float]] = {}
         converged_pass_1 = False
@@ -140,6 +150,90 @@ class BulbPregraspPlanner:
             target_pose=self.target_pose, scenario=self.scenario, ik_report=self.ik_report,
             bulb_diagnostics=self.bulb_diagnostics,
             target_diagnostics=self.target_diagnostics)
+
+    def plan(self, x0_measured: np.ndarray, target_pose_override: Optional[Any] = None,
+             previous_solution: Optional[Any] = None,
+             max_iterations: Optional[int] = None) -> Any:
+        """Replan from a measured state and return an nmpc_tracking TrajectorySnapshot.
+
+        This preserves solve_strategy() for offline scripts. When provided,
+        previous_solution.states and previous_solution.controls seed BoxFDDP.
+        """
+        from nmpc_tracking.trajectory_types import TrajectorySnapshot
+
+        t_start = time.time()
+        x0 = np.asarray(x0_measured, dtype=float).copy()
+        if x0.shape != self.x0.shape:
+            raise ValueError("x0_measured shape %s does not match planner state %s" %
+                             (x0.shape, self.x0.shape))
+        old_x0 = self.x0.copy()
+        old_target = self.target_pose
+        old_reference_states = self.reference_states.copy()
+        old_trim_references = self.trim_references.copy()
+        old_max_iterations = self.scenario.get("max_iterations")
+        try:
+            self.x0 = x0
+            if target_pose_override is not None:
+                self.target_pose = target_pose_override
+            if max_iterations is not None:
+                self.scenario["max_iterations"] = int(max_iterations)
+            difference = self.robot.state.diff(self.x0, self.x_seed)
+            self.reference_states = np.asarray([
+                self.robot.state.integrate(self.x0, (index / self.steps) * difference)
+                for index in range(self.steps + 1)])
+            trim_solver = StaticTrimSolver(self.robot, self.actuation, prediction_model=self.prediction)
+            trims = []
+            for index, state in enumerate(self.reference_states[:-1]):
+                result = trim_solver.solve_trim(state[:self.robot.model.nq])
+                if not result.strict_feasible:
+                    raise RuntimeError("runtime trim failed at node %d: %s" % (index, result.status))
+                trims.append(result.u_eq)
+            self.trim_references = np.asarray(trims)
+            strategy = self.scenario.get("runtime_strategy", "whole_body")
+            if strategy not in self.scenario["strategies"]:
+                strategy = list(self.scenario["strategies"].keys())[0]
+            initial_xs = getattr(previous_solution, "states", None)
+            initial_us = getattr(previous_solution, "controls", None)
+            solution = self.solve_strategy(strategy, initial_xs=initial_xs, initial_us=initial_us)
+            q_names = ["base_x", "base_y", "base_z", "base_qx", "base_qy", "base_qz", "base_qw"]
+            q_names += [j.name for j in self.robot.arm_joints]
+            v_names = ["base_vx_body", "base_vy_body", "base_vz_body",
+                       "base_wx_body", "base_wy_body", "base_wz_body"]
+            v_names += [j.name + "_velocity" for j in self.robot.arm_joints]
+            controls = solution.controls
+            total_thrust = np.sum(controls[:, :self.actuation.n_rotors], axis=1)
+            total_thrust = np.r_[total_thrust, total_thrust[-1]]
+            nq = self.robot.model.nq
+            return TrajectorySnapshot(
+                t0=0.0,
+                dt=float(self.dt),
+                states=solution.states,
+                controls=controls,
+                total_thrust_reference=total_thrust,
+                body_rate_reference=solution.states[:, nq + 3:nq + 6],
+                joint_position_reference=solution.states[:, 7:nq],
+                joint_velocity_reference=solution.states[:, nq + 6:],
+                solve_time=time.time() - t_start,
+                converged=bool(solution.converged),
+                terminal_metrics=self._evaluate_diagnostics(
+                    self._build_problem(self.scenario["strategies"][strategy], self.trim_references),
+                    [np.asarray(v) for v in solution.states],
+                    [np.asarray(v) for v in solution.controls]),
+                q_names=q_names,
+                v_names=v_names,
+                control_names=[f"rotor_{r['id']}_thrust_N" for r in self.actuation.rotors] +
+                              [n + "_torque_Nm" for n in self.actuation.joint_names],
+                target_translation=np.asarray(self.target_pose.translation, dtype=float),
+                target_rotation=np.asarray(self.target_pose.rotation, dtype=float),
+                version=int(getattr(previous_solution, "version", -1)) + 1,
+            )
+        finally:
+            self.x0 = old_x0
+            self.target_pose = old_target
+            self.reference_states = old_reference_states
+            self.trim_references = old_trim_references
+            if old_max_iterations is not None:
+                self.scenario["max_iterations"] = old_max_iterations
 
     def _new_diagnostic_history(self) -> Dict[str, List[float]]:
         return {
@@ -262,10 +356,8 @@ class BulbPregraspPlanner:
         residual_state = crocoddyl.ResidualModelState(state, xref, nu)
         weights = np.ones(state.ndx)
         weights[:3] = strategy["base_position"]; weights[3:6] = strategy["base_attitude"]
-        weights[6:12] = strategy["arm_position"]; weights[12:] = strategy["velocity"]
-        # Keep the independent gripper/knuckle at its explicit open reference.
-        knuckle = self.robot.model.joints[self.robot.model.getJointId("left_knuckle_joint")].idx_v
-        weights[knuckle] = max(weights[knuckle], 200.0)
+        weights[6:6 + self.robot.n_arm] = strategy["arm_position"]
+        weights[6 + self.robot.n_arm:] = strategy["velocity"]
         add("strategy_state", residual_state, factor,
             crocoddyl.ActivationModelWeightedQuad(weights))
         if not terminal:

@@ -1,0 +1,39 @@
+canonical_launch: /home/zlhq/catkin_ws/src/le_arm/launch/iris_arm.launch
+canonical_xacro: /home/zlhq/catkin_ws/src/le_arm/urdf/iris_arm_base.xacro
+lock_shoulder_pan: true
+model_variant: iris_arm_planar_4dof
+active_arm_joint_names:
+- shoulder_lift_joint
+- elbow_joint
+- wrist_1_joint
+- wrist_roll_joint
+locked_joint_names:
+- shoulder_pan_joint
+excluded_joint_names:
+- left_knuckle_joint
+- right_knuckle_joint
+- wrist_2_joint
+shoulder_pan_joint_type: fixed
+shoulder_pan_has_transmission: false
+le_arm_controller_command_joints:
+- shoulder_lift_joint
+- elbow_joint
+- wrist_1_joint
+wrist_roll_controller_command_joint: wrist_roll_joint
+gripper_controller_joint:
+- left_knuckle_joint
+wrist_2_joint:
+  name: wrist_2_joint
+  type: revolute
+  parent: wrist_roll_link
+  child: gripper_base_link
+  axis: 0 0 1
+  lower: '0'
+  upper: '0'
+  velocity: '0'
+  effort: '0'
+  mimic: ''
+  transmission: ''
+gazebo_and_pinocchio_same_xacro_source: true
+pinocchio_reduction_note: Pinocchio loads the same locked xacro expansion and reduces
+  excluded gripper/zero-range joints with the configured locked reference.

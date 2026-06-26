@@ -118,7 +118,9 @@ def solve_terminal_ik(robot: UamModel, scenario: Dict[str, Any], task_joints: Di
     q = initial_configuration(robot, scenario)
     q[:3] = np.asarray(scenario["base_seed_pose"]["position"], dtype=float)
     q[3:7] = np.asarray(scenario["base_seed_pose"]["quaternion_xyzw"], dtype=float)
-    for name, value in task_joints["fixed_pregrasp_joint_positions"].items():
+    for name, value in (task_joints.get("fixed_pregrasp_joint_positions") or {}).items():
+        if not robot.model.existJointName(name):
+            continue
         joint = robot.model.joints[robot.model.getJointId(name)]
         q[joint.idx_q] = float(value)
     active = [robot.model.getJointId(name) for name in task_joints["trajectory_active_joints"]]

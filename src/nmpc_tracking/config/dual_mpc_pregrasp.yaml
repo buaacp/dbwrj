@@ -1,0 +1,80 @@
+runtime:
+  dry_run: true
+  enable_arming: false
+  enable_offboard_switch: false
+  namespace: /iris_0
+  required_interface_validation: true
+  terminal_hold_s: 5.0
+  log_dir: /tmp/nmpc_tracking
+
+topics:
+  mavros_state: /iris_0/mavros/state
+  local_pose: /iris_0/mavros/local_position/pose
+  local_velocity: /iris_0/mavros/local_position/velocity_local
+  attitude_setpoint: /iris_0/mavros/setpoint_raw/attitude
+  arming_service: /iris_0/mavros/cmd/arming
+  set_mode_service: /iris_0/mavros/set_mode
+  joint_states: /joint_states
+  bulb_pose: /light_bulb/body_pose
+  arm_velocity_command: /le_arm_controller/command
+  wrist_velocity_command: /wrist_roll_controller/command
+
+trajectory:
+  offline_npz: /home/zlhq/px4_fly_ws/results/p2_bulb_pregrasp_planar4/runs/planar4_current/whole_body/trajectory.npz
+  hold_after_s: 5.0
+
+planner:
+  dt: 0.05
+  horizon_steps: 40
+  max_iterations: 80
+  strategy: whole_body
+  target_position_replan_threshold_m: 0.01
+  target_orientation_replan_threshold_rad: 0.05236
+  tracking_error_replan_threshold_m: 0.10
+
+controller:
+  rate_hz: 50.0
+  dt: 0.02
+  horizon_steps: 15
+  tau_body_rate_s: 0.12
+  tau_arm_servo_s: 0.18
+  solver: SQP_RTI
+  qp_solver: PARTIAL_CONDENSING_HPIPM
+  sigma:
+    position_m: 0.05
+    velocity_mps: 0.10
+    attitude_rad: 0.0872665
+    body_rate_radps: 0.10
+    joint_position_rad: 0.05
+    joint_velocity_radps: 0.10
+    command: 0.20
+    command_rate: 1.00
+
+vehicle:
+  mass_override_kg:
+  gravity_mps2: 9.81
+  hover_thrust_norm: 0.50
+  thrust_norm_min: 0.0
+  thrust_norm_max: 1.0
+  total_thrust_min_n: 0.0
+  total_thrust_max_n: 41.3751272
+  total_thrust_rate_limit_nps: 80.0
+  body_rate_limit_radps: [1.0, 1.0, 1.0]
+  body_rate_accel_limit_radps2: [10.0, 10.0, 10.0]
+
+arm:
+  joint_names:
+    - shoulder_lift_joint
+    - elbow_joint
+    - wrist_1_joint
+    - wrist_roll_joint
+  velocity_signs: [1.0, 1.0, 1.0, 1.0]
+  velocity_accel_limits_radps2: [6.0, 6.0, 6.0, 4.0]
+  command_message_type: std_msgs/Float64MultiArray
+  wrist_joint_name: wrist_roll_joint
+  wrist_command_message_type: std_msgs/Float64
+
+safety:
+  max_position_error_m: 0.30
+  max_attitude_error_rad: 0.50
+  max_joint_error_rad: 0.50

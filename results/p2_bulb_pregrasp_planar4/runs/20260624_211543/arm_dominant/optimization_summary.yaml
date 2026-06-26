@@ -1,0 +1,74 @@
+strategy: ARM_DOMINANT_SOFT_BASE_HOLD
+metadata:
+  model_variant: iris_arm_planar_4dof
+  arm_dof: 4
+  active_arm_joint_names:
+  - shoulder_lift_joint
+  - elbow_joint
+  - wrist_1_joint
+  - wrist_roll_joint
+  locked_joint_names:
+  - shoulder_pan_joint
+  canonical_launch: /home/zlhq/catkin_ws/src/le_arm/launch/iris_arm.launch
+  lock_shoulder_pan: true
+metrics:
+  pass: true
+  fddp_converged: true
+  iterations: 3
+  final_cost: 11.587172586866917
+  pass_1_iterations: 12
+  pass_2_iterations: 3
+  total_fddp_iterations: 15
+  pass_1_converged: true
+  pass_2_converged: true
+  rollout_error: 0.0
+  terminal_position_error_m: 0.000580519514123008
+  terminal_orientation_error_rad: 0.003025662930448367
+  terminal_ee_linear_velocity_mps: 0.0010046932909040063
+  terminal_ee_angular_velocity_radps: 0.00017505346495386067
+  maximum_base_tilt_rad: 0.17616800420496184
+  maximum_rotor_occupancy: 0.49525758491717875
+  maximum_joint_torque_occupancy: 0.2530939774459325
+  minimum_rotor_margin_N: 0.23112018054120373
+  minimum_joint_torque_margin_Nm: 0.4983807367911264
+  delta_u_cost: 19.25318742177334
+  input_saturation: false
+  control_bounds_satisfied: true
+  terminal_reference_trim_strict: true
+  minimum_arm_distance_to_fully_extended_rad: 1.0
+  passed_near_fully_extended: false
+  pose_source: SCENE_FILE
+  terminal_base_linear_velocity_norm_mps: 0.0010565111827098067
+  terminal_base_angular_velocity_norm_radps: 0.00017077271181011015
+  terminal_max_arm_joint_velocity_radps: 5.987458358911943e-05
+  terminal_full_body_velocity_norm: 0.00107364419613277
+  terminal_rest_pass: true
+  terminal_rest_mode: strong-soft terminal rest condition
+  terminal_rest_window_steps: 4
+fddp_pass_1:
+  iterations: 12
+  converged: true
+  initial_cost: 4368.201396030994
+  final_cost: 11.64832582528023
+  initial_objective_cost: 14.196373363703454
+  final_objective_cost: 11.64832582528023
+  initial_dynamics_gap_max: 0.03299244240226605
+  final_dynamics_gap_max: 0.0
+fddp_pass_2:
+  iterations: 3
+  converged: true
+  initial_cost: 11.600666548304913
+  final_cost: 11.587172586866917
+  initial_objective_cost: 11.600666548304913
+  final_objective_cost: 11.587172586866917
+  initial_dynamics_gap_max: 0.0
+  final_dynamics_gap_max: 0.0
+total_fddp_iterations: 15
+dynamics_gap_penalty_weight: 100000.0
+cost_curve_note: costs and optimization_cost_convergence.png contain pass 2 diagnostic
+  merit cost only; pass 1 uses a different proximal objective. objective_costs_pass_*
+  store raw Crocoddyl objective costs.
+diagnostic_total_cost: objective_cost + dynamics_gap_penalty_weight * sum_k ||x[k+1]
+  - f(x[k], u[k])||^2; diagnostic only, not a replacement for BoxFDDP shooting dynamics.
+delta_u_implementation: two-pass proximal previous-control reference; exact cross-node
+  delta-u requires control-state augmentation

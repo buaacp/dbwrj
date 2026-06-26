@@ -1,0 +1,20 @@
+name,type,parent,child,axis,lower,upper,velocity,effort,mimic,transmission
+base_joint,fixed,base_link,base_link_inertia,,,,,,,
+rotor_0_joint,continuous,base_link,rotor_0,0 0 1,,,,,,
+rotor_1_joint,continuous,base_link,rotor_1,0 0 1,,,,,,
+rotor_2_joint,continuous,base_link,rotor_2,0 0 1,,,,,,
+rotor_3_joint,continuous,base_link,rotor_3,0 0 1,,,,,,
+arm_base_joint,revolute,base_link,arm_base_link,0 0 1,0,0,0,0,,
+shoulder_pan_joint,fixed,arm_base_link,shoulder_link,,,,,,,
+shoulder_lift_joint,revolute,shoulder_link,upper_arm_link,0 -1 0,-1.57,1.57,2,1000,,shoulder_lift_trans
+elbow_joint,revolute,upper_arm_link,forearm_link,0 -1 0,-1.57,1.57,2,1000,,elbow_trans
+wrist_1_joint,revolute,forearm_link,wrist_1_link,0 -1 0,-1.57,1.57,2,1000,,wrist_1_trans
+wrist_roll_joint,continuous,wrist_1_link,wrist_roll_link,0 0 1,,,2,1000,,wrist_roll_trans
+wrist_2_joint,revolute,wrist_roll_link,gripper_base_link,0 0 1,0,0,0,0,,
+left_knuckle_joint,revolute,gripper_base_link,left_knuckle_link,0 0 1,-1.57,1.57,2.0,1000,,left_knuckle_joint_transmission
+right_knuckle_joint,revolute,gripper_base_link,right_knuckle_link,0 0 -1,-1.57,1.57,2.0,1000,left_knuckle_joint,
+left_inner_knuckle_joint,revolute,gripper_base_link,left_inner_knuckle_link,0 0 1,-1.57,1.57,2.0,1000,left_knuckle_joint,
+left_finger_joint,revolute,left_inner_knuckle_link,left_finger_link,0 0 1,-1.57,1.57,2.0,1000,left_knuckle_joint,
+right_inner_knuckle_joint,revolute,gripper_base_link,right_inner_knuckle_link,0 0 1,-1.57,1.57,2.0,1000,left_knuckle_joint,
+right_finger_joint,revolute,right_inner_knuckle_link,right_finger_link,0 0 -1,-1.57,1.57,2.0,1000,left_knuckle_joint,
+/imu_joint,revolute,base_link,/imu_link,,0,0,0,0,,

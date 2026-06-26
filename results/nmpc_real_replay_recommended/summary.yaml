@@ -1,0 +1,60 @@
+cycles: 350
+status_zero_count: 350
+solver_build_count: 1
+mean_solve_time_s: 0.0024391200800891965
+max_solve_time_s: 0.0036560720000125
+p95_solve_time_s: 0.0027221699014262414
+command_bounds_ok: true
+command_rate_bounds_ok: true
+joint_reference_ranges:
+- 0.6676565283376918
+- 0.4178236221297944
+- 0.6985115951764738
+- 0.016416027835007847
+joint_command_ranges:
+- 0.8632957163103608
+- 0.7114504690123008
+- 0.9485351823356791
+- 0.10500344896862339
+joint_references_all_different: true
+joint_commands_all_different: true
+initial_errors:
+  e_p: 0.04123105625617661
+  e_v: 0.0
+  e_R: 0.08726646259971647
+  e_omega: 0.0
+  e_q: 0.1
+  e_dq: 0.0
+maximum_errors:
+  e_p: 0.1179866492831638
+  e_v: 0.36182922543995266
+  e_R: 0.11054900092193991
+  e_omega: 1.0138824924247014
+  e_q: 0.20874673886738876
+  e_dq: 1.6887167953583058
+final_errors:
+  e_p: 0.0033816964523131557
+  e_v: 0.001043975046635577
+  e_R: 0.01605503701440285
+  e_omega: 0.003291612981472035
+  e_q: 7.774284223609981e-07
+  e_dq: 1.3163555662178454e-06
+initial_joint_abs_errors:
+  shoulder_lift_joint: 0.04999999999999999
+  elbow_joint: 0.05
+  wrist_1_joint: 0.05
+  wrist_roll_joint: 0.05
+final_joint_abs_errors:
+  shoulder_lift_joint: 3.4702523338259184e-07
+  elbow_joint: 3.749854100565386e-07
+  wrist_1_joint: 1.3770529827539235e-07
+  wrist_roll_joint: 5.695538889008509e-07
+maximum_joint_abs_errors:
+  shoulder_lift_joint: 0.11423685160149821
+  elbow_joint: 0.09752281235166953
+  wrist_1_joint: 0.13481489874443237
+  wrist_roll_joint: 0.06176239449482006
+final_position_error_less_than_initial: true
+node_interpolation:
+  max_position_node_error: 0.0
+  max_joint_node_error: 0.0

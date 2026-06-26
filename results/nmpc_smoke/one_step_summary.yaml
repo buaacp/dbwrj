@@ -1,0 +1,64 @@
+solver_status: 0
+solve_time_s: 0.0032467660021211486
+hover_thrust_reference_n: 16.843769999999996
+first_optimal_command:
+- 16.843769999999505
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+first_optimal_command_rate:
+- -2.4542419908412522e-11
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+command_bounds_ok: true
+command_rate_bounds_ok: true
+command_lower:
+- 0.0
+- -1.0
+- -1.0
+- -1.0
+- -2.0
+- -2.0
+- -2.0
+- -2.0
+command_upper:
+- 41.3751272
+- 1.0
+- 1.0
+- 1.0
+- 2.0
+- 2.0
+- 2.0
+- 2.0
+command_rate_lower:
+- -80.0
+- -10.0
+- -10.0
+- -10.0
+- -6.0
+- -6.0
+- -6.0
+- -4.0
+command_rate_upper:
+- 80.0
+- 10.0
+- 10.0
+- 10.0
+- 6.0
+- 6.0
+- 6.0
+- 4.0
+cost: 6.878334882306584e-24
+build_count: 1
+model_mass_kg: 1.7169999999999996
+effective_mass_kg: 1.7169999999999996
+mass_override_kg: null
